@@ -14,8 +14,12 @@ export const useAuthStore = defineStore('auth', () => {
     loading.value = true
     try {
       const res = await apiLogin(email, password)
-      token.value = res.data.token
-      localStorage.setItem('token', res.data.token)
+      const newToken = res.data.token
+      if (!newToken) {
+        throw new Error('登录失败，请检查账号密码')
+      }
+      token.value = newToken
+      localStorage.setItem('token', newToken)
       await fetchProfile()
       return true
     } catch (e: any) {

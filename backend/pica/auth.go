@@ -15,10 +15,17 @@ func (c *Client) Login(email, password string) (*APIResponse, error) {
 	}
 
 	// 提取 token
-	if token, ok := resp.Data["token"]; ok {
-		if t, ok := token.(string); ok {
-			c.token = t
+	if resp.Data != nil {
+		if token, ok := resp.Data["token"]; ok {
+			if t, ok := token.(string); ok && t != "" {
+				c.token = t
+			}
 		}
+	}
+
+	// 检查是否获取到 token
+	if c.token == "" {
+		return nil, fmt.Errorf("登录失败，请检查账号密码")
 	}
 
 	return resp, nil
