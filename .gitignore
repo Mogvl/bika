@@ -1,0 +1,26 @@
+# Go
+backend/bika-server
+backend/bika-server.exe
+
+# Node
+node_modules/
+
+# Frontend build
+frontend/dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data
+data/
+
+# Temp
+*.log
+tmp/
