@@ -14,38 +14,27 @@
 - ✅ 图片代理（解决跨域和缓存）
 - ✅ Docker 多阶段构建（镜像小巧）
 
-## 快速开始
+## 绿联云 NAS 部署（推荐）
 
-### 使用 Docker Compose（推荐）
+只需两步，通过 Compose 自动拉取镜像部署：
 
-> **注意**: 绿联云 Docker Compose 不支持 `build` 指令，需要先手动构建镜像。
+### 第一步：在 GitHub Actions 构建镜像
 
-**第一步：构建镜像**
+1. 打开 [GitHub Actions](https://github.com/Mogvl/bika/actions)
+2. 选择 **构建 Docker 镜像** 工作流
+3. 点击 **Run workflow** 手动触发构建
+4. 等待构建完成（约 3-5 分钟）
 
-通过 SSH 连接绿联云 NAS，或在项目目录下执行：
+### 第二步：在绿联云部署 Compose
 
-```bash
-# Intel/AMD 架构（大部分绿联云）
-./build.sh amd64
-
-# ARM 架构（部分绿联云型号）
-./build.sh arm64
-```
-
-或者直接用 docker 命令：
-
-```bash
-docker build -t bika-web:latest .
-```
-
-**第二步：部署**
-
-新建 `docker-compose.yml` 文件，粘贴以下内容：
+1. 打开绿联云 NAS 的 **Docker** 应用
+2. 进入 **Compose** 页面
+3. 新建项目，粘贴以下内容：
 
 ```yaml
 services:
   bika-web:
-    image: bika-web:latest
+    image: ghcr.io/mogvl/bika-web:latest
     container_name: bika-web
     ports:
       - "3000:4000"
@@ -59,36 +48,11 @@ services:
     restart: unless-stopped
 ```
 
-> ⚠️ 使用前需先构建镜像：`docker build -t bika-web:latest .`
+4. 点击 **部署**
 
-然后启动：
+部署成功后访问 `http://<NAS-IP>:3000` 即可使用。
 
-```bash
-docker compose up -d
-```
-
-访问 `http://localhost:4000` 即可使用。
-
-### 使用 Docker 命令行（无需 Compose）
-
-```bash
-# 先构建镜像
-docker build -t bika-web:latest .
-
-# 运行容器
-docker run -d \
-  --name bika-web \
-  --restart unless-stopped \
-  -p 4000:4000 \
-  -e PORT=4000 \
-  -e TZ=Asia/Shanghai \
-  -v ./data/downloads:/data/downloads \
-  -v ./data/config:/data/config \
-  -v ./data/cache:/data/cache \
-  bika-web:latest
-```
-
-### 本地开发
+## 快速开始（本地开发）
 
 ```bash
 # 启动 Go 后端
@@ -103,84 +67,20 @@ npm run dev
 
 前端开发服务器默认监听 `http://localhost:3000`，API 请求会代理到 `http://localhost:4000`。
 
-## 绿联云 NAS 部署指南
-
-### 方法1：Docker Compose（推荐）
-
-1. **通过 SSH 连接 NAS**（或在 Docker 终端执行）
-2. 拉取代码并构建镜像：
-   ```bash
-   git clone https://github.com/Mogvl/bika.git /volume1/docker/bika
-   cd /volume1/docker/bika
-   docker build -t bika-web:latest .
-   ```
-3. 打开绿联云 NAS 的 **Docker** 应用
-4. 进入 **Compose** 页面
-5. 新建项目，粘贴以下内容（项目目录选 `/volume1/docker/bika`）：
-   ```yaml
-   services:
-     bika-web:
-       image: bika-web:latest
-       container_name: bika-web
-       ports:
-         - "3000:4000"
-       environment:
-         - PORT=4000
-         - TZ=Asia/Shanghai
-       volumes:
-         - /volume1/bika:/data/downloads
-         - /volume1/docker/bika:/data/config
-         - /volume1/docker/bika/cache:/data/cache
-       restart: unless-stopped
-   ```
-6. 点击 **部署**
-
-### 方法2：Portainer 部署
-
-1. 在绿联云上安装 Portainer
-2. 进入 Portainer 管理界面
-3. 选择 **Images** → **Build a new image**，上传项目目录构建
-4. 选择 **Stacks** → **Add stack**
-5. 粘贴 `docker-compose.yml` 内容（将 `build: .` 改为 `image: bika-web:latest`）
-6. 点击 **Deploy**
-
-### 方法3：命令行部署（最简单）
-
-通过 SSH 连接绿联云 NAS，直接执行：
+## 使用 Docker 命令行（无需 Compose）
 
 ```bash
-# 拉取代码
-git clone https://github.com/Mogvl/bika.git /volume1/docker/bika
-cd /volume1/docker/bika
-
-# 构建镜像
-docker build -t bika-web:latest .
-
-# 创建数据目录
-mkdir -p data/{downloads,config,cache}
-
-# 运行容器
 docker run -d \
   --name bika-web \
   --restart unless-stopped \
-  -p 4000:4000 \
+  -p 3000:4000 \
   -e PORT=4000 \
   -e TZ=Asia/Shanghai \
-  -v /volume1/docker/bika/data/downloads:/data/downloads \
-  -v /volume1/docker/bika/data/config:/data/config \
-  -v /volume1/docker/bika/data/cache:/data/cache \
-  bika-web:latest
+  -v /volume1/bika:/data/downloads \
+  -v /volume1/docker/bika:/data/config \
+  -v /volume1/docker/bika/cache:/data/cache \
+  ghcr.io/mogvl/bika-web:latest
 ```
-
-### 访问地址
-
-部署成功后，通过以下地址访问：
-
-```
-http://<NAS-IP>:4000
-```
-
-默认端口为 `4000`，可在 `docker-compose.yml` 中修改映射端口。
 
 ## 配置说明
 
@@ -193,13 +93,11 @@ http://<NAS-IP>:4000
 
 ### 数据持久化
 
-通过 Docker 卷挂载持久化数据：
-
 | 挂载路径 | 说明 |
 |----------|------|
-| `./data/downloads` | 漫画下载目录 |
-| `./data/config` | 配置保存目录 |
-| `./data/cache` | 缓存目录 |
+| `/volume1/bika` | 漫画下载目录 |
+| `/volume1/docker/bika` | 配置保存目录 |
+| `/volume1/docker/bika/cache` | 缓存目录 |
 
 ## 登录说明
 
@@ -215,6 +113,7 @@ http://<NAS-IP>:4000
 - **路由**: Vue Router
 - **HTTP 客户端**: Axios
 - **容器**: Docker 多阶段构建
+- **CI/CD**: GitHub Actions
 
 ## 与原始项目的关系
 
