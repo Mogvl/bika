@@ -155,6 +155,7 @@ func SPAFileServer(staticFS fs.FS) http.Handler {
 		if data, err := fs.ReadFile(staticFS, "index.html"); err == nil {
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
 			w.Header().Set("Content-Length", fmt.Sprintf("%d", len(data)))
+			w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 			w.WriteHeader(http.StatusOK)
 			w.Write(data)
 			return
