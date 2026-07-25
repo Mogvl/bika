@@ -54,9 +54,9 @@ services:
       - PORT=4000
       - TZ=Asia/Shanghai
     volumes:
-      - /volume1/漫画/bika/downloads:/data/downloads
-      - /volume1/漫画/bika/config:/data/config
-      - /volume1/漫画/bika/cache:/data/cache
+      - /volume1/bika:/data/downloads
+      - /volume1/docker/bika:/data/config
+      - /volume1/docker/bika/cache:/data/cache
     restart: unless-stopped
 ```
 
