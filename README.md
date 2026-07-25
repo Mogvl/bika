@@ -34,7 +34,7 @@
 ```yaml
 services:
   bika-web:
-    image: ghcr.io/mogvl/bika-web:latest
+    image: ghcr.io/mogvl/bika:latest
     container_name: bika-web
     ports:
       - "3000:4000"
@@ -79,7 +79,7 @@ docker run -d \
   -v /volume1/bika:/data/downloads \
   -v /volume1/docker/bika:/data/config \
   -v /volume1/docker/bika/cache:/data/cache \
-  ghcr.io/mogvl/bika-web:latest
+  ghcr.io/mogvl/bika:latest
 ```
 
 ## 配置说明
