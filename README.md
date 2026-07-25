@@ -30,7 +30,7 @@ docker compose up -d
 docker compose logs -f
 ```
 
-访问 `http://localhost:8080` 即可使用。
+访问 `http://localhost:4000` 即可使用。
 
 ### 使用 Docker 命令行
 
@@ -57,7 +57,7 @@ npm install
 npm run dev
 ```
 
-前端开发服务器默认监听 `http://localhost:3000`，API 请求会代理到 `http://localhost:8080`。
+前端开发服务器默认监听 `http://localhost:3000`，API 请求会代理到 `http://localhost:4000`。
 
 ## 绿联云 NAS 部署指南
 
@@ -97,10 +97,10 @@ docker compose up -d
 部署成功后，通过以下地址访问：
 
 ```
-http://<NAS-IP>:8080
+http://<NAS-IP>:4000
 ```
 
-默认端口为 `8080`，可在 `docker-compose.yml` 中修改映射端口。
+默认端口为 `4000`，可在 `docker-compose.yml` 中修改映射端口。
 
 ## 配置说明
 

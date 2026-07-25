@@ -6,9 +6,9 @@ services:
     container_name: bika-web
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "4000:4000"
     environment:
-      - PORT=8080
+      - PORT=4000
       - TZ=Asia/Shanghai
     volumes:
       # 下载目录 - 漫画下载保存位置
