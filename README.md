@@ -30,6 +30,56 @@ docker compose up -d
 docker compose logs -f
 ```
 
+或者直接新建 `docker-compose.yml` 文件，粘贴以下内容：
+
+```yaml
+version: '3.8'
+
+services:
+  bika:
+    build: .
+    container_name: bika-web
+    restart: unless-stopped
+
+    # ==================== 端口映射 ====================
+    # 格式: "宿主机端口:容器端口"
+    # 宿主机端口可自定义，避免与其它服务冲突
+    # 绿联云访问地址: http://<NAS-IP>:4000
+    ports:
+      - "4000:4000"
+
+    # ==================== 环境变量 ====================
+    # PORT: 服务端口（需与上方容器端口一致）
+    # TZ: 时区设置
+    environment:
+      - PORT=4000
+      - TZ=Asia/Shanghai
+
+    # ==================== 数据持久化 ====================
+    # 将容器内数据映射到宿主机，防止重启丢失
+    # ./data 目录会自动创建在当前文件夹下
+    volumes:
+      # 漫画下载保存位置
+      - ./data/downloads:/data/downloads
+      # 配置文件持久化
+      - ./data/config:/data/config
+      # 缓存文件
+      - ./data/cache:/data/cache
+
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+```
+
+然后执行：
+
+```bash
+docker compose up -d
+```
+
 访问 `http://localhost:4000` 即可使用。
 
 ### 使用 Docker 命令行
@@ -38,8 +88,12 @@ docker compose logs -f
 docker build -t bika-web .
 docker run -d \
   --name bika-web \
-  -p 8080:8080 \
-  -v ./data:/data \
+  -p 4000:4000 \
+  -e PORT=4000 \
+  -e TZ=Asia/Shanghai \
+  -v ./data/downloads:/data/downloads \
+  -v ./data/config:/data/config \
+  -v ./data/cache:/data/cache \
   --restart unless-stopped \
   bika-web
 ```
