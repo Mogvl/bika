@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"io/fs"
 	"net/http"
 	"net/url"
@@ -104,8 +105,6 @@ func CORSMiddleware(next http.Handler) http.Handler {
 
 // SPAFileServer 创建支持 SPA 路由的静态文件服务器
 func SPAFileServer(staticFS fs.FS) http.Handler {
-	fileServer := http.FileServer(http.FS(staticFS))
-
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// API 请求不处理
 		if strings.HasPrefix(r.URL.Path, "/api/") {
@@ -114,23 +113,53 @@ func SPAFileServer(staticFS fs.FS) http.Handler {
 		}
 
 		// 尝试打开请求的文件
-		path := r.URL.Path
-		if path == "/" {
-			path = "index.html"
-		} else {
-			path = strings.TrimPrefix(path, "/")
+		filePath := strings.TrimPrefix(r.URL.Path, "/")
+		if filePath == "" {
+			filePath = "index.html"
 		}
 
-		// 检查文件是否存在
-		if f, err := staticFS.(fs.ReadFileFS).Open(path); err == nil {
-			f.Close()
-			// 文件存在，正常提供
-			fileServer.ServeHTTP(w, r)
+		// 检查文件是否存在并读取
+		if data, err := fs.ReadFile(staticFS, filePath); err == nil {
+			// 设置正确的 Content-Type
+			contentType := http.DetectContentType(data)
+			if strings.HasSuffix(filePath, ".js") {
+				contentType = "application/javascript"
+			} else if strings.HasSuffix(filePath, ".css") {
+				contentType = "text/css"
+			} else if strings.HasSuffix(filePath, ".html") {
+				contentType = "text/html; charset=utf-8"
+			} else if strings.HasSuffix(filePath, ".json") {
+				contentType = "application/json"
+			} else if strings.HasSuffix(filePath, ".svg") {
+				contentType = "image/svg+xml"
+			} else if strings.HasSuffix(filePath, ".png") {
+				contentType = "image/png"
+			} else if strings.HasSuffix(filePath, ".jpg") || strings.HasSuffix(filePath, ".jpeg") {
+				contentType = "image/jpeg"
+			} else if strings.HasSuffix(filePath, ".gif") {
+				contentType = "image/gif"
+			} else if strings.HasSuffix(filePath, ".woff2") {
+				contentType = "font/woff2"
+			} else if strings.HasSuffix(filePath, ".woff") {
+				contentType = "font/woff"
+			}
+			w.Header().Set("Content-Type", contentType)
+			w.Header().Set("Content-Length", fmt.Sprintf("%d", len(data)))
+			w.Header().Set("Cache-Control", "public, max-age=31536000")
+			w.WriteHeader(http.StatusOK)
+			w.Write(data)
 			return
 		}
 
 		// 文件不存在，提供 index.html（SPA 路由）
-		r.URL.Path = "/"
-		fileServer.ServeHTTP(w, r)
+		if data, err := fs.ReadFile(staticFS, "index.html"); err == nil {
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			w.Header().Set("Content-Length", fmt.Sprintf("%d", len(data)))
+			w.WriteHeader(http.StatusOK)
+			w.Write(data)
+			return
+		}
+
+		http.NotFound(w, r)
 	})
 }
