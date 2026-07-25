@@ -12,7 +12,7 @@ import (
 	"github.com/Mogvl/bika/backend/pica"
 )
 
-//go:embed static/*
+//go:embed all:static
 var embeddedStatic embed.FS
 
 func main() {
