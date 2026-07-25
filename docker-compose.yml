@@ -1,7 +1,6 @@
-version: '3.8'
 services:
   bika-web:
-    image: ghcr.io/mogvl/bika-web:latest
+    image: bika-web:latest
     container_name: bika-web
     ports:
       - "3000:4000"

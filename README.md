@@ -43,13 +43,12 @@ docker build -t bika-web:latest .
 新建 `docker-compose.yml` 文件，粘贴以下内容：
 
 ```yaml
-version: '3.8'
 services:
   bika-web:
-    image: ghcr.io/mogvl/bika-web:latest
+    image: bika-web:latest
     container_name: bika-web
     ports:
-      - "4000:4000"
+      - "3000:4000"
     environment:
       - PORT=4000
       - TZ=Asia/Shanghai
@@ -60,7 +59,7 @@ services:
     restart: unless-stopped
 ```
 
-> ⚠️ 使用前需先构建镜像：`docker build -t ghcr.io/mogvl/bika-web:latest .`
+> ⚠️ 使用前需先构建镜像：`docker build -t bika-web:latest .`
 
 然后启动：
 
@@ -119,20 +118,19 @@ npm run dev
 4. 进入 **Compose** 页面
 5. 新建项目，粘贴以下内容（项目目录选 `/volume1/docker/bika`）：
    ```yaml
-   version: '3.8'
    services:
      bika-web:
-       image: ghcr.io/mogvl/bika-web:latest
+       image: bika-web:latest
        container_name: bika-web
        ports:
-         - "4000:4000"
+         - "3000:4000"
        environment:
          - PORT=4000
          - TZ=Asia/Shanghai
        volumes:
-         - /volume1/漫画/bika/downloads:/data/downloads
-         - /volume1/漫画/bika/config:/data/config
-         - /volume1/漫画/bika/cache:/data/cache
+         - /volume1/bika:/data/downloads
+         - /volume1/docker/bika:/data/config
+         - /volume1/docker/bika/cache:/data/cache
        restart: unless-stopped
    ```
 6. 点击 **部署**
