@@ -18,63 +18,50 @@
 
 ### 使用 Docker Compose（推荐）
 
+> **注意**: 绿联云 Docker Compose 不支持 `build` 指令，需要先手动构建镜像。
+
+**第一步：构建镜像**
+
+通过 SSH 连接绿联云 NAS，或在项目目录下执行：
+
 ```bash
-# 克隆仓库
-git clone https://github.com/Mogvl/bika.git
-cd bika
+# Intel/AMD 架构（大部分绿联云）
+./build.sh amd64
 
-# 启动服务
-docker compose up -d
-
-# 查看日志
-docker compose logs -f
+# ARM 架构（部分绿联云型号）
+./build.sh arm64
 ```
 
-或者直接新建 `docker-compose.yml` 文件，粘贴以下内容：
+或者直接用 docker 命令：
+
+```bash
+docker build -t bika-web:latest .
+```
+
+**第二步：部署**
+
+新建 `docker-compose.yml` 文件，粘贴以下内容：
 
 ```yaml
 version: '3.8'
 
 services:
   bika:
-    build: .
+    image: bika-web:latest
     container_name: bika-web
     restart: unless-stopped
-
-    # ==================== 端口映射 ====================
-    # 格式: "宿主机端口:容器端口"
-    # 宿主机端口可自定义，避免与其它服务冲突
-    # 绿联云访问地址: http://<NAS-IP>:4000
     ports:
       - "4000:4000"
-
-    # ==================== 环境变量 ====================
-    # PORT: 服务端口（需与上方容器端口一致）
-    # TZ: 时区设置
     environment:
       - PORT=4000
       - TZ=Asia/Shanghai
-
-    # ==================== 数据持久化 ====================
-    # 将容器内数据映射到宿主机，防止重启丢失
-    # ./data 目录会自动创建在当前文件夹下
     volumes:
-      # 漫画下载保存位置
       - ./data/downloads:/data/downloads
-      # 配置文件持久化
       - ./data/config:/data/config
-      # 缓存文件
       - ./data/cache:/data/cache
-
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:4000/api/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
 ```
 
-然后执行：
+然后启动：
 
 ```bash
 docker compose up -d
@@ -82,20 +69,23 @@ docker compose up -d
 
 访问 `http://localhost:4000` 即可使用。
 
-### 使用 Docker 命令行
+### 使用 Docker 命令行（无需 Compose）
 
 ```bash
-docker build -t bika-web .
+# 先构建镜像
+docker build -t bika-web:latest .
+
+# 运行容器
 docker run -d \
   --name bika-web \
+  --restart unless-stopped \
   -p 4000:4000 \
   -e PORT=4000 \
   -e TZ=Asia/Shanghai \
   -v ./data/downloads:/data/downloads \
   -v ./data/config:/data/config \
   -v ./data/cache:/data/cache \
-  --restart unless-stopped \
-  bika-web
+  bika-web:latest
 ```
 
 ### 本地开发
@@ -117,33 +107,70 @@ npm run dev
 
 ### 方法1：Docker Compose（推荐）
 
-1. 打开绿联云 NAS 的 **文件管理器**
-2. 创建一个文件夹，例如 `docker/bika`
-3. 将本项目中的 `docker-compose.yml` 上传到该目录
-4. 打开 **Docker** 应用
-5. 进入 **Compose** 页面
-6. 选择项目目录为 `docker/bika`
-7. 点击 **部署**
+1. **通过 SSH 连接 NAS**（或在 Docker 终端执行）
+2. 拉取代码并构建镜像：
+   ```bash
+   git clone https://github.com/Mogvl/bika.git /volume1/docker/bika
+   cd /volume1/docker/bika
+   docker build -t bika-web:latest .
+   ```
+3. 打开绿联云 NAS 的 **Docker** 应用
+4. 进入 **Compose** 页面
+5. 新建项目，粘贴以下内容（项目目录选 `/volume1/docker/bika`）：
+   ```yaml
+   version: '3.8'
+   services:
+     bika:
+       image: bika-web:latest
+       container_name: bika-web
+       restart: unless-stopped
+       ports:
+         - "4000:4000"
+       environment:
+         - PORT=4000
+         - TZ=Asia/Shanghai
+       volumes:
+         - /volume1/docker/bika/data/downloads:/data/downloads
+         - /volume1/docker/bika/data/config:/data/config
+         - /volume1/docker/bika/data/cache:/data/cache
+   ```
+6. 点击 **部署**
 
 ### 方法2：Portainer 部署
 
 1. 在绿联云上安装 Portainer
 2. 进入 Portainer 管理界面
-3. 选择 **Stacks** → **Add stack**
-4. 粘贴 `docker-compose.yml` 内容
-5. 点击 **Deploy**
+3. 选择 **Images** → **Build a new image**，上传项目目录构建
+4. 选择 **Stacks** → **Add stack**
+5. 粘贴 `docker-compose.yml` 内容（将 `build: .` 改为 `image: bika-web:latest`）
+6. 点击 **Deploy**
 
-### 方法3：命令行部署
+### 方法3：命令行部署（最简单）
 
-通过 SSH 连接绿联云 NAS，执行：
+通过 SSH 连接绿联云 NAS，直接执行：
 
 ```bash
 # 拉取代码
 git clone https://github.com/Mogvl/bika.git /volume1/docker/bika
 cd /volume1/docker/bika
 
-# 构建并启动
-docker compose up -d
+# 构建镜像
+docker build -t bika-web:latest .
+
+# 创建数据目录
+mkdir -p data/{downloads,config,cache}
+
+# 运行容器
+docker run -d \
+  --name bika-web \
+  --restart unless-stopped \
+  -p 4000:4000 \
+  -e PORT=4000 \
+  -e TZ=Asia/Shanghai \
+  -v /volume1/docker/bika/data/downloads:/data/downloads \
+  -v /volume1/docker/bika/data/config:/data/config \
+  -v /volume1/docker/bika/data/cache:/data/cache \
+  bika-web:latest
 ```
 
 ### 访问地址
