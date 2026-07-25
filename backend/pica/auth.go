@@ -2,6 +2,30 @@ package pica
 
 import "fmt"
 
+// GetCodeErrMsg 根据错误码返回错误信息
+func GetCodeErrMsg(code string) string {
+	msgMap := map[string]string{
+		"1004": "账号或密码错误",
+		"1005": "未授权",
+		"1006": "账号未激活，请先到邮箱激活",
+		"1007": "找不到该账号",
+		"1008": "该邮箱已被注册",
+		"1009": "该昵称已被使用",
+		"1010": "账号或密码错误",
+		"1014": "该漫画正在审核中",
+		"1019": "等级不够，无法操作",
+		"1023": "请求过于频繁",
+		"1024": "不支持该邮箱",
+		"1025": "哔咔是注册商标，不能使用",
+		"1026": "邮箱格式错误",
+		"1029": "时间不同步，请调整设备时间",
+	}
+	if msg, ok := msgMap[code]; ok {
+		return msg
+	}
+	return ""
+}
+
 // Login 用户登录，返回 token 和用户信息
 func (c *Client) Login(email, password string) (*APIResponse, error) {
 	req := LoginRequest{
@@ -11,6 +35,20 @@ func (c *Client) Login(email, password string) (*APIResponse, error) {
 
 	resp, err := c.doPost("auth/sign-in", req)
 	if err != nil {
+		// 如果是 API 错误（如 401），提取错误信息
+		if resp != nil {
+			errMsg := "登录失败，请检查账号密码"
+			if resp.Message != "" && resp.Message != "success" {
+				errMsg = resp.Message
+			}
+			if code, ok := resp.Data["code"].(string); ok {
+				errMsg = GetCodeErrMsg(code)
+				if errMsg == "" {
+					errMsg = fmt.Sprintf("登录失败 (错误码: %s)", code)
+				}
+			}
+			return nil, fmt.Errorf(errMsg)
+		}
 		return nil, fmt.Errorf("登录失败: %w", err)
 	}
 
@@ -25,7 +63,7 @@ func (c *Client) Login(email, password string) (*APIResponse, error) {
 
 	// 检查是否获取到 token
 	if c.token == "" {
-		return nil, fmt.Errorf("登录失败，请检查账号密码")
+		return nil, fmt.Errorf("登录失败，请使用邮箱登录")
 	}
 
 	return resp, nil
