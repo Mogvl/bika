@@ -4,27 +4,19 @@ import type { ApiResponse, LeaderboardTT } from '@/types'
 const api = axios.create({
   baseURL: '/api',
   timeout: 30000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: { 'Content-Type': 'application/json' },
 })
 
-// 请求拦截器 - 自动添加 token
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token')
-  if (token) {
-    config.headers.Authorization = token
-  }
+  if (token) config.headers.Authorization = token
   return config
 })
 
-// 响应拦截器 - 统一错误处理
 api.interceptors.response.use(
   (response) => {
     const data = response.data as ApiResponse
-    if (data.code !== 200) {
-      return Promise.reject(new Error(data.message || '请求失败'))
-    }
+    if (data.code !== 200) return Promise.reject(new Error(data.message || '请求失败'))
     return response
   },
   (error) => {
@@ -37,10 +29,14 @@ api.interceptors.response.use(
   }
 )
 
-// ==================== 认证相关 ====================
-
+// ==================== 认证 ====================
 export async function login(email: string, password: string) {
   const res = await api.post('/auth/login', { email, password })
+  return res.data
+}
+
+export async function register(data: any) {
+  const res = await api.post('/auth/register', data)
   return res.data
 }
 
@@ -54,15 +50,23 @@ export async function punchIn() {
   return res.data
 }
 
-// ==================== 分类相关 ====================
+export async function changePassword(old_password: string, new_password: string) {
+  const res = await api.post('/auth/change-password', { old_password, new_password })
+  return res.data
+}
 
+export async function forgotPassword(email: string) {
+  const res = await api.post('/auth/forgot-password', { email })
+  return res.data
+}
+
+// ==================== 分类 ====================
 export async function getCategories() {
   const res = await api.get('/categories')
   return res.data
 }
 
-// ==================== 漫画相关 ====================
-
+// ==================== 漫画 ====================
 export async function getComicsByCategory(page: number, category: string, sort = 'ua') {
   const res = await api.get('/comics', { params: { page, c: category, s: sort } })
   return res.data
@@ -108,8 +112,28 @@ export async function getKeywords() {
   return res.data
 }
 
-// ==================== 收藏相关 ====================
+// ==================== 评论 ====================
+export async function getComments(bookId: string, page = 1) {
+  const res = await api.get(`/comics/${bookId}/comments`, { params: { page } })
+  return res.data
+}
 
+export async function sendComment(bookId: string, content: string) {
+  const res = await api.post(`/comics/${bookId}/comments/send`, { content })
+  return res.data
+}
+
+export async function likeComment(commentId: string) {
+  const res = await api.post(`/comments/${commentId}/like`)
+  return res.data
+}
+
+export async function likeComic(bookId: string) {
+  const res = await api.post(`/comics/${bookId}/like`)
+  return res.data
+}
+
+// ==================== 收藏 ====================
 export async function getFavourites(page = 1, sort = 'da') {
   const res = await api.get('/favourites', { params: { page, s: sort } })
   return res.data
@@ -120,12 +144,33 @@ export async function addFavourite(id: string) {
   return res.data
 }
 
-// ==================== 图片代理 ====================
-
-export function getImageUrl(fileServer: string, path: string): string {
-  return `/api/image/proxy?fileServer=${encodeURIComponent(fileServer)}&path=${encodeURIComponent(path)}`
+// ==================== 游戏 ====================
+export async function getGames(page = 1) {
+  const res = await api.get('/games', { params: { page } })
+  return res.data
 }
 
-export function getImageUrlDirect(url: string): string {
-  return `/api/image/proxy?url=${encodeURIComponent(url)}`
+export async function getGameDetail(id: string) {
+  const res = await api.get(`/games/${id}`)
+  return res.data
+}
+
+export async function getGameEps(id: string, page = 1) {
+  const res = await api.get(`/games/${id}/eps`, { params: { page } })
+  return res.data
+}
+
+export async function getGamePages(id: string, epsId: string, page = 1) {
+  const res = await api.get(`/games/${id}/eps/${epsId}/pages`, { params: { page } })
+  return res.data
+}
+
+export async function getGameComments(id: string, page = 1) {
+  const res = await api.get(`/games/${id}/comments`, { params: { page } })
+  return res.data
+}
+
+// ==================== 图片 ====================
+export function getImageUrl(fileServer: string, path: string): string {
+  return `/api/image/proxy?fileServer=${encodeURIComponent(fileServer)}&path=${encodeURIComponent(path)}`
 }

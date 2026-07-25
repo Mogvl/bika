@@ -185,6 +185,15 @@ func (c *Client) doPost(path string, body any) (*APIResponse, error) {
 	return c.doRequest("POST", path, strings.NewReader(string(jsonBody)))
 }
 
+// doPut 执行 PUT 请求
+func (c *Client) doPut(path string, body any) (*APIResponse, error) {
+	jsonBody, err := json.Marshal(body)
+	if err != nil {
+		return nil, fmt.Errorf("序列化请求体失败: %w", err)
+	}
+	return c.doRequest("PUT", path, strings.NewReader(string(jsonBody)))
+}
+
 // RawImage 获取原始图片数据
 func (c *Client) RawImage(url string) ([]byte, string, error) {
 	req, err := http.NewRequest("GET", url, nil)

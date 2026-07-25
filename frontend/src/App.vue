@@ -7,6 +7,7 @@
       </div>
       <div class="header-right">
         <router-link to="/search" class="nav-link">🔍</router-link>
+        <router-link to="/games" class="nav-link">🎮</router-link>
         <router-link to="/leaderboard" class="nav-link">🏆</router-link>
         <router-link to="/favourites" class="nav-link">❤️</router-link>
         <span class="user-name" @click="showUserMenu = !showUserMenu">
@@ -28,6 +29,10 @@
         <router-link to="/search" @click="showMenu = false" class="menu-item">🔍 搜索</router-link>
         <router-link to="/leaderboard" @click="showMenu = false" class="menu-item">🏆 排行榜</router-link>
         <router-link to="/favourites" @click="showMenu = false" class="menu-item">❤️ 我的收藏</router-link>
+        <router-link to="/games" @click="showMenu = false" class="menu-item">🎮 游戏区</router-link>
+        <router-link to="/history" @click="showMenu = false" class="menu-item">📖 阅读历史</router-link>
+        <router-link to="/profile" @click="showMenu = false" class="menu-item">👤 个人资料</router-link>
+        <router-link to="/settings" @click="showMenu = false" class="menu-item">⚙️ 设置</router-link>
         <hr />
         <a href="#" @click.prevent="logout" class="menu-item logout">🚪 退出登录</a>
       </nav>
@@ -44,6 +49,8 @@
         <p class="user-level">Lv.{{ auth.user?.level || '?' }}</p>
         <p class="user-name">{{ auth.user?.name || '用户' }}</p>
       </div>
+      <router-link to="/profile" @click="showUserMenu = false">个人资料</router-link>
+      <router-link to="/settings" @click="showUserMenu = false">设置</router-link>
       <a href="#" @click.prevent="logout">退出登录</a>
     </div>
   </div>

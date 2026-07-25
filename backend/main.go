@@ -27,14 +27,18 @@ func main() {
 	authHandler := handler.NewAuthHandler(client)
 	comicsHandler := handler.NewComicsHandler(client)
 	imageHandler := handler.NewImageHandler(client)
+	gameHandler := handler.NewGameHandler(client)
 
 	mux := http.NewServeMux()
 
 	// ==================== API 路由 ====================
 
 	mux.HandleFunc("/api/auth/login", authHandler.Login)
+	mux.HandleFunc("/api/auth/register", authHandler.Register)
 	mux.HandleFunc("/api/auth/profile", handler.AuthMiddleware(client, authHandler.Profile))
 	mux.HandleFunc("/api/auth/punch-in", handler.AuthMiddleware(client, authHandler.PunchIn))
+	mux.HandleFunc("/api/auth/change-password", handler.AuthMiddleware(client, authHandler.ChangePassword))
+	mux.HandleFunc("/api/auth/forgot-password", authHandler.ForgotPassword)
 
 	mux.HandleFunc("/api/categories", comicsHandler.Categories)
 
@@ -49,6 +53,17 @@ func main() {
 	mux.HandleFunc("/api/comics/{id}/eps", comicsHandler.Eps)
 	mux.HandleFunc("/api/comics/{id}/eps/{epsId}/pages", comicsHandler.Pages)
 	mux.HandleFunc("/api/comics/{id}/comments", comicsHandler.Comments)
+	mux.HandleFunc("/api/comics/{id}/comments/send", handler.AuthMiddleware(client, comicsHandler.SendComment))
+	mux.HandleFunc("/api/comics/{id}/like", handler.AuthMiddleware(client, comicsHandler.LikeComic))
+
+	mux.HandleFunc("/api/comments/{id}/like", handler.AuthMiddleware(client, comicsHandler.LikeComment))
+
+	// 游戏接口
+	mux.HandleFunc("/api/games", gameHandler.List)
+	mux.HandleFunc("/api/games/{id}", gameHandler.Detail)
+	mux.HandleFunc("/api/games/{id}/eps", gameHandler.Eps)
+	mux.HandleFunc("/api/games/{id}/eps/{epsId}/pages", gameHandler.Pages)
+	mux.HandleFunc("/api/games/{id}/comments", gameHandler.Comments)
 
 	mux.HandleFunc("/api/favourites", handler.AuthMiddleware(client, comicsHandler.Favourites))
 	mux.HandleFunc("/api/comics/{id}/favourite", handler.AuthMiddleware(client, comicsHandler.AddFavourite))

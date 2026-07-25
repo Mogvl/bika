@@ -96,3 +96,38 @@ func (c *Client) GetComicRecommendation(bookID string) (*APIResponse, error) {
 func (c *Client) GetComments(bookID string, page int) (*APIResponse, error) {
 	return c.doGet(fmt.Sprintf("comics/%s/comments?page=%d", bookID, page))
 }
+
+// SendComment 发送评论
+func (c *Client) SendComment(bookID, content string) (*APIResponse, error) {
+	return c.doPost(fmt.Sprintf("comics/%s/comments", bookID), map[string]string{"content": content})
+}
+
+// GetSubComments 获取子评论
+func (c *Client) GetSubComments(commentID string, page int) (*APIResponse, error) {
+	return c.doGet(fmt.Sprintf("comics/%s/comments?page=%d", commentID, page))
+}
+
+// SendSubComment 发送子评论
+func (c *Client) SendSubComment(commentID, content string) (*APIResponse, error) {
+	return c.doPost(fmt.Sprintf("comments/%s", commentID), map[string]string{"content": content})
+}
+
+// LikeComic 点赞漫画
+func (c *Client) LikeComic(bookID string) (*APIResponse, error) {
+	return c.doPost(fmt.Sprintf("comics/%s/like", bookID), nil)
+}
+
+// LikeComment 点赞评论
+func (c *Client) LikeComment(commentID string) (*APIResponse, error) {
+	return c.doPost(fmt.Sprintf("comments/%s/like", commentID), nil)
+}
+
+// ReportComment 举报评论
+func (c *Client) ReportComment(commentID string) (*APIResponse, error) {
+	return c.doPost(fmt.Sprintf("comments/%s/report", commentID), nil)
+}
+
+// GetCollections 获取推荐合集
+func (c *Client) GetCollectionsDetail(collectionID string) (*APIResponse, error) {
+	return c.doGet(fmt.Sprintf("collections/%s", collectionID))
+}

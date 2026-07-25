@@ -36,6 +36,7 @@
       </form>
 
       <div class="login-footer">
+        <router-link to="/register" class="register-link">没有账号？去注册</router-link>
         <p class="disclaimer">
           使用哔咔漫画账号登录<br />
           本项目仅用于技术研究
