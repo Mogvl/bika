@@ -17,13 +17,29 @@
           <option value="bot">其他</option>
         </select>
 
-        <div class="question-group" v-for="i in 3" :key="i">
-          <select v-model="form[`question${i}`]" class="input-field">
+        <div class="question-group">
+          <select v-model="form.question1" class="input-field">
             <option :value="1">你最喜欢的漫画角色？</option>
             <option :value="2">你的第一个宠物叫什么？</option>
             <option :value="3">你的家乡在哪里？</option>
           </select>
-          <input v-model="form[`answer${i}`]" type="text" class="input-field" :placeholder="`答案${i}`" />
+          <input v-model="form.answer1" type="text" class="input-field" placeholder="答案1" />
+        </div>
+        <div class="question-group">
+          <select v-model="form.question2" class="input-field">
+            <option :value="1">你最喜欢的漫画角色？</option>
+            <option :value="2">你的第一个宠物叫什么？</option>
+            <option :value="3">你的家乡在哪里？</option>
+          </select>
+          <input v-model="form.answer2" type="text" class="input-field" placeholder="答案2" />
+        </div>
+        <div class="question-group">
+          <select v-model="form.question3" class="input-field">
+            <option :value="1">你最喜欢的漫画角色？</option>
+            <option :value="2">你的第一个宠物叫什么？</option>
+            <option :value="3">你的家乡在哪里？</option>
+          </select>
+          <input v-model="form.answer3" type="text" class="input-field" placeholder="答案3" />
         </div>
 
         <p v-if="errorMsg" class="error-tip">{{ errorMsg }}</p>
