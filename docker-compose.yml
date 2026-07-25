@@ -1,30 +1,15 @@
 version: '3.8'
-
 services:
-  bika:
-    # 绿联云 Docker Compose 不支持 build 指令
-    # 请先运行以下命令构建镜像：
-    #   docker build -t bika-web:latest .
-    image: bika-web:latest
+  bika-web:
+    image: ghcr.io/mogvl/bika-web:latest
     container_name: bika-web
-    restart: unless-stopped
-
-    # ==================== 端口映射 ====================
-    # 格式: "宿主机端口:容器端口"
-    # 如果 4000 被占用，改成其他端口（如 4001），同时改下方的 PORT
     ports:
       - "4000:4000"
-
-    # ==================== 环境变量 ====================
-    # PORT: 必须与 ports 右侧的容器端口一致
-    # TZ: 时区，修改为你的时区
     environment:
       - PORT=4000
       - TZ=Asia/Shanghai
-
-    # ==================== 数据持久化 ====================
-    # 漫画下载、配置、缓存保存在宿主机，容器删除也不丢失
     volumes:
-      - ./data/downloads:/data/downloads
-      - ./data/config:/data/config
-      - ./data/cache:/data/cache
+      - /volume1/漫画/bika/downloads:/data/downloads
+      - /volume1/漫画/bika/config:/data/config
+      - /volume1/漫画/bika/cache:/data/cache
+    restart: unless-stopped

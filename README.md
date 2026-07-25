@@ -44,22 +44,23 @@ docker build -t bika-web:latest .
 
 ```yaml
 version: '3.8'
-
 services:
-  bika:
-    image: bika-web:latest
+  bika-web:
+    image: ghcr.io/mogvl/bika-web:latest
     container_name: bika-web
-    restart: unless-stopped
     ports:
       - "4000:4000"
     environment:
       - PORT=4000
       - TZ=Asia/Shanghai
     volumes:
-      - ./data/downloads:/data/downloads
-      - ./data/config:/data/config
-      - ./data/cache:/data/cache
+      - /volume1/漫画/bika/downloads:/data/downloads
+      - /volume1/漫画/bika/config:/data/config
+      - /volume1/漫画/bika/cache:/data/cache
+    restart: unless-stopped
 ```
+
+> ⚠️ 使用前需先构建镜像：`docker build -t ghcr.io/mogvl/bika-web:latest .`
 
 然后启动：
 
@@ -120,19 +121,19 @@ npm run dev
    ```yaml
    version: '3.8'
    services:
-     bika:
-       image: bika-web:latest
+     bika-web:
+       image: ghcr.io/mogvl/bika-web:latest
        container_name: bika-web
-       restart: unless-stopped
        ports:
          - "4000:4000"
        environment:
          - PORT=4000
          - TZ=Asia/Shanghai
        volumes:
-         - /volume1/docker/bika/data/downloads:/data/downloads
-         - /volume1/docker/bika/data/config:/data/config
-         - /volume1/docker/bika/data/cache:/data/cache
+         - /volume1/漫画/bika/downloads:/data/downloads
+         - /volume1/漫画/bika/config:/data/config
+         - /volume1/漫画/bika/cache:/data/cache
+       restart: unless-stopped
    ```
 6. 点击 **部署**
 
