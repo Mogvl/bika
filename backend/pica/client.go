@@ -91,7 +91,8 @@ func (c *Client) GetToken() string {
 
 // buildSignature 计算 API 签名
 func (c *Client) buildSignature(path, method, timestamp, nonce string) string {
-	data := strings.ToLower(path + timestamp + nonce + method + APIKey)
+	// 签名数据包含 baseUrl + path (和原始 picacg-qt 一致)
+	data := strings.ToLower(BaseURL + path + timestamp + nonce + method + APIKey)
 	key := "~d}$Q7$eIni=V)9\\RK/P.RM4;9[7|@/CA}b~OW!3?EV`:<>M7pddUBL5n|0/*Cn"
 	mac := hmac.New(sha256.New, []byte(key))
 	mac.Write([]byte(data))
