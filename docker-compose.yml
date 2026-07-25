@@ -3,7 +3,7 @@ services:
     image: ghcr.io/mogvl/bika:latest
     container_name: bika-web
     ports:
-      - "3000:4000"
+      - "4000:4000"
     environment:
       - PORT=4000
       - TZ=Asia/Shanghai
