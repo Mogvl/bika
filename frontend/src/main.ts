@@ -2,7 +2,6 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
-import { useAuthStore } from './stores/auth'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -10,8 +9,5 @@ const pinia = createPinia()
 app.use(pinia)
 app.use(router)
 
-// 初始化认证状态
-const auth = useAuthStore()
-auth.init()
-
+// 初始化认证状态在 App.vue 的 setup 中完成
 app.mount('#app')

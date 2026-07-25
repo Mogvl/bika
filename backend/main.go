@@ -68,8 +68,7 @@ func main() {
 	if err == nil {
 		if entries, _ := fs.ReadDir(staticFS, "."); len(entries) > 0 {
 			log.Println("使用内置前端文件")
-			fileHandler := http.FileServer(http.FS(staticFS))
-			mux.Handle("/", handler.StaticFileMiddleware(http.FS(staticFS), "index.html")(fileHandler))
+			mux.Handle("/", handler.SPAFileServer(staticFS))
 		} else {
 			log.Println("内置前端目录为空，尝试外部目录")
 			serveExternalStatic(mux)
@@ -114,9 +113,7 @@ func serveExternalStatic(mux *http.ServeMux) {
 	if stat, err := os.Stat(frontendDir); err == nil && stat.IsDir() {
 		if entries, _ := os.ReadDir(frontendDir); len(entries) > 0 {
 			log.Printf("从外部目录加载前端文件: %s", frontendDir)
-			mux.Handle("/", handler.StaticFileMiddleware(http.Dir(frontendDir), "index.html")(
-				http.FileServer(http.Dir(frontendDir)),
-			))
+			mux.Handle("/", http.FileServer(http.Dir(frontendDir)))
 		} else {
 			log.Println("外部静态文件目录为空")
 		}

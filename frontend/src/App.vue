@@ -55,6 +55,7 @@ import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
 const auth = useAuthStore()
+auth.init()
 const route = useRoute()
 const showMenu = ref(false)
 const showUserMenu = ref(false)

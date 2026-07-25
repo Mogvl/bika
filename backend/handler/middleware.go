@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"io/fs"
 	"net/http"
 	"net/url"
 	"strings"
@@ -19,7 +20,6 @@ func NewImageHandler(client *pica.Client) *ImageHandler {
 }
 
 // Proxy 代理图片请求
-// 前端传递图片的 fileServer 和 path，后端代理获取图片数据
 func (h *ImageHandler) Proxy(w http.ResponseWriter, r *http.Request) {
 	imageURL := r.URL.Query().Get("url")
 	if imageURL == "" {
@@ -27,12 +27,10 @@ func (h *ImageHandler) Proxy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// URL 解码
 	if decoded, err := url.QueryUnescape(imageURL); err == nil {
 		imageURL = decoded
 	}
 
-	// 构建完整图片 URL（如果是相对路径）
 	fileServer := r.URL.Query().Get("fileServer")
 	path := r.URL.Query().Get("path")
 	var fullURL string
@@ -45,10 +43,8 @@ func (h *ImageHandler) Proxy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 下载图片
 	data, contentType, err := h.client.RawImage(fullURL)
 	if err != nil {
-		// 如果图片下载失败，返回占位图
 		w.Header().Set("Content-Type", "image/svg+xml")
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
@@ -64,8 +60,7 @@ func (h *ImageHandler) Proxy(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-// ImageURL 构建图片 URL（返回前端可直接使用的 URL）
-// 这个接口返回代理图片的 URL 列表
+// ImageURL 构建图片 URL
 func (h *ImageHandler) ImageURL(w http.ResponseWriter, r *http.Request) {
 	fileServer := r.URL.Query().Get("fileServer")
 	path := r.URL.Query().Get("path")
@@ -77,7 +72,6 @@ func (h *ImageHandler) ImageURL(w http.ResponseWriter, r *http.Request) {
 
 	proxyURL := pica.GetImageURL(fileServer, path)
 
-	// 构建代理 URL
 	scheme := r.Header.Get("X-Forwarded-Proto")
 	if scheme == "" {
 		scheme = "http"
@@ -91,35 +85,7 @@ func (h *ImageHandler) ImageURL(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// ExtractComicImages 从漫画章节数据中提取所有图片的代理 URL
-func (h *ImageHandler) ExtractComicImages(pageData map[string]any, scheme, host string) []string {
-	pages, ok := pageData["pages"].([]any)
-	if !ok {
-		return nil
-	}
-
-	var urls []string
-	for _, p := range pages {
-		page, ok := p.(map[string]any)
-		if !ok {
-			continue
-		}
-		media, ok := page["media"].(map[string]any)
-		if !ok {
-			continue
-		}
-		fileServer, _ := media["fileServer"].(string)
-		path, _ := media["path"].(string)
-		if fileServer != "" && path != "" {
-			proxyURL := scheme + "://" + host + "/api/image/proxy?url=" +
-				url.QueryEscape(pica.GetImageURL(fileServer, path))
-			urls = append(urls, proxyURL)
-		}
-	}
-	return urls
-}
-
-// CORS 中间件 - 处理跨域请求
+// CORS 中间件
 func CORSMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -136,50 +102,35 @@ func CORSMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-// StaticFileMiddleware 静态文件中间件 - 处理 SPA 路由
-func StaticFileMiddleware(staticDir http.FileSystem, indexPage string) func(http.Handler) http.Handler {
-	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// 如果是 API 请求，跳过静态文件处理
-			if strings.HasPrefix(r.URL.Path, "/api/") {
-				next.ServeHTTP(w, r)
-				return
-			}
+// SPAFileServer 创建支持 SPA 路由的静态文件服务器
+func SPAFileServer(staticFS fs.FS) http.Handler {
+	fileServer := http.FileServer(http.FS(staticFS))
 
-			// 尝试提供静态文件
-			path := r.URL.Path
-			if path == "/" {
-				path = "/" + indexPage
-			}
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// API 请求不处理
+		if strings.HasPrefix(r.URL.Path, "/api/") {
+			http.NotFound(w, r)
+			return
+		}
 
-			f, err := staticDir.Open(path)
-			if err != nil {
-				// 文件不存在，返回 SPA 入口页面（支持客户端路由）
-				f, err = staticDir.Open("/" + indexPage)
-				if err != nil {
-					next.ServeHTTP(w, r)
-					return
-				}
-				defer f.Close()
+		// 尝试打开请求的文件
+		path := r.URL.Path
+		if path == "/" {
+			path = "index.html"
+		} else {
+			path = strings.TrimPrefix(path, "/")
+		}
 
-				stat, _ := f.Stat()
-				if stat != nil {
-					http.ServeContent(w, r, indexPage, stat.ModTime(), f)
-				}
-				return
-			}
-			defer f.Close()
+		// 检查文件是否存在
+		if f, err := staticFS.(fs.ReadFileFS).Open(path); err == nil {
+			f.Close()
+			// 文件存在，正常提供
+			fileServer.ServeHTTP(w, r)
+			return
+		}
 
-			stat, _ := f.Stat()
-			if stat != nil {
-				// 根据扩展名设置 Content-Type
-				if strings.HasSuffix(path, ".js") {
-					w.Header().Set("Content-Type", "application/javascript")
-				} else if strings.HasSuffix(path, ".css") {
-					w.Header().Set("Content-Type", "text/css")
-				}
-				http.ServeContent(w, r, path, stat.ModTime(), f)
-			}
-		})
-	}
+		// 文件不存在，提供 index.html（SPA 路由）
+		r.URL.Path = "/"
+		fileServer.ServeHTTP(w, r)
+	})
 }
