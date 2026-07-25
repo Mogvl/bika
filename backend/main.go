@@ -18,6 +18,12 @@ var embeddedStatic embed.FS
 func main() {
 	client := pica.NewClient()
 
+	// 初始化 API 客户端（获取真实 IP）
+	if err := client.Init(); err != nil {
+		log.Printf("警告: API 初始化失败: %v", err)
+		log.Println("将使用默认 DNS 连接，可能无法正常工作")
+	}
+
 	authHandler := handler.NewAuthHandler(client)
 	comicsHandler := handler.NewComicsHandler(client)
 	imageHandler := handler.NewImageHandler(client)

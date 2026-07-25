@@ -1,12 +1,14 @@
 package pica
 
 import (
+	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"strings"
 	"time"
@@ -14,20 +16,67 @@ import (
 	"github.com/google/uuid"
 )
 
-// picaClient PicACG API 客户端
+// Client PicACG API 客户端
 type Client struct {
 	baseURL    string
 	token      string
 	httpClient *http.Client
-	headers    map[string]string
 }
 
 // NewClient 创建新的 API 客户端
 func NewClient() *Client {
-	return &Client{
+	c := &Client{
 		baseURL:    BaseURL,
 		httpClient: &http.Client{Timeout: 30 * time.Second},
 	}
+	return c
+}
+
+// Init 初始化客户端 - 获取 API 真实 IP
+func (c *Client) Init() error {
+	// 创建一个独立的 HTTP 客户端用于 IP 探测
+	probeClient := &http.Client{Timeout: 10 * time.Second}
+
+	resp, err := probeClient.Get("http://68.183.234.72/init")
+	if err != nil {
+		return fmt.Errorf("获取 API 服务器 IP 失败: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, _ := io.ReadAll(resp.Body)
+	var initResp struct {
+		Status    string   `json:"status"`
+		Addresses []string `json:"addresses"`
+	}
+	if err := json.Unmarshal(body, &initResp); err != nil {
+		return fmt.Errorf("解析 init 响应失败: %w", err)
+	}
+
+	if initResp.Status != "ok" || len(initResp.Addresses) == 0 {
+		return fmt.Errorf("init 返回无效数据: %s", string(body))
+	}
+
+	apiIP := initResp.Addresses[0]
+	fmt.Printf("获取到 PicACG API 真实 IP: %s\n", apiIP)
+
+	// 创建自定义 Transport，将 API 域名解析到真实 IP
+	transport := &http.Transport{
+		ForceAttemptHTTP2: true,
+		DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
+			if strings.Contains(addr, "picaapi.picacomic.com") {
+				addr = apiIP + ":443"
+			}
+			var dialer net.Dialer
+			return dialer.DialContext(ctx, network, addr)
+		},
+	}
+
+	c.httpClient = &http.Client{
+		Timeout:   30 * time.Second,
+		Transport: transport,
+	}
+
+	return nil
 }
 
 // SetToken 设置认证 token
@@ -42,12 +91,8 @@ func (c *Client) GetToken() string {
 
 // buildSignature 计算 API 签名
 func (c *Client) buildSignature(path, method, timestamp, nonce string) string {
-	// 签名数据: path + timestamp + nonce + method + apiKey
 	data := strings.ToLower(path + timestamp + nonce + method + APIKey)
-
-	// 签名密钥
 	key := "~d}$Q7$eIni=V)9\\RK/P.RM4;9[7|@/CA}b~OW!3?EV`:<>M7pddUBL5n|0/*Cn"
-
 	mac := hmac.New(sha256.New, []byte(key))
 	mac.Write([]byte(data))
 	return hex.EncodeToString(mac.Sum(nil))
@@ -93,6 +138,9 @@ func (c *Client) doRequest(method, path string, body io.Reader) (*APIResponse, e
 	if err != nil {
 		return nil, fmt.Errorf("创建请求失败: %w", err)
 	}
+
+	// 设置 Host 头为 API 域名（因使用真实 IP 连接，需要保留 Host）
+	req.Host = "picaapi.picacomic.com"
 
 	headers := c.buildHeaders(path, method)
 	for k, v := range headers {
@@ -143,7 +191,6 @@ func (c *Client) RawImage(url string) ([]byte, string, error) {
 		return nil, "", err
 	}
 
-	// 使用 Android 的 User-Agent
 	req.Header.Set("User-Agent", Agent)
 	req.Header.Set("Referer", "https://picaapi.picacomic.com/")
 
