@@ -20,12 +20,15 @@ api.interceptors.response.use(
     return response
   },
   (error) => {
-    if (error.response?.status === 401) {
+    // 登录接口的 401 不跳转，让调用方处理错误信息
+    const isLoginRequest = error.config?.url?.includes('/auth/login')
+    if (error.response?.status === 401 && !isLoginRequest) {
       localStorage.removeItem('token')
       localStorage.removeItem('user')
       window.location.href = '/#/login'
     }
-    return Promise.reject(error)
+    const msg = error.response?.data?.message || error.message || '请求失败'
+    return Promise.reject(new Error(msg))
   }
 )
 
