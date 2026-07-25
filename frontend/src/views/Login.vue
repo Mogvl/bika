@@ -10,11 +10,11 @@
         <div class="form-group">
           <input
             v-model="email"
-            type="email"
+            type="text"
             class="input-field"
-            placeholder="邮箱"
+            placeholder="用户名/邮箱"
             required
-            autocomplete="email"
+            autocomplete="username"
           />
         </div>
         <div class="form-group">
@@ -60,7 +60,7 @@ const errorMsg = ref('')
 
 async function handleLogin() {
   if (!email.value || !password.value) {
-    errorMsg.value = '请输入邮箱和密码'
+    errorMsg.value = '请输入用户名和密码'
     return
   }
 
