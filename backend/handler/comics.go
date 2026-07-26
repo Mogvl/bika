@@ -286,3 +286,4 @@ func (h *ComicsHandler) LikeComment(w http.ResponseWriter, r *http.Request) {
 	}
 	Success(w, resp.Data)
 }
+

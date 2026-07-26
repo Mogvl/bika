@@ -181,7 +181,6 @@ func AuthMiddleware(client *pica.Client, next http.HandlerFunc) http.HandlerFunc
 			token = r.URL.Query().Get("token")
 		}
 		if token == "" {
-			// 从 Cookie 中获取
 			cookie, err := r.Cookie("token")
 			if err == nil && cookie.Value != "" {
 				token = cookie.Value
@@ -192,7 +191,7 @@ func AuthMiddleware(client *pica.Client, next http.HandlerFunc) http.HandlerFunc
 			return
 		}
 
-		// 添加 Bearer 前缀（如果没有的话）
+		// PicACG API 的 token 可能已包含 Bearer 前缀
 		if !strings.HasPrefix(token, "Bearer ") {
 			token = "Bearer " + token
 		}
