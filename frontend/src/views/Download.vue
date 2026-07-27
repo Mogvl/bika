@@ -23,7 +23,7 @@
             </span>
           </div>
           <div v-if="task.error" class="download-error">{{ task.error }}</div>
-          <div class="download-path">📁 /data/downloads/{{ sanitizeTitle(task.title) }}/</div>
+          <div class="download-path">📁 {{ getDownloadPath(task.title) }}</div>
           <div class="download-time">{{ formatTime(task.updatedAt) }}</div>
         </div>
         <div class="download-actions">
@@ -113,6 +113,11 @@ function handleImgError(e: Event) {
 
 function sanitizeTitle(title: string): string {
   return title.replace(/[\/\\:*?"<>|]/g, '_').substring(0, 200)
+}
+
+function getDownloadPath(title: string): string {
+  const safeName = sanitizeTitle(title)
+  return `/volume1/bika/${safeName}/`
 }
 
 function getStatusText(status: string): string {
