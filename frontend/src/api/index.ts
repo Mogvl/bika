@@ -177,3 +177,29 @@ export async function getGameComments(id: string, page = 1) {
 export function getImageUrl(fileServer: string, path: string): string {
   return `/api/image/proxy?fileServer=${encodeURIComponent(fileServer)}&path=${encodeURIComponent(path)}`
 }
+
+// ==================== 下载 ====================
+export async function getDownloads() {
+  const res = await api.get('/downloads')
+  return res.data
+}
+
+export async function addDownload(bookId: string, title: string, coverUrl: string) {
+  const res = await api.post('/downloads/add', { bookId, title, coverUrl })
+  return res.data
+}
+
+export async function getDownloadStatus(id: string) {
+  const res = await api.get(`/downloads/${id}`)
+  return res.data
+}
+
+export async function cancelDownload(id: string) {
+  const res = await api.post(`/downloads/${id}/cancel`)
+  return res.data
+}
+
+export async function removeDownload(id: string) {
+  const res = await api.post(`/downloads/${id}/remove`)
+  return res.data
+}

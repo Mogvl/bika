@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/Mogvl/bika/backend/download"
 	"github.com/Mogvl/bika/backend/handler"
 	"github.com/Mogvl/bika/backend/pica"
 )
@@ -28,6 +29,15 @@ func main() {
 	comicsHandler := handler.NewComicsHandler(client)
 	imageHandler := handler.NewImageHandler(client)
 	gameHandler := handler.NewGameHandler(client)
+
+	// 初始化下载管理器
+	downloadDir := os.Getenv("DOWNLOAD_DIR")
+	if downloadDir == "" {
+		downloadDir = "downloads"
+	}
+	os.MkdirAll(downloadDir, 0755)
+	downloadManager := download.NewManager(client, downloadDir)
+	downloadHandler := handler.NewDownloadHandler(downloadManager)
 
 	mux := http.NewServeMux()
 
@@ -67,6 +77,13 @@ func main() {
 
 	mux.HandleFunc("/api/favourites", handler.AuthMiddleware(client, comicsHandler.Favourites))
 	mux.HandleFunc("/api/comics/{id}/favourite", handler.AuthMiddleware(client, comicsHandler.AddFavourite))
+
+	// 下载接口
+	mux.HandleFunc("/api/downloads", handler.AuthMiddleware(client, downloadHandler.List))
+	mux.HandleFunc("/api/downloads/add", handler.AuthMiddleware(client, downloadHandler.Add))
+	mux.HandleFunc("/api/downloads/{id}", handler.AuthMiddleware(client, downloadHandler.Status))
+	mux.HandleFunc("/api/downloads/{id}/cancel", handler.AuthMiddleware(client, downloadHandler.Cancel))
+	mux.HandleFunc("/api/downloads/{id}/remove", handler.AuthMiddleware(client, downloadHandler.Remove))
 
 	mux.HandleFunc("/api/image/proxy", imageHandler.Proxy)
 	mux.HandleFunc("/api/image/url", imageHandler.ImageURL)

@@ -30,6 +30,7 @@
         <router-link to="/leaderboard" @click="showMenu = false" class="menu-item">🏆 排行榜</router-link>
         <router-link to="/favourites" @click="showMenu = false" class="menu-item">❤️ 我的收藏</router-link>
         <router-link to="/games" @click="showMenu = false" class="menu-item">🎮 游戏区</router-link>
+        <router-link to="/downloads" @click="showMenu = false" class="menu-item">📥 下载管理</router-link>
         <router-link to="/history" @click="showMenu = false" class="menu-item">📖 阅读历史</router-link>
         <router-link to="/profile" @click="showMenu = false" class="menu-item">👤 个人资料</router-link>
         <router-link to="/settings" @click="showMenu = false" class="menu-item">⚙️ 设置</router-link>

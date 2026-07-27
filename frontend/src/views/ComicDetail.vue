@@ -14,13 +14,21 @@
         <div class="detail-tags">
           <span v-for="cat in comic.categories" :key="cat" class="tag">{{ cat }}</span>
         </div>
-        <button
-          class="btn btn-primary"
-          @click="startReading"
-          :disabled="!eps.length"
-        >
-          {{ eps.length ? '开始阅读' : '暂无章节' }}
-        </button>
+        <div class="detail-actions">
+          <button
+            class="btn btn-primary"
+            @click="startReading"
+            :disabled="!eps.length"
+          >
+            {{ eps.length ? '开始阅读' : '暂无章节' }}
+          </button>
+          <button
+            class="btn btn-download"
+            @click="downloadComic"
+          >
+            📥 下载
+          </button>
+        </div>
       </div>
     </div>
 
@@ -60,7 +68,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getComicDetail, getComicEps } from '@/api'
+import { getComicDetail, getComicEps, addDownload } from '@/api'
 import type { Comic, EP } from '@/types'
 
 const route = useRoute()
@@ -124,6 +132,18 @@ function startReading() {
 function goReader(order: number) {
   router.push(`/reader/${route.params.id}/${order}`)
 }
+
+async function downloadComic() {
+  const coverUrl = comic.value.thumb?.fileServer && comic.value.thumb?.path
+    ? `${comic.value.thumb.fileServer}/static/${comic.value.thumb.path}`
+    : ''
+  try {
+    await addDownload(route.params.id as string, comic.value.title || '', coverUrl)
+    alert('已添加到下载队列！')
+  } catch (e: any) {
+    alert(e.message || '添加下载失败')
+  }
+}
 </script>
 
 <style scoped>
@@ -137,6 +157,26 @@ function goReader(order: number) {
   gap: 16px;
   padding: 16px;
   background: var(--bg-card);
+}
+
+.detail-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btn-download {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-download:hover {
+  background: #2980b9;
 }
 
 .detail-cover-wrap {

@@ -18,6 +18,7 @@ const router = createRouter({
     { path: '/profile', name: 'profile', component: () => import('@/views/Profile.vue'), meta: { requiresAuth: true } },
     { path: '/settings', name: 'settings', component: () => import('@/views/Settings.vue'), meta: { requiresAuth: true } },
     { path: '/history', name: 'history', component: () => import('@/views/History.vue'), meta: { requiresAuth: true } },
+    { path: '/downloads', name: 'downloads', component: () => import('@/views/Download.vue'), meta: { requiresAuth: true } },
   ],
 })
 
