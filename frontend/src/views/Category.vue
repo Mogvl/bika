@@ -86,8 +86,7 @@ function goRandom() {
 }
 
 function goCategory(title: string) {
-  // 跳转到搜索页，按分类搜索
-  router.push({ path: '/search', query: { c: title } })
+  router.push({ path: '/category/comics', query: { c: title } })
 }
 </script>
 
