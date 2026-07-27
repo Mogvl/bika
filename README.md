@@ -41,6 +41,7 @@ services:
     environment:
       - PORT=4000
       - TZ=Asia/Shanghai
+      - DOWNLOAD_DIR=/data/downloads
     volumes:
       - /volume1/bika:/data/downloads
       - /volume1/docker/bika:/data/config
