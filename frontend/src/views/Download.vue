@@ -45,6 +45,7 @@ interface DownloadTask {
   bookId: string
   title: string
   coverUrl: string
+  savePath?: string
   totalPages: number
   downloaded: number
   status: string
