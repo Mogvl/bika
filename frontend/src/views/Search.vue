@@ -59,10 +59,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { getKeywords, searchComics } from '@/api'
 import type { Comic } from '@/types'
 
+const route = useRoute()
 const router = useRouter()
 const keyword = ref('')
 const lastKeyword = ref('')
@@ -75,10 +76,17 @@ const searched = ref(false)
 let searchTimer: number | undefined
 
 onMounted(async () => {
-  try {
-    const res = await getKeywords()
-    keywords.value = res.data?.keywords || []
-  } catch {}
+  // 检查是否有分类查询参数
+  const category = route.query.c as string
+  if (category) {
+    keyword.value = category
+    await doCategorySearch(category)
+  } else {
+    try {
+      const res = await getKeywords()
+      keywords.value = res.data?.keywords || []
+    } catch {}
+  }
 })
 
 function onInput() {
@@ -100,6 +108,25 @@ async function doSearch() {
 
   try {
     const res = await searchComics(kw, page.value)
+    const data = res.data
+    const comicsData = data?.comics
+    results.value = Array.isArray(comicsData?.docs) ? comicsData.docs : (Array.isArray(comicsData) ? comicsData : [])
+    hasMore.value = page.value < (comicsData?.pages || data?.pages || 1)
+  } catch {} finally {
+    loading.value = false
+  }
+}
+
+async function doCategorySearch(category: string) {
+  lastKeyword.value = category
+  page.value = 1
+  results.value = []
+  searched.value = true
+  hasMore.value = false
+  loading.value = true
+
+  try {
+    const res = await searchComics(category, page.value, category)
     const data = res.data
     const comicsData = data?.comics
     results.value = Array.isArray(comicsData?.docs) ? comicsData.docs : (Array.isArray(comicsData) ? comicsData : [])
