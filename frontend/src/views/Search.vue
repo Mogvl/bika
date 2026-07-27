@@ -60,7 +60,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getKeywords, searchComics } from '@/api'
+import { getKeywords, searchComics, getComicsByCategory } from '@/api'
 import type { Comic } from '@/types'
 
 const route = useRoute()
@@ -126,7 +126,7 @@ async function doCategorySearch(category: string) {
   loading.value = true
 
   try {
-    const res = await searchComics(category, page.value, category)
+    const res = await getComicsByCategory(page.value, category)
     const data = res.data
     const comicsData = data?.comics
     results.value = Array.isArray(comicsData?.docs) ? comicsData.docs : (Array.isArray(comicsData) ? comicsData : [])

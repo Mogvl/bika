@@ -130,11 +130,19 @@ async function loadComics() {
   try {
     let res
     const searchKeyword = keyword.value.trim()
-    const cats = selectedCategories.value.join(',')
+    const cats = selectedCategories.value
 
-    if (searchKeyword || cats) {
-      res = await searchComics(searchKeyword, page.value, cats, sort.value)
+    if (searchKeyword) {
+      // 有关键词时用搜索接口
+      res = await searchComics(searchKeyword, page.value, cats.join(','), sort.value)
+    } else if (cats.length === 1) {
+      // 单个分类用分类接口
+      res = await getComicsByCategory(page.value, cats[0], sort.value)
+    } else if (cats.length > 1) {
+      // 多个分类用搜索接口
+      res = await searchComics('', page.value, cats[0], sort.value)
     } else {
+      // 无分类无关键词
       res = await getComicsByCategory(page.value, '大家都在看', sort.value)
     }
 
