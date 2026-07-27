@@ -75,6 +75,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getComicEps, getComicPages } from '@/api'
+import { saveReadingProgress } from '@/utils/history'
 import type { EP, Page } from '@/types'
 
 const route = useRoute()
@@ -174,6 +175,7 @@ async function loadPages() {
 function nextPage() {
   if (currentIndex.value < pages.value.length - 1) {
     currentIndex.value++
+    saveProgress()
   } else {
     nextEps()
   }
@@ -182,7 +184,21 @@ function nextPage() {
 function prevPage() {
   if (currentIndex.value > 0) {
     currentIndex.value--
+    saveProgress()
   }
+}
+
+function saveProgress() {
+  const ep = epsList.value.find(e => e.order === currentOrder.value)
+  saveReadingProgress(
+    comicId.value,
+    ep?.title || `第${currentOrder.value}话`,
+    null,
+    currentOrder.value,
+    currentOrder.value,
+    ep?.title || `第${currentOrder.value}话`,
+    currentIndex.value
+  )
 }
 
 function goBack() {

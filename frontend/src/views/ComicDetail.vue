@@ -69,6 +69,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getComicDetail, getComicEps, addDownload } from '@/api'
+import { saveComicHistory } from '@/utils/history'
 import type { Comic, EP } from '@/types'
 
 const route = useRoute()
@@ -100,6 +101,8 @@ async function loadDetail(id: string) {
     const epsData = epsRes.data?.eps
     eps.value = Array.isArray(epsData?.docs) ? epsData.docs : (Array.isArray(epsData) ? epsData : [])
     epsHasMore.value = epsPage.value < (epsData?.pages || 1)
+    // 保存到阅读历史
+    saveComicHistory(comic.value)
   } catch (e: any) {
     error.value = e.message || '加载失败'
   } finally {
