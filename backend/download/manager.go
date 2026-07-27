@@ -18,7 +18,6 @@ type DownloadTask struct {
 	BookID      string    `json:"bookId"`
 	Title       string    `json:"title"`
 	CoverURL    string    `json:"coverUrl"`
-	SavePath    string    `json:"savePath"`    // 实际保存路径
 	TotalPages  int       `json:"totalPages"`
 	Downloaded  int       `json:"downloaded"`
 	Status      string    `json:"status"` // waiting, downloading, completed, error, paused
@@ -62,14 +61,11 @@ func (m *Manager) AddTask(bookID, title, coverURL string) *DownloadTask {
 		return task
 	}
 
-	comicDir := filepath.Join(m.downloadDir, sanitizeFilename(title))
-
 	task := &DownloadTask{
 		ID:        bookID,
 		BookID:    bookID,
 		Title:     title,
 		CoverURL:  coverURL,
-		SavePath:  comicDir,
 		Status:    "waiting",
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
