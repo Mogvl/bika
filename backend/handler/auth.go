@@ -3,7 +3,6 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
-	"strings"
 
 	"github.com/Mogvl/bika/backend/pica"
 )
@@ -191,10 +190,7 @@ func AuthMiddleware(client *pica.Client, next http.HandlerFunc) http.HandlerFunc
 			return
 		}
 
-		// PicACG API 的 token 可能已包含 Bearer 前缀
-		if !strings.HasPrefix(token, "Bearer ") {
-			token = "Bearer " + token
-		}
+		// 直接使用 token（保留原始格式，PicACG API 不需要 Bearer 前缀）
 		client.SetToken(token)
 		next(w, r)
 	}
