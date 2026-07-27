@@ -10,6 +10,7 @@ import (
 
 	"github.com/Mogvl/bika/backend/chat"
 	"github.com/Mogvl/bika/backend/download"
+	"github.com/Mogvl/bika/backend/fried"
 	"github.com/Mogvl/bika/backend/handler"
 	"github.com/Mogvl/bika/backend/pica"
 )
@@ -26,11 +27,6 @@ func main() {
 		log.Println("将使用默认 DNS 连接，可能无法正常工作")
 	}
 
-	authHandler := handler.NewAuthHandler(client)
-	comicsHandler := handler.NewComicsHandler(client)
-	imageHandler := handler.NewImageHandler(client)
-	gameHandler := handler.NewGameHandler(client)
-
 	// 初始化下载管理器
 	downloadDir := os.Getenv("DOWNLOAD_DIR")
 	if downloadDir == "" {
@@ -43,6 +39,16 @@ func main() {
 	// 初始化聊天客户端
 	chatClient := chat.NewChatClient()
 	chatHandler := handler.NewChatHandler(chatClient)
+
+	// 初始化锅贴客户端
+	friedClient := fried.NewFriedClient()
+	friedHandler := handler.NewFriedHandler(friedClient)
+
+	// 初始化处理器
+	authHandler := handler.NewAuthHandler(client, friedClient)
+	comicsHandler := handler.NewComicsHandler(client)
+	imageHandler := handler.NewImageHandler(client)
+	gameHandler := handler.NewGameHandler(client)
 
 	mux := http.NewServeMux()
 
@@ -96,6 +102,12 @@ func main() {
 	mux.HandleFunc("/api/chat/messages", handler.AuthMiddleware(client, chatHandler.Messages))
 	mux.HandleFunc("/api/chat/send", handler.AuthMiddleware(client, chatHandler.SendMessage))
 	mux.HandleFunc("/api/chat/profile", handler.AuthMiddleware(client, chatHandler.Profile))
+
+	// 锅贴接口（好友动态）
+	mux.HandleFunc("/api/fried/posts", handler.AuthMiddleware(client, friedHandler.Posts))
+	mux.HandleFunc("/api/fried/posts/{id}/comments", handler.AuthMiddleware(client, friedHandler.Comments))
+	mux.HandleFunc("/api/fried/posts/{id}/comments/send", handler.AuthMiddleware(client, friedHandler.SendComment))
+	mux.HandleFunc("/api/fried/comments/{id}/like", handler.AuthMiddleware(client, friedHandler.LikeComment))
 
 	mux.HandleFunc("/api/image/proxy", imageHandler.Proxy)
 	mux.HandleFunc("/api/image/url", imageHandler.ImageURL)

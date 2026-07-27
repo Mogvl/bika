@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/Mogvl/bika/backend/fried"
 	"github.com/Mogvl/bika/backend/pica"
 )
 
@@ -14,12 +15,13 @@ func decodeJSON(r *http.Request, v any) error {
 
 // AuthHandler 认证相关处理器
 type AuthHandler struct {
-	client *pica.Client
+	client      *pica.Client
+	friedClient *fried.FriedClient
 }
 
 // NewAuthHandler 创建认证处理器
-func NewAuthHandler(client *pica.Client) *AuthHandler {
-	return &AuthHandler{client: client}
+func NewAuthHandler(client *pica.Client, friedClient *fried.FriedClient) *AuthHandler {
+	return &AuthHandler{client: client, friedClient: friedClient}
 }
 
 // Login 登录
@@ -58,6 +60,11 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 				data[k] = v
 			}
 		}
+	}
+
+	// 同步 token 到锅贴客户端
+	if h.friedClient != nil {
+		h.friedClient.SetToken(h.client.GetToken())
 	}
 
 	Success(w, data)

@@ -20,6 +20,7 @@ const router = createRouter({
     { path: '/history', name: 'history', component: () => import('@/views/History.vue'), meta: { requiresAuth: true } },
     { path: '/downloads', name: 'downloads', component: () => import('@/views/Download.vue'), meta: { requiresAuth: true } },
     { path: '/chat', name: 'chat', component: () => import('@/views/Chat.vue'), meta: { requiresAuth: true } },
+    { path: '/fried', name: 'fried', component: () => import('@/views/Fried.vue'), meta: { requiresAuth: true } },
   ],
 })
 
