@@ -44,8 +44,8 @@
     <!-- 底部章节切换 -->
     <div class="reader-bottom" :class="{ hidden: controlsHidden }">
       <button class="btn-nav" @click="prevEps">上一话</button>
-      <select v-model="currentEpsId" @change="switchEps" class="eps-select">
-        <option v-for="ep in epsList" :key="ep._id" :value="ep._id">
+      <select v-model="currentOrder" @change="switchEps" class="eps-select">
+        <option v-for="ep in epsList" :key="ep.order" :value="ep.order">
           第 {{ ep.order }} 话
         </option>
       </select>
@@ -81,7 +81,7 @@ const route = useRoute()
 const router = useRouter()
 
 const comicId = computed(() => route.params.id as string)
-const currentEpsId = ref(route.params.epsId as string)
+const currentOrder = ref(Number(route.params.epsId) || 1)  // 章节序号
 const epsList = ref<EP[]>([])
 const totalEpsLoaded = ref(false)
 
@@ -96,8 +96,8 @@ const readerContent = ref<HTMLElement | null>(null)
 const scrollContainer = ref<HTMLElement | null>(null)
 
 const currentEpsTitle = computed(() => {
-  const ep = epsList.value.find(e => e._id === currentEpsId.value)
-  return ep ? `第 ${ep.order} 话` : ''
+  const ep = epsList.value.find(e => e.order === currentOrder.value)
+  return ep ? `第 ${ep.order} 话` : `第 ${currentOrder.value} 话`
 })
 
 const totalPages = computed(() => pages.value.length)
@@ -140,7 +140,7 @@ onMounted(async () => {
   await loadPages()
 })
 
-watch(currentEpsId, async () => {
+watch(currentOrder, async () => {
   await loadPages()
 })
 
@@ -160,9 +160,10 @@ async function loadPages() {
   pages.value = []
 
   try {
-    const res = await getComicPages(comicId.value, currentEpsId.value)
+    const res = await getComicPages(comicId.value, String(currentOrder.value))
     const data = res.data
-    pages.value = data?.pages || []
+    const pagesData = data?.pages
+    pages.value = Array.isArray(pagesData?.docs) ? pagesData.docs : (Array.isArray(pagesData) ? pagesData : [])
   } catch (e: any) {
     error.value = e.message || '加载失败'
   } finally {
@@ -199,22 +200,22 @@ function toggleMode() {
 }
 
 function switchEps() {
-  router.replace(`/reader/${comicId.value}/${currentEpsId.value}`)
+  router.replace(`/reader/${comicId.value}/${currentOrder.value}`)
 }
 
 function nextEps() {
-  const idx = epsList.value.findIndex(e => e._id === currentEpsId.value)
+  const idx = epsList.value.findIndex(e => e.order === currentOrder.value)
   if (idx < epsList.value.length - 1) {
-    currentEpsId.value = epsList.value[idx + 1]._id
-    router.replace(`/reader/${comicId.value}/${currentEpsId.value}`)
+    currentOrder.value = epsList.value[idx + 1].order
+    router.replace(`/reader/${comicId.value}/${currentOrder.value}`)
   }
 }
 
 function prevEps() {
-  const idx = epsList.value.findIndex(e => e._id === currentEpsId.value)
+  const idx = epsList.value.findIndex(e => e.order === currentOrder.value)
   if (idx > 0) {
-    currentEpsId.value = epsList.value[idx - 1]._id
-    router.replace(`/reader/${comicId.value}/${currentEpsId.value}`)
+    currentOrder.value = epsList.value[idx - 1].order
+    router.replace(`/reader/${comicId.value}/${currentOrder.value}`)
   }
 }
 

@@ -38,7 +38,7 @@
           v-for="ep in eps"
           :key="ep._id"
           class="eps-item"
-          @click="goReader(ep._id)"
+          @click="goReader(ep.order)"
         >
           <span class="eps-order">第 {{ ep.order }} 话</span>
           <span class="eps-title">{{ ep.title || `第 ${ep.order} 话` }}</span>
@@ -117,12 +117,12 @@ function getCoverUrl(thumb: any): string {
 
 function startReading() {
   if (eps.value.length > 0) {
-    goReader(eps.value[0]._id)
+    goReader(eps.value[0].order)
   }
 }
 
-function goReader(epsId: string) {
-  router.push(`/reader/${route.params.id}/${epsId}`)
+function goReader(order: number) {
+  router.push(`/reader/${route.params.id}/${order}`)
 }
 </script>
 

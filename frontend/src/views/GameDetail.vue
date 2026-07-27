@@ -23,7 +23,7 @@
     <div class="detail-section">
       <h3 class="section-title">章节列表 ({{ eps.length }})</h3>
       <div class="eps-list">
-        <div v-for="ep in eps" :key="ep._id" class="eps-item" @click="goReader(ep._id)">
+        <div v-for="ep in eps" :key="ep.order" class="eps-item" @click="goReader(ep.order)">
           <span class="eps-order">第 {{ ep.order }} 话</span>
           <span class="eps-title">{{ ep.title || `第 ${ep.order} 话` }}</span>
         </div>
@@ -49,7 +49,8 @@ onMounted(async () => {
   try {
     const [detailRes, epsRes] = await Promise.all([getGameDetail(id), getGameEps(id)])
     game.value = detailRes.data?.game || {}
-    eps.value = epsRes.data?.eps || []
+    const epsData = epsRes.data?.eps
+    eps.value = Array.isArray(epsData?.docs) ? epsData.docs : (Array.isArray(epsData) ? epsData : [])
   } catch {} finally { loading.value = false }
 })
 
@@ -58,8 +59,8 @@ function getCoverUrl(thumb: any): string {
   return `/api/image/proxy?fileServer=${encodeURIComponent(thumb.fileServer)}&path=${encodeURIComponent(thumb.path)}`
 }
 
-function startPlaying() { if (eps.value.length) goReader(eps.value[0]._id) }
-function goReader(epsId: string) { router.push(`/reader/${route.params.id}/${epsId}`) }
+function startPlaying() { if (eps.value.length) goReader(eps.value[0].order) }
+function goReader(order: number) { router.push(`/reader/${route.params.id}/${order}`) }
 </script>
 
 <style scoped>
