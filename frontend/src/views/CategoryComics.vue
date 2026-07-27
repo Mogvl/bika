@@ -1,12 +1,13 @@
 <template>
-  <div class="category-comics-page">
+  <div class="search-page">
     <!-- 搜索栏 -->
     <div class="search-bar">
+      <button class="btn-back" @click="$router.back()">←</button>
       <div class="search-input-wrap">
         <input
           v-model="keyword"
           type="text"
-          placeholder="搜索漫画..."
+          :placeholder="categoryName || '搜索漫画...'"
           class="search-input"
           @keydown.enter="doSearch"
         />
@@ -14,43 +15,48 @@
       </div>
     </div>
 
-    <!-- 分类标签过滤 -->
+    <!-- 分类筛选（展开/收起） -->
     <div class="filter-section">
-      <div class="filter-header">
-        <span class="filter-label">分类筛选</span>
-        <button class="filter-toggle" @click="showFilters = !showFilters">
-          {{ showFilters ? '收起' : '展开' }}
-        </button>
-      </div>
-      <div v-show="showFilters" class="filter-tags">
-        <span
-          v-for="cat in allCategories"
-          :key="cat"
-          class="filter-tag"
-          :class="{ active: selectedCategories.includes(cat) }"
-          @click="toggleCategory(cat)"
-        >
-          {{ cat }}
-        </span>
-        <button v-if="selectedCategories.length > 0" class="filter-clear" @click="clearFilters">清除筛选</button>
+      <button class="filter-toggle" @click="showFilters = !showFilters">
+        {{ showFilters ? '收起分类 ▲' : '展开分类 ▼' }}
+      </button>
+      <div v-show="showFilters" class="filter-body">
+        <div class="filter-actions">
+          <button class="filter-action" @click="selectAll">全选</button>
+          <button class="filter-action" @click="clearFilters">清除</button>
+        </div>
+        <div class="filter-tags">
+          <span
+            v-for="cat in allCategories"
+            :key="cat"
+            class="filter-tag"
+            :class="{ active: selectedCategories.includes(cat) }"
+            @click="toggleCategory(cat)"
+          >
+            {{ cat }}
+          </span>
+        </div>
       </div>
     </div>
 
-    <!-- 排序选项 -->
+    <!-- 排序 -->
     <div class="sort-bar">
       <div class="sort-group">
         <span class="sort-label">排序:</span>
-        <span class="sort-item" :class="{ active: sort === 'ua' }" @click="changeSort('ua')">最新</span>
-        <span class="sort-item" :class="{ active: sort === 'dd' }" @click="changeSort('dd')">新→旧</span>
-        <span class="sort-item" :class="{ active: sort === 'da' }" @click="changeSort('da')">旧→新</span>
-        <span class="sort-item" :class="{ active: sort === 'ld' }" @click="changeSort('ld')">最多喜欢</span>
-        <span class="sort-item" :class="{ active: sort === 'vv' }" @click="changeSort('vv')">最多浏览</span>
+        <select v-model="sort" @change="doSearch" class="sort-select">
+          <option value="ua">最新</option>
+          <option value="dd">新→旧</option>
+          <option value="da">旧→新</option>
+          <option value="ld">最多喜欢</option>
+          <option value="vv">最多浏览</option>
+        </select>
       </div>
     </div>
 
-    <!-- 搜索结果/分类漫画 -->
+    <!-- 结果 -->
     <div v-if="loading && comics.length === 0" class="loading">加载中</div>
     <div v-else-if="error" class="error-msg">{{ error }}</div>
+    <div v-else-if="comics.length === 0" class="empty-state">没有找到相关漫画</div>
 
     <div v-else>
       <div class="comic-grid">
@@ -64,9 +70,6 @@
           <div class="comic-info">
             <div class="comic-title">{{ comic.title }}</div>
             <div class="comic-author">{{ comic.author }}</div>
-            <div class="comic-categories">
-              <span v-for="cat in (comic.categories || []).slice(0, 2)" :key="cat" class="comic-cat-tag">{{ cat }}</span>
-            </div>
           </div>
         </div>
       </div>
@@ -74,7 +77,9 @@
       <!-- 分页 -->
       <div class="pagination">
         <button class="page-btn" :disabled="page <= 1" @click="prevPage">上一页</button>
-        <span class="page-info">{{ page }} / {{ totalPages }}</span>
+        <input v-model.number="jumpPage" type="number" class="page-input" min="1" :max="totalPages" @keydown.enter="goPage" />
+        <span class="page-info">/ {{ totalPages }}</span>
+        <button class="page-btn" @click="goPage">跳转</button>
         <button class="page-btn" :disabled="page >= totalPages" @click="nextPage">下一页</button>
       </div>
     </div>
@@ -82,7 +87,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getComicsByCategory, searchComics, getCategories } from '@/api'
 import type { Comic } from '@/types'
@@ -95,6 +100,7 @@ const categoryName = ref((route.query.c as string) || '')
 const comics = ref<Comic[]>([])
 const page = ref(1)
 const totalPages = ref(1)
+const jumpPage = ref(1)
 const sort = ref('ua')
 const loading = ref(false)
 const error = ref('')
@@ -103,16 +109,17 @@ const allCategories = ref<string[]>([])
 const selectedCategories = ref<string[]>([])
 
 onMounted(async () => {
-  // 加载所有分类用于筛选
+  // 加载所有分类
   try {
     const res = await getCategories()
     const cats = res.data?.categories || []
     allCategories.value = cats.map((c: any) => c.title).filter(Boolean)
   } catch {}
 
-  // 如果有指定分类，预选
+  // 如果指定了分类
   if (categoryName.value) {
     selectedCategories.value = [categoryName.value]
+    keyword.value = categoryName.value
     await loadComics()
   }
 })
@@ -122,17 +129,12 @@ async function loadComics() {
   error.value = ''
   try {
     let res
-    if (keyword.value.trim()) {
-      // 有搜索关键词时用搜索接口
-      res = await searchComics(keyword.value, page.value, selectedCategories.value[0] || '', sort.value)
-    } else if (selectedCategories.value.length === 1) {
-      // 单个分类
-      res = await getComicsByCategory(page.value, selectedCategories.value[0], sort.value)
-    } else if (selectedCategories.value.length > 1) {
-      // 多个分类用搜索接口
-      res = await searchComics('', page.value, selectedCategories.value.join(','), sort.value)
+    const searchKeyword = keyword.value.trim()
+    const cats = selectedCategories.value.join(',')
+
+    if (searchKeyword || cats) {
+      res = await searchComics(searchKeyword, page.value, cats, sort.value)
     } else {
-      // 无分类无关键词，获取全部
       res = await getComicsByCategory(page.value, '大家都在看', sort.value)
     }
 
@@ -147,6 +149,7 @@ async function loadComics() {
     } else {
       comics.value = []
     }
+    jumpPage.value = page.value
   } catch (e: any) {
     error.value = e.message || '加载失败'
   } finally {
@@ -167,23 +170,18 @@ function toggleCategory(cat: string) {
   } else {
     selectedCategories.value.push(cat)
   }
-  page.value = 1
-  comics.value = []
-  loadComics()
+  doSearch()
+}
+
+function selectAll() {
+  selectedCategories.value = [...allCategories.value]
+  doSearch()
 }
 
 function clearFilters() {
   selectedCategories.value = []
-  page.value = 1
-  comics.value = []
-  loadComics()
-}
-
-function changeSort(s: string) {
-  sort.value = s
-  page.value = 1
-  comics.value = []
-  loadComics()
+  keyword.value = ''
+  doSearch()
 }
 
 function prevPage() {
@@ -196,6 +194,14 @@ function prevPage() {
 function nextPage() {
   if (page.value < totalPages.value) {
     page.value++
+    loadComics()
+  }
+}
+
+function goPage() {
+  const p = jumpPage.value
+  if (p >= 1 && p <= totalPages.value) {
+    page.value = p
     loadComics()
   }
 }
@@ -216,21 +222,33 @@ function goComic(id: string) {
 </script>
 
 <style scoped>
-.category-comics-page {
+.search-page {
   max-width: 100%;
 }
 
 .search-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   padding: 12px;
   background: var(--bg-card);
   border-bottom: 1px solid var(--border);
 }
 
+.btn-back {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--text);
+  padding: 4px 8px;
+  flex-shrink: 0;
+}
+
 .search-input-wrap {
+  flex: 1;
   display: flex;
   gap: 8px;
-  max-width: 600px;
-  margin: 0 auto;
 }
 
 .search-input {
@@ -254,33 +272,43 @@ function goComic(id: string) {
   border-radius: 20px;
   font-size: 16px;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 /* 分类筛选 */
 .filter-section {
   background: var(--bg-card);
   border-bottom: 1px solid var(--border);
-  padding: 8px 12px;
-}
-
-.filter-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.filter-label {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-secondary);
 }
 
 .filter-toggle {
+  width: 100%;
+  padding: 10px 16px;
   background: none;
   border: none;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--primary);
+  cursor: pointer;
+  text-align: left;
+}
+
+.filter-body {
+  padding: 0 16px 12px;
+  border-top: 1px solid var(--border);
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.filter-action {
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 12px;
+  background: var(--bg);
   cursor: pointer;
 }
 
@@ -313,48 +341,31 @@ function goComic(id: string) {
   border-color: var(--primary);
 }
 
-.filter-clear {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-  background: #e74c3c;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
 /* 排序 */
 .sort-bar {
   background: var(--bg-card);
   border-bottom: 1px solid var(--border);
-  padding: 8px 12px;
+  padding: 8px 16px;
 }
 
 .sort-group {
   display: flex;
   align-items: center;
   gap: 8px;
-  overflow-x: auto;
 }
 
 .sort-label {
   font-size: 13px;
   color: var(--text-secondary);
-  white-space: nowrap;
 }
 
-.sort-item {
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  cursor: pointer;
-  white-space: nowrap;
-  color: var(--text-secondary);
-}
-
-.sort-item.active {
-  background: var(--primary);
-  color: white;
+.sort-select {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  background: var(--bg);
+  outline: none;
 }
 
 /* 漫画网格 */
@@ -395,21 +406,6 @@ function goComic(id: string) {
 .comic-author {
   font-size: 11px;
   color: var(--text-secondary);
-  margin-bottom: 4px;
-}
-
-.comic-categories {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-
-.comic-cat-tag {
-  padding: 1px 6px;
-  border-radius: 8px;
-  font-size: 10px;
-  background: #fce4ec;
-  color: var(--primary);
 }
 
 /* 分页 */
@@ -417,12 +413,12 @@ function goComic(id: string) {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 8px;
   padding: 20px;
 }
 
 .page-btn {
-  padding: 8px 20px;
+  padding: 8px 16px;
   background: var(--primary);
   color: white;
   border: none;
@@ -434,6 +430,20 @@ function goComic(id: string) {
 .page-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.page-input {
+  width: 50px;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-align: center;
+  font-size: 14px;
+  outline: none;
+}
+
+.page-input:focus {
+  border-color: var(--primary);
 }
 
 .page-info {
