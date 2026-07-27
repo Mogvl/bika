@@ -89,8 +89,8 @@ async function loadDetail(id: string) {
       getComicEps(id, 1),
     ])
     comic.value = detailRes.data?.comic || {}
-    const epsData = epsRes.data
-    eps.value = epsData?.eps || []
+    const epsData = epsRes.data?.eps
+    eps.value = Array.isArray(epsData?.docs) ? epsData.docs : (Array.isArray(epsData) ? epsData : [])
     epsHasMore.value = epsPage.value < (epsData?.pages || 1)
   } catch (e: any) {
     error.value = e.message || '加载失败'
@@ -103,9 +103,10 @@ async function loadMoreEps() {
   epsPage.value++
   try {
     const res = await getComicEps(route.params.id as string, epsPage.value)
-    const data = res.data
-    eps.value.push(...(data?.eps || []))
-    epsHasMore.value = epsPage.value < (data?.pages || 1)
+    const epsData = res.data?.eps
+    const newEps = Array.isArray(epsData?.docs) ? epsData.docs : (Array.isArray(epsData) ? epsData : [])
+    eps.value.push(...newEps)
+    epsHasMore.value = epsPage.value < (epsData?.pages || 1)
   } catch {}
 }
 
