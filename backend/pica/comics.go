@@ -1,6 +1,9 @@
 package pica
 
-import "fmt"
+import (
+	"fmt"
+	"net/url"
+)
 
 // GetCategories 获取漫画分类列表
 func (c *Client) GetCategories() (*APIResponse, error) {
@@ -10,7 +13,9 @@ func (c *Client) GetCategories() (*APIResponse, error) {
 // GetComicsByCategory 按分类获取漫画列表
 // page: 页码, category: 分类名, sort: 排序方式(ua=更新时间, dd=新到旧, da=旧到新, ld=最多喜欢, vv=最多浏览)
 func (c *Client) GetComicsByCategory(page int, category, sort string) (*APIResponse, error) {
-	path := fmt.Sprintf("comics?page=%d&c=%s&s=%s", page, category, sort)
+	// 分类名需要 URL 编码（和原始 picacg-qt 一致）
+	encodedCategory := url.QueryEscape(category)
+	path := fmt.Sprintf("comics?page=%d&c=%s&s=%s", page, encodedCategory, sort)
 	return c.doGet(path)
 }
 
@@ -33,7 +38,8 @@ func (c *Client) AdvancedSearch(keyword string, categories []string, sort string
 
 // SearchByCategory 按分类搜索
 func (c *Client) SearchByCategory(page int, category, sort string) (*APIResponse, error) {
-	return c.doGet(fmt.Sprintf("comics?page=%d&c=%s&s=%s", page, category, sort))
+	encodedCategory := url.QueryEscape(category)
+	return c.doGet(fmt.Sprintf("comics?page=%d&c=%s&s=%s", page, encodedCategory, sort))
 }
 
 // GetComicDetail 获取漫画详情
