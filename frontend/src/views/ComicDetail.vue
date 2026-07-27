@@ -15,19 +15,10 @@
           <span v-for="cat in comic.categories" :key="cat" class="tag">{{ cat }}</span>
         </div>
         <div class="detail-actions">
-          <button
-            class="btn btn-primary"
-            @click="startReading"
-            :disabled="!eps.length"
-          >
+          <button class="btn btn-primary" @click="startReading" :disabled="!eps.length">
             {{ eps.length ? '开始阅读' : '暂无章节' }}
           </button>
-          <button
-            class="btn btn-download"
-            @click="downloadComic"
-          >
-            📥 下载
-          </button>
+          <button class="btn btn-download" @click="downloadComic">📥 下载</button>
         </div>
       </div>
     </div>
@@ -40,20 +31,24 @@
 
     <!-- 章节列表 -->
     <div class="detail-section">
-      <h3 class="section-title">章节列表 ({{ eps.length }})</h3>
-      <div class="eps-list">
+      <div class="eps-header">
+        <h3 class="section-title">章节 ({{ eps.length }})</h3>
+      </div>
+
+      <div v-if="eps.length === 0" class="empty-state">暂无章节</div>
+
+      <div v-else class="eps-grid">
         <div
           v-for="ep in eps"
           :key="ep._id"
-          class="eps-item"
-          @click="goReader(ep.order)"
+          class="eps-chip"
+          :class="{ 'selected': selectedEps.includes(ep.order) }"
+          @click="handleEpsClick(ep)"
         >
-          <span class="eps-order">第 {{ ep.order }} 话</span>
-          <span class="eps-title">{{ ep.title || `第 ${ep.order} 话` }}</span>
-          <span class="eps-pages">{{ ep.pagesCount }}页</span>
+          {{ ep.title || `第${ep.order}话` }}
         </div>
-        <div v-if="eps.length === 0" class="empty-state">暂无章节</div>
       </div>
+
       <div v-if="epsHasMore" class="page-load-more">
         <button class="load-more-btn" @click="loadMoreEps">加载更多章节</button>
       </div>
@@ -61,7 +56,6 @@
   </div>
 
   <div v-else class="loading">加载中</div>
-
   <div v-if="error" class="error-msg">{{ error }}</div>
 </template>
 
@@ -80,6 +74,7 @@ const loading = ref(true)
 const error = ref('')
 const epsPage = ref(1)
 const epsHasMore = ref(false)
+const selectedEps = ref<number[]>([])
 
 onMounted(async () => {
   const id = route.params.id as string
@@ -101,7 +96,6 @@ async function loadDetail(id: string) {
     const epsData = epsRes.data?.eps
     eps.value = Array.isArray(epsData?.docs) ? epsData.docs : (Array.isArray(epsData) ? epsData : [])
     epsHasMore.value = epsPage.value < (epsData?.pages || 1)
-    // 保存到阅读历史
     saveComicHistory(comic.value)
   } catch (e: any) {
     error.value = e.message || '加载失败'
@@ -121,19 +115,15 @@ async function loadMoreEps() {
   } catch {}
 }
 
-function getCoverUrl(thumb: any): string {
-  if (!thumb?.fileServer || !thumb?.path) return ''
-  return `/api/image/proxy?fileServer=${encodeURIComponent(thumb.fileServer)}&path=${encodeURIComponent(thumb.path)}`
+function handleEpsClick(ep: EP) {
+  // 单击直接打开阅读器
+  router.push(`/reader/${route.params.id}/${ep.order}`)
 }
 
 function startReading() {
   if (eps.value.length > 0) {
-    goReader(eps.value[0].order)
+    router.push(`/reader/${route.params.id}/${eps.value[0].order}`)
   }
-}
-
-function goReader(order: number) {
-  router.push(`/reader/${route.params.id}/${order}`)
 }
 
 async function downloadComic() {
@@ -146,6 +136,11 @@ async function downloadComic() {
   } catch (e: any) {
     alert(e.message || '添加下载失败')
   }
+}
+
+function getCoverUrl(thumb: any): string {
+  if (!thumb?.fileServer || !thumb?.path) return ''
+  return `/api/image/proxy?fileServer=${encodeURIComponent(thumb.fileServer)}&path=${encodeURIComponent(thumb.path)}`
 }
 </script>
 
@@ -160,26 +155,6 @@ async function downloadComic() {
   gap: 16px;
   padding: 16px;
   background: var(--bg-card);
-}
-
-.detail-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.btn-download {
-  background: #3498db;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.btn-download:hover {
-  background: #2980b9;
 }
 
 .detail-cover-wrap {
@@ -233,6 +208,24 @@ async function downloadComic() {
   color: var(--primary);
 }
 
+.detail-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-download {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-download:hover {
+  background: #2980b9;
+}
+
 .detail-section {
   padding: 16px;
   background: var(--bg-card);
@@ -245,41 +238,40 @@ async function downloadComic() {
   color: var(--text-secondary);
 }
 
-.eps-list {
+/* 章节网格 - 和原版一致 */
+.eps-header {
   display: flex;
-  flex-direction: column;
-}
-
-.eps-item {
-  display: flex;
+  justify-content: space-between;
   align-items: center;
-  padding: 12px 8px;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-  transition: background 0.2s;
-  gap: 12px;
+  margin-bottom: 12px;
 }
 
-.eps-item:hover { background: var(--bg); }
-.eps-item:active { background: #f0f0f0; }
+.eps-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
 
-.eps-order {
+.eps-chip {
+  padding: 8px 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
   font-size: 13px;
-  color: var(--primary);
-  font-weight: 500;
-  min-width: 56px;
-}
-
-.eps-title {
-  flex: 1;
-  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.eps-pages {
-  font-size: 12px;
-  color: var(--text-secondary);
+.eps-chip:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: #fff0f5;
+}
+
+.eps-chip.selected {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
 }
 </style>
