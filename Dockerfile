@@ -2,19 +2,18 @@ FROM alpine:3.19
 
 RUN apk --no-cache add ca-certificates tzdata wget
 
-RUN adduser -D -u 1000 bika && \
-    mkdir -p /data/downloads /data/config /data/cache && \
-    chown -R bika:bika /data
+# 创建数据目录（用 root 确保权限正确）
+RUN mkdir -p /data/downloads /data/config /data/cache && \
+    chmod -R 777 /data
 
 WORKDIR /app
 
 COPY backend/bika-server .
 COPY backend/static ./static
 
-USER bika
-
 ENV PORT=4000 \
-    DATA_DIR=/data
+    DATA_DIR=/data \
+    DOWNLOAD_DIR=/data/downloads
 
 EXPOSE 4000
 
