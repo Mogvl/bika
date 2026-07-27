@@ -36,6 +36,7 @@
         <router-link to="/history" @click="showMenu = false" class="menu-item">📖 阅读历史</router-link>
         <router-link to="/profile" @click="showMenu = false" class="menu-item">👤 个人资料</router-link>
         <router-link to="/settings" @click="showMenu = false" class="menu-item">⚙️ 设置</router-link>
+        <router-link to="/help" @click="showMenu = false" class="menu-item">❓ 帮助</router-link>
         <hr />
         <a href="#" @click.prevent="logout" class="menu-item logout">🚪 退出登录</a>
       </nav>
