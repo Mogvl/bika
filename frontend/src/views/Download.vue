@@ -23,7 +23,7 @@
             </span>
           </div>
           <div v-if="task.error" class="download-error">{{ task.error }}</div>
-          <div class="download-path">📁 {{ task.savePath || 'downloads/' + sanitizeTitle(task.title) }}</div>
+          <div class="download-path">📁 {{ getDisplayPath(task) }}</div>
           <div class="download-time">{{ formatTime(task.updatedAt) }}</div>
         </div>
         <div class="download-actions">
@@ -113,6 +113,16 @@ function handleImgError(e: Event) {
 
 function sanitizeTitle(title: string): string {
   return title.replace(/[\/\\:*?"<>|]/g, '_').substring(0, 200)
+}
+
+function getDisplayPath(task: DownloadTask): string {
+  const path = task.savePath || ('downloads/' + sanitizeTitle(task.title))
+  // 将容器路径转换为宿主机路径
+  // /data/downloads/xxx -> /volume1/bika/xxx
+  // downloads/xxx -> /volume1/bika/xxx (本地运行)
+  return path
+    .replace(/^\/data\/downloads/, '/volume1/bika')
+    .replace(/^downloads/, '/volume1/bika')
 }
 
 function getStatusText(status: string): string {
