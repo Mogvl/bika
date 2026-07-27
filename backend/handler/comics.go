@@ -128,7 +128,8 @@ func (h *ComicsHandler) Pages(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := h.client.GetComicPages(bookID, epsID, page)
 	if err != nil {
-		Error(w, http.StatusInternalServerError, err.Error())
+		// PicACG API 偶尔会返回 500，给出友好提示
+		Error(w, http.StatusInternalServerError, "获取页面失败，PicACG 服务可能暂时不可用")
 		return
 	}
 	Success(w, resp.Data)
