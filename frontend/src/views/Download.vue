@@ -23,7 +23,7 @@
             </span>
           </div>
           <div v-if="task.error" class="download-error">{{ task.error }}</div>
-          <div class="download-path">📁 {{ getDownloadPath(task.title) }}</div>
+          <div class="download-path">📁 {{ task.savePath || getDownloadPath(task.title) }}</div>
           <div class="download-time">{{ formatTime(task.updatedAt) }}</div>
         </div>
         <div class="download-actions">
@@ -117,7 +117,7 @@ function sanitizeTitle(title: string): string {
 
 function getDownloadPath(title: string): string {
   const safeName = sanitizeTitle(title)
-  return `/volume1/bika/${safeName}/`
+  return `downloads/${safeName}/`
 }
 
 function getStatusText(status: string): string {
