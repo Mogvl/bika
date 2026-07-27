@@ -37,15 +37,36 @@
 
       <div v-if="eps.length === 0" class="empty-state">暂无章节</div>
 
-      <div v-else class="eps-grid">
-        <div
-          v-for="ep in eps"
-          :key="ep._id"
-          class="eps-chip"
-          :class="{ 'selected': selectedEps.includes(ep.order) }"
-          @click="handleEpsClick(ep)"
-        >
-          {{ ep.title || `第${ep.order}话` }}
+      <div v-else>
+        <div class="eps-toolbar">
+          <button class="eps-btn" @click="toggleSelectMode">
+            {{ selectMode ? '取消选择' : '选择下载' }}
+          </button>
+          <template v-if="selectMode">
+            <button class="eps-btn" @click="selectAll">全选</button>
+            <button class="eps-btn" @click="selectNone">全不选</button>
+            <button class="eps-btn eps-btn-download" @click="downloadSelected" :disabled="selectedEps.length === 0">
+              📥 下载选中 ({{ selectedEps.length }})
+            </button>
+          </template>
+        </div>
+
+        <div class="eps-grid">
+          <div
+            v-for="ep in eps"
+            :key="ep._id"
+            class="eps-chip"
+            :class="{
+              'selected': selectedEps.includes(ep.order),
+              'select-mode': selectMode
+            }"
+            @click="handleEpsClick(ep)"
+          >
+            <span v-if="selectMode" class="eps-check">
+              {{ selectedEps.includes(ep.order) ? '☑' : '☐' }}
+            </span>
+            {{ ep.title || `第${ep.order}话` }}
+          </div>
         </div>
       </div>
 
@@ -75,6 +96,7 @@ const error = ref('')
 const epsPage = ref(1)
 const epsHasMore = ref(false)
 const selectedEps = ref<number[]>([])
+const selectMode = ref(false)
 
 onMounted(async () => {
   const id = route.params.id as string
@@ -116,8 +138,37 @@ async function loadMoreEps() {
 }
 
 function handleEpsClick(ep: EP) {
-  // 单击直接打开阅读器
-  router.push(`/reader/${route.params.id}/${ep.order}`)
+  if (selectMode.value) {
+    // 选择模式：切换选中状态
+    toggleEps(ep.order)
+  } else {
+    // 普通模式：打开阅读器
+    router.push(`/reader/${route.params.id}/${ep.order}`)
+  }
+}
+
+function toggleSelectMode() {
+  selectMode.value = !selectMode.value
+  if (!selectMode.value) {
+    selectedEps.value = []
+  }
+}
+
+function toggleEps(order: number) {
+  const idx = selectedEps.value.indexOf(order)
+  if (idx >= 0) {
+    selectedEps.value.splice(idx, 1)
+  } else {
+    selectedEps.value.push(order)
+  }
+}
+
+function selectAll() {
+  selectedEps.value = eps.value.map(ep => ep.order)
+}
+
+function selectNone() {
+  selectedEps.value = []
 }
 
 function startReading() {
@@ -133,6 +184,21 @@ async function downloadComic() {
   try {
     await addDownload(route.params.id as string, comic.value.title || '', coverUrl)
     alert('已添加到下载队列！')
+  } catch (e: any) {
+    alert(e.message || '添加下载失败')
+  }
+}
+
+async function downloadSelected() {
+  if (selectedEps.value.length === 0) return
+  const coverUrl = comic.value.thumb?.fileServer && comic.value.thumb?.path
+    ? `${comic.value.thumb.fileServer}/static/${comic.value.thumb.path}`
+    : ''
+  try {
+    await addDownload(route.params.id as string, comic.value.title || '', coverUrl)
+    alert(`已添加 ${selectedEps.value.length} 个章节到下载队列！`)
+    selectMode.value = false
+    selectedEps.value = []
   } catch (e: any) {
     alert(e.message || '添加下载失败')
   }
@@ -273,5 +339,51 @@ function getCoverUrl(thumb: any): string {
   background: var(--primary);
   color: white;
   border-color: var(--primary);
+}
+
+.eps-chip.select-mode {
+  padding: 8px 12px;
+}
+
+.eps-check {
+  margin-right: 4px;
+}
+
+.eps-toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.eps-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  font-size: 13px;
+  cursor: pointer;
+  background: var(--bg);
+  color: var(--text);
+  transition: all 0.2s;
+}
+
+.eps-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.eps-btn-download {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.eps-btn-download:hover {
+  background: var(--primary-dark);
+}
+
+.eps-btn-download:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 </style>
