@@ -3,9 +3,11 @@ package download
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -18,10 +20,10 @@ type DownloadTask struct {
 	BookID      string    `json:"bookId"`
 	Title       string    `json:"title"`
 	CoverURL    string    `json:"coverUrl"`
-	SavePath    string    `json:"savePath"`    // 实际保存路径
+	SavePath    string    `json:"savePath"`
 	TotalPages  int       `json:"totalPages"`
 	Downloaded  int       `json:"downloaded"`
-	Status      string    `json:"status"` // waiting, downloading, completed, error, paused
+	Status      string    `json:"status"`
 	Error       string    `json:"error,omitempty"`
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
@@ -29,15 +31,20 @@ type DownloadTask struct {
 
 // Manager 下载管理器
 type Manager struct {
-	client     *pica.Client
+	client      *pica.Client
 	downloadDir string
-	tasks      map[string]*DownloadTask
-	mu         sync.RWMutex
-	httpClient *http.Client
+	tasks       map[string]*DownloadTask
+	mu          sync.RWMutex
+	httpClient  *http.Client
 }
 
 // NewManager 创建下载管理器
 func NewManager(client *pica.Client, downloadDir string) *Manager {
+	log.Printf("[下载管理器] 初始化, 目录: %s", downloadDir)
+	// 确保目录存在
+	if err := os.MkdirAll(downloadDir, 0755); err != nil {
+		log.Printf("[下载管理器] 创建目录失败: %v", err)
+	}
 	return &Manager{
 		client:      client,
 		downloadDir: downloadDir,
@@ -51,7 +58,6 @@ func (m *Manager) AddTask(bookID, title, coverURL string) *DownloadTask {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	// 检查是否已存在
 	if task, exists := m.tasks[bookID]; exists {
 		if task.Status == "completed" || task.Status == "error" {
 			task.Status = "waiting"
@@ -76,7 +82,6 @@ func (m *Manager) AddTask(bookID, title, coverURL string) *DownloadTask {
 	}
 	m.tasks[bookID] = task
 
-	// 异步开始下载
 	go m.downloadComic(task)
 
 	return task
@@ -125,31 +130,45 @@ func (m *Manager) downloadComic(task *DownloadTask) {
 	task.UpdatedAt = time.Now()
 	m.mu.Unlock()
 
-	// 获取章节列表
+	log.Printf("[下载] 开始: %s (%s)", task.Title, task.BookID)
+
+	// 获取章节列表 (最多 50 章)
 	epsResp, err := m.client.GetComicEps(task.BookID, 1)
 	if err != nil {
 		m.setError(task, fmt.Sprintf("获取章节失败: %v", err))
+		log.Printf("[下载] 获取章节失败: %v", err)
 		return
 	}
 
 	epsData, _ := epsResp.Data["eps"].(map[string]any)
 	if epsData == nil {
 		m.setError(task, "章节数据格式错误")
+		log.Printf("[下载] 章节数据格式错误")
 		return
 	}
 
 	docs, _ := epsData["docs"].([]any)
 	if len(docs) == 0 {
 		m.setError(task, "没有章节")
+		log.Printf("[下载] 没有章节")
 		return
 	}
 
+	log.Printf("[下载] 共 %d 个章节", len(docs))
+
 	// 创建漫画目录
 	comicDir := filepath.Join(m.downloadDir, sanitizeFilename(task.Title))
-	os.MkdirAll(comicDir, 0755)
+	if err := os.MkdirAll(comicDir, 0755); err != nil {
+		m.setError(task, fmt.Sprintf("创建目录失败: %v", err))
+		log.Printf("[下载] 创建目录失败: %v", err)
+		return
+	}
+	log.Printf("[下载] 保存目录: %s", comicDir)
+
+	totalDownloaded := 0
 
 	// 下载每个章节
-	for i, ep := range docs {
+	for _, ep := range docs {
 		epMap, ok := ep.(map[string]any)
 		if !ok {
 			continue
@@ -163,22 +182,30 @@ func (m *Manager) downloadComic(task *DownloadTask) {
 		// 获取章节页面
 		pagesResp, err := m.client.GetComicPages(task.BookID, fmt.Sprintf("%d", int(order)), 1)
 		if err != nil {
+			log.Printf("[下载] 获取章节 %d 页面失败: %v", int(order), err)
 			continue
 		}
 
 		pagesData, _ := pagesResp.Data["pages"].(map[string]any)
 		if pagesData == nil {
+			log.Printf("[下载] 章节 %d 页面数据为空", int(order))
 			continue
 		}
 
 		pageDocs, _ := pagesData["docs"].([]any)
 		if len(pageDocs) == 0 {
+			log.Printf("[下载] 章节 %d 没有页面", int(order))
 			continue
 		}
 
 		// 创建章节目录
 		epsDir := filepath.Join(comicDir, sanitizeFilename(epsTitle))
-		os.MkdirAll(epsDir, 0755)
+		if err := os.MkdirAll(epsDir, 0755); err != nil {
+			log.Printf("[下载] 创建章节目录失败: %v", err)
+			continue
+		}
+
+		log.Printf("[下载] 章节 %d: %s (%d 页)", int(order), epsTitle, len(pageDocs))
 
 		// 下载每一页
 		for j, page := range pageDocs {
@@ -204,8 +231,9 @@ func (m *Manager) downloadComic(task *DownloadTask) {
 
 			// 检查文件是否已存在
 			if _, err := os.Stat(filePath); err == nil {
+				totalDownloaded++
 				m.mu.Lock()
-				task.Downloaded++
+				task.Downloaded = totalDownloaded
 				task.UpdatedAt = time.Now()
 				m.mu.Unlock()
 				continue
@@ -213,12 +241,13 @@ func (m *Manager) downloadComic(task *DownloadTask) {
 
 			// 下载图片
 			if err := m.downloadImage(imageURL, filePath); err != nil {
-				// 单个图片失败不影响整体
+				log.Printf("[下载] 图片失败 %s: %v", filename, err)
 				continue
 			}
 
+			totalDownloaded++
 			m.mu.Lock()
-			task.Downloaded++
+			task.Downloaded = totalDownloaded
 			task.UpdatedAt = time.Now()
 			m.mu.Unlock()
 		}
@@ -228,8 +257,6 @@ func (m *Manager) downloadComic(task *DownloadTask) {
 		infoData := fmt.Sprintf(`{"comic_id":"%s","eps_order":%d,"title":"%s","pages":%d}`,
 			task.BookID, int(order), epsTitle, len(pageDocs))
 		os.WriteFile(infoPath, []byte(infoData), 0644)
-
-		_ = i // suppress unused warning
 	}
 
 	// 保存漫画信息
@@ -242,6 +269,8 @@ func (m *Manager) downloadComic(task *DownloadTask) {
 	task.Status = "completed"
 	task.UpdatedAt = time.Now()
 	m.mu.Unlock()
+
+	log.Printf("[下载] 完成: %s, 共下载 %d 张图片", task.Title, totalDownloaded)
 }
 
 // downloadImage 下载单张图片
@@ -251,6 +280,7 @@ func (m *Manager) downloadImage(url, filePath string) error {
 		return err
 	}
 	req.Header.Set("User-Agent", "okhttp/3.8.1")
+	req.Header.Set("Referer", "https://picaapi.picacomic.com/")
 
 	resp, err := m.httpClient.Do(req)
 	if err != nil {
@@ -262,7 +292,7 @@ func (m *Manager) downloadImage(url, filePath string) error {
 		return fmt.Errorf("HTTP %d", resp.StatusCode)
 	}
 
-	// 写入临时文件后重命名，防止部分写入
+	// 写入临时文件后重命名
 	tmpPath := filePath + ".tmp"
 	out, err := os.Create(tmpPath)
 	if err != nil {
@@ -288,26 +318,13 @@ func (m *Manager) setError(task *DownloadTask, msg string) {
 }
 
 func sanitizeFilename(name string) string {
-	// 替换非法文件名字符
 	invalid := []string{"/", "\\", ":", "*", "?", "\"", "<", ">", "|"}
 	result := name
 	for _, c := range invalid {
-		result = replaceAll(result, c, "_")
+		result = strings.ReplaceAll(result, c, "_")
 	}
 	if len(result) > 200 {
 		result = result[:200]
-	}
-	return result
-}
-
-func replaceAll(s, old, new string) string {
-	result := ""
-	for _, c := range s {
-		if string(c) == old {
-			result += new
-		} else {
-			result += string(c)
-		}
 	}
 	return result
 }
