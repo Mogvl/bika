@@ -49,7 +49,8 @@ async function loadLeaderboard() {
   loading.value = true
   try {
     const res = await getLeaderboard(currentTT.value)
-    comics.value = res.data?.comics || []
+    const comicsData = res.data?.comics
+    comics.value = Array.isArray(comicsData) ? comicsData : (Array.isArray(comicsData?.docs) ? comicsData.docs : [])
   } catch {} finally { loading.value = false }
 }
 

@@ -101,8 +101,9 @@ async function doSearch() {
   try {
     const res = await searchComics(kw, page.value)
     const data = res.data
-    results.value = data?.comics || []
-    hasMore.value = page.value < (data?.pages || 1)
+    const comicsData = data?.comics
+    results.value = Array.isArray(comicsData?.docs) ? comicsData.docs : (Array.isArray(comicsData) ? comicsData : [])
+    hasMore.value = page.value < (comicsData?.pages || data?.pages || 1)
   } catch {} finally {
     loading.value = false
   }
@@ -114,8 +115,10 @@ async function loadMore() {
   try {
     const res = await searchComics(lastKeyword.value, page.value)
     const data = res.data
-    results.value.push(...(data?.comics || []))
-    hasMore.value = page.value < (data?.pages || 1)
+    const comicsData = data?.comics
+    const newComics = Array.isArray(comicsData?.docs) ? comicsData.docs : (Array.isArray(comicsData) ? comicsData : [])
+    results.value.push(...newComics)
+    hasMore.value = page.value < (comicsData?.pages || data?.pages || 1)
   } catch {} finally {
     loading.value = false
   }

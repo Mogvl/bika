@@ -96,9 +96,11 @@ async function loadComics() {
   try {
     const res = await getComicsByCategory(page.value, selectedCategory.value)
     const data = res.data
-    const newComics = Array.isArray(data?.comics) ? data.comics : []
+    // PicACG API 返回格式: data.comics.docs 或 data.comics
+    const comicsData = data?.comics
+    const newComics = Array.isArray(comicsData?.docs) ? comicsData.docs : (Array.isArray(comicsData) ? comicsData : [])
     comics.value.push(...newComics)
-    hasMore.value = page.value < (data?.pages || 1)
+    hasMore.value = page.value < (comicsData?.pages || data?.pages || 1)
   } catch (e: any) {
     error.value = e.message || '加载失败'
   } finally {

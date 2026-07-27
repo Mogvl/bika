@@ -57,8 +57,9 @@ async function loadFavourites() {
   try {
     const res = await getFavourites(page.value)
     const data = res.data
-    comics.value = data?.comics || []
-    hasMore.value = page.value < (data?.pages || 1)
+    const comicsData = data?.comics
+    comics.value = Array.isArray(comicsData?.docs) ? comicsData.docs : (Array.isArray(comicsData) ? comicsData : [])
+    hasMore.value = page.value < (comicsData?.pages || data?.pages || 1)
   } catch (e: any) {
     if (e.message?.includes('401') || e.message?.includes('未登录')) {
       error.value = '请先登录'
