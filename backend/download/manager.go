@@ -252,18 +252,9 @@ func (m *Manager) downloadComic(task *DownloadTask) {
 			m.mu.Unlock()
 		}
 
-		// 保存章节信息
-		infoPath := filepath.Join(epsDir, "info.json")
-		infoData := fmt.Sprintf(`{"comic_id":"%s","eps_order":%d,"title":"%s","pages":%d}`,
-			task.BookID, int(order), epsTitle, len(pageDocs))
-		os.WriteFile(infoPath, []byte(infoData), 0644)
 	}
 
-	// 保存漫画信息
-	comicInfoPath := filepath.Join(comicDir, "info.json")
-	comicInfo := fmt.Sprintf(`{"id":"%s","title":"%s","downloaded_at":"%s"}`,
-		task.BookID, task.Title, time.Now().Format(time.RFC3339))
-	os.WriteFile(comicInfoPath, []byte(comicInfo), 0644)
+	_ = comicDir
 
 	m.mu.Lock()
 	task.Status = "completed"
