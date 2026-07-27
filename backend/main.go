@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/Mogvl/bika/backend/chat"
 	"github.com/Mogvl/bika/backend/download"
 	"github.com/Mogvl/bika/backend/handler"
 	"github.com/Mogvl/bika/backend/pica"
@@ -38,6 +39,10 @@ func main() {
 	os.MkdirAll(downloadDir, 0755)
 	downloadManager := download.NewManager(client, downloadDir)
 	downloadHandler := handler.NewDownloadHandler(downloadManager)
+
+	// 初始化聊天客户端
+	chatClient := chat.NewChatClient()
+	chatHandler := handler.NewChatHandler(chatClient)
 
 	mux := http.NewServeMux()
 
@@ -84,6 +89,13 @@ func main() {
 	mux.HandleFunc("/api/downloads/{id}", handler.AuthMiddleware(client, downloadHandler.Status))
 	mux.HandleFunc("/api/downloads/{id}/cancel", handler.AuthMiddleware(client, downloadHandler.Cancel))
 	mux.HandleFunc("/api/downloads/{id}/remove", handler.AuthMiddleware(client, downloadHandler.Remove))
+
+	// 聊天接口
+	mux.HandleFunc("/api/chat/login", handler.AuthMiddleware(client, chatHandler.Login))
+	mux.HandleFunc("/api/chat/rooms", handler.AuthMiddleware(client, chatHandler.Rooms))
+	mux.HandleFunc("/api/chat/messages", handler.AuthMiddleware(client, chatHandler.Messages))
+	mux.HandleFunc("/api/chat/send", handler.AuthMiddleware(client, chatHandler.SendMessage))
+	mux.HandleFunc("/api/chat/profile", handler.AuthMiddleware(client, chatHandler.Profile))
 
 	mux.HandleFunc("/api/image/proxy", imageHandler.Proxy)
 	mux.HandleFunc("/api/image/url", imageHandler.ImageURL)

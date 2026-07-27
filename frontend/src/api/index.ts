@@ -203,3 +203,29 @@ export async function removeDownload(id: string) {
   const res = await api.post(`/downloads/${id}/remove`)
   return res.data
 }
+
+// ==================== 聊天 ====================
+export async function chatLogin(email: string, password: string) {
+  const res = await api.post('/chat/login', { email, password })
+  return res.data
+}
+
+export async function getChatRooms() {
+  const res = await api.get('/chat/rooms')
+  return res.data
+}
+
+export async function getChatMessages(roomId: string, page = 1) {
+  const res = await api.get('/chat/messages', { params: { roomId, page } })
+  return res.data
+}
+
+export async function sendChatMessage(roomId: string, message: string) {
+  const res = await api.post('/chat/send', { roomId, message })
+  return res.data
+}
+
+export async function getChatProfile() {
+  const res = await api.get('/chat/profile')
+  return res.data
+}
