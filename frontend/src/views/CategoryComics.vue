@@ -116,10 +116,9 @@ onMounted(async () => {
     allCategories.value = cats.map((c: any) => c.title).filter(Boolean)
   } catch {}
 
-  // 如果指定了分类
+  // 如果指定了分类（从分类页跳转来的，不设关键词）
   if (categoryName.value) {
     selectedCategories.value = [categoryName.value]
-    keyword.value = categoryName.value
     await loadComics()
   }
 })
