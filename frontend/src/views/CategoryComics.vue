@@ -132,17 +132,17 @@ async function loadComics() {
     const searchKeyword = keyword.value.trim()
     const cats = selectedCategories.value
 
-    if (searchKeyword) {
-      // 有关键词时用搜索接口
-      res = await searchComics(searchKeyword, page.value, cats.join(','), sort.value)
-    } else if (cats.length === 1) {
-      // 单个分类用分类接口
+    if (searchKeyword && cats.length > 0) {
+      // 有关键词+分类：用搜索接口
+      res = await searchComics(searchKeyword, page.value, cats[0], sort.value)
+    } else if (searchKeyword) {
+      // 纯关键词搜索
+      res = await searchComics(searchKeyword, page.value, '', sort.value)
+    } else if (cats.length > 0) {
+      // 有分类：用分类接口（取第一个选中的分类）
       res = await getComicsByCategory(page.value, cats[0], sort.value)
-    } else if (cats.length > 1) {
-      // 多个分类用搜索接口
-      res = await searchComics('', page.value, cats[0], sort.value)
     } else {
-      // 无分类无关键词
+      // 无分类无关键词：默认分类
       res = await getComicsByCategory(page.value, '大家都在看', sort.value)
     }
 
