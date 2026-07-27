@@ -194,7 +194,7 @@ function saveProgress() {
     comicId.value,
     ep?.title || `第${currentOrder.value}话`,
     null,
-    currentOrder.value,
+    String(currentOrder.value),
     currentOrder.value,
     ep?.title || `第${currentOrder.value}话`,
     currentIndex.value
