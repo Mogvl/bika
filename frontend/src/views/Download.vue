@@ -23,7 +23,7 @@
             </span>
           </div>
           <div v-if="task.error" class="download-error">{{ task.error }}</div>
-          <div class="download-path">📁 /data/downloads/{{ sanitizeTitle(task.title) }}/</div>
+          <div class="download-path">📁 {{ task.savePath || 'downloads/' + sanitizeTitle(task.title) }}</div>
           <div class="download-time">{{ formatTime(task.updatedAt) }}</div>
         </div>
         <div class="download-actions">
