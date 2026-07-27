@@ -23,6 +23,7 @@
             </span>
           </div>
           <div v-if="task.error" class="download-error">{{ task.error }}</div>
+          <div class="download-path">📁 /data/downloads/{{ sanitizeTitle(task.title) }}/</div>
           <div class="download-time">{{ formatTime(task.updatedAt) }}</div>
         </div>
         <div class="download-actions">
@@ -110,6 +111,10 @@ function handleImgError(e: Event) {
   img.style.background = '#f0f0f0'
 }
 
+function sanitizeTitle(title: string): string {
+  return title.replace(/[\/\\:*?"<>|]/g, '_').substring(0, 200)
+}
+
 function getStatusText(status: string): string {
   const map: Record<string, string> = {
     waiting: '等待中',
@@ -195,6 +200,14 @@ function formatTime(t: string): string {
   font-size: 11px;
   color: #e74c3c;
   margin-top: 4px;
+}
+
+.download-path {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  font-family: monospace;
+  word-break: break-all;
 }
 
 .download-time {
