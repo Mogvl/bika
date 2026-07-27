@@ -77,8 +77,10 @@ async function loadMore() {
   try {
     const res = await getFavourites(page.value)
     const data = res.data
-    comics.value.push(...(data?.comics || []))
-    hasMore.value = page.value < (data?.pages || 1)
+    const comicsData = data?.comics
+    const newComics = Array.isArray(comicsData?.docs) ? comicsData.docs : (Array.isArray(comicsData) ? comicsData : [])
+    comics.value.push(...newComics)
+    hasMore.value = page.value < (comicsData?.pages || data?.pages || 1)
   } catch {} finally {
     loading.value = false
   }

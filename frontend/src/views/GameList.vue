@@ -38,8 +38,10 @@ async function loadGames() {
   try {
     const res = await getGames(page.value)
     const data = res.data
-    games.value.push(...(data?.games || []))
-    hasMore.value = page.value < (data?.pages || 1)
+    const gamesData = data?.games
+    const newGames = Array.isArray(gamesData?.docs) ? gamesData.docs : (Array.isArray(gamesData) ? gamesData : [])
+    games.value.push(...newGames)
+    hasMore.value = page.value < (gamesData?.pages || data?.pages || 1)
   } catch {} finally { loading.value = false }
 }
 

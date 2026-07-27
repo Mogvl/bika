@@ -147,8 +147,8 @@ watch(currentOrder, async () => {
 async function loadEpsList() {
   try {
     const res = await getComicEps(comicId.value, 1)
-    const data = res.data
-    epsList.value = data?.eps || []
+    const epsData = res.data?.eps
+    epsList.value = Array.isArray(epsData?.docs) ? epsData.docs : (Array.isArray(epsData) ? epsData : [])
     totalEpsLoaded.value = true
   } catch {}
 }
