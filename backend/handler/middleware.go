@@ -22,25 +22,17 @@ func NewImageHandler(client *pica.Client) *ImageHandler {
 
 // Proxy 代理图片请求
 func (h *ImageHandler) Proxy(w http.ResponseWriter, r *http.Request) {
-	imageURL := r.URL.Query().Get("url")
-	if imageURL == "" {
-		Error(w, http.StatusBadRequest, "缺少图片 URL 参数")
-		return
-	}
-
-	if decoded, err := url.QueryUnescape(imageURL); err == nil {
-		imageURL = decoded
-	}
-
 	fileServer := r.URL.Query().Get("fileServer")
 	path := r.URL.Query().Get("path")
+	imageURL := r.URL.Query().Get("url")
+
 	var fullURL string
-	if imageURL != "" {
-		fullURL = imageURL
-	} else if fileServer != "" && path != "" {
+	if fileServer != "" && path != "" {
 		fullURL = pica.GetImageURL(fileServer, path)
+	} else if imageURL != "" {
+		fullURL = imageURL
 	} else {
-		Error(w, http.StatusBadRequest, "请提供 url 或 fileServer+path 参数")
+		Error(w, http.StatusBadRequest, "缺少图片参数")
 		return
 	}
 
