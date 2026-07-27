@@ -96,7 +96,7 @@ async function loadComics() {
   try {
     const res = await getComicsByCategory(page.value, selectedCategory.value)
     const data = res.data
-    const newComics = data?.comics || []
+    const newComics = Array.isArray(data?.comics) ? data.comics : []
     comics.value.push(...newComics)
     hasMore.value = page.value < (data?.pages || 1)
   } catch (e: any) {
