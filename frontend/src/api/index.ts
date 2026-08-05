@@ -260,9 +260,29 @@ export async function cancelDownload(id: string) {
   return res.data
 }
 
-export async function removeDownload(id: string) {
-  const res = await api.post(`/downloads/${id}/remove`)
+export async function resumeDownload(id: string) {
+  const res = await api.post(`/downloads/${id}/resume`)
   return res.data
+}
+
+export async function removeDownload(id: string, deleteFile = false) {
+  const res = await api.post(`/downloads/${id}/remove`, null, { params: { deleteFile } })
+  return res.data
+}
+
+// ==================== 本地库 ====================
+export async function getLocalLibrary() {
+  const res = await api.get('/local/list')
+  return res.data
+}
+
+export async function getLocalEps(path: string) {
+  const res = await api.get('/local/eps', { params: { path } })
+  return res.data
+}
+
+export function getLocalImageUrl(relPath: string): string {
+  return `/api/local/image?path=${encodeURIComponent(relPath)}`
 }
 
 // ==================== 聊天 ====================
@@ -281,8 +301,8 @@ export async function getChatMessages(roomId: string, page = 1) {
   return res.data
 }
 
-export async function sendChatMessage(roomId: string, message: string) {
-  const res = await api.post('/chat/send', { roomId, message })
+export async function sendChatMessage(roomId: string, message: string, referenceId?: string) {
+  const res = await api.post('/chat/send', { roomId, message, referenceId })
   return res.data
 }
 

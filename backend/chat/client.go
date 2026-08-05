@@ -182,14 +182,18 @@ func (c *ChatClient) GetMessages(roomID string, page int) ([]Message, error) {
 }
 
 // SendMessage 发送消息
-func (c *ChatClient) SendMessage(roomID, message string) error {
+// referenceId: 回复引用的消息ID（可选）
+func (c *ChatClient) SendMessage(roomID, message, referenceID string) error {
 	c.mu.RLock()
 	token := c.token
 	c.mu.RUnlock()
 
 	url := ChatBaseURL + "message/send-message"
+	if referenceID == "" {
+		referenceID = generateUUID()
+	}
 	body := fmt.Sprintf(`{"roomId":"%s","message":"%s","referenceId":"%s","userMentions":[]}`,
-		roomID, message, generateUUID())
+		roomID, message, referenceID)
 
 	req, err := http.NewRequest("POST", url, strings.NewReader(body))
 	if err != nil {

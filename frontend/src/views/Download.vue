@@ -2,15 +2,28 @@
   <div class="page-container">
     <div class="section-title">📥 下载管理</div>
 
+    <!-- 状态筛选 -->
+    <div class="filter-bar">
+      <button
+        v-for="f in filters"
+        :key="f.value"
+        class="filter-btn"
+        :class="{ active: currentFilter === f.value }"
+        @click="currentFilter = f.value"
+      >
+        {{ f.label }}
+      </button>
+    </div>
+
     <div v-if="loading" class="loading">加载中</div>
 
-    <div v-else-if="tasks.length === 0" class="empty-state">
+    <div v-else-if="filteredTasks.length === 0" class="empty-state">
       <p>暂无下载任务</p>
       <p class="empty-tip">在漫画详情页点击"下载"按钮添加任务</p>
     </div>
 
     <div v-else class="download-list">
-      <div v-for="task in tasks" :key="task.id" class="download-item">
+      <div v-for="task in filteredTasks" :key="task.id" class="download-item">
         <div class="download-cover">
           <img :src="getCoverUrl(task.coverUrl)" :alt="task.title" @error="handleImgError" />
         </div>
@@ -21,6 +34,9 @@
             <span v-if="task.status === 'downloading'" class="download-progress">
               {{ task.downloaded }}/{{ task.totalPages || '?' }}
             </span>
+            <span v-if="task.status === 'downloading' && task.speed" class="download-speed">
+              ⚡ {{ task.speed }}
+            </span>
           </div>
           <div v-if="task.error" class="download-error">{{ task.error }}</div>
           <div class="download-path">📁 {{ getDisplayPath(task) }}</div>
@@ -28,8 +44,9 @@
         </div>
         <div class="download-actions">
           <button v-if="task.status === 'downloading'" class="btn-action btn-cancel" @click="cancel(task.id)">暂停</button>
-          <button v-if="task.status === 'paused' || task.status === 'error'" class="btn-action btn-start" @click="retry(task.id)">重试</button>
-          <button class="btn-action btn-remove" @click="remove(task.id)">删除</button>
+          <button v-if="task.status === 'paused' || task.status === 'error'" class="btn-action btn-start" @click="resume(task.id)">继续</button>
+          <button v-if="task.status === 'completed'" class="btn-action btn-start" @click="openLocal(task)">📚 本地</button>
+          <button class="btn-action btn-remove" @click="remove(task.id, task.title)">删除</button>
         </div>
       </div>
     </div>
@@ -37,8 +54,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import { getDownloads, cancelDownload, removeDownload, addDownload } from '@/api'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { getDownloads, cancelDownload, resumeDownload, removeDownload } from '@/api'
 
 interface DownloadTask {
   id: string
@@ -48,20 +66,35 @@ interface DownloadTask {
   savePath?: string
   totalPages: number
   downloaded: number
+  speed?: string
   status: string
   error?: string
   createdAt: string
   updatedAt: string
 }
 
+const router = useRouter()
 const tasks = ref<DownloadTask[]>([])
 const loading = ref(true)
+const currentFilter = ref('all')
 let timer: number | null = null
+
+const filters = [
+  { label: '全部', value: 'all' },
+  { label: '下载中', value: 'downloading' },
+  { label: '已完成', value: 'completed' },
+  { label: '已暂停', value: 'paused' },
+]
+
+const filteredTasks = computed(() => {
+  if (currentFilter.value === 'all') return tasks.value
+  return tasks.value.filter(t => t.status === currentFilter.value)
+})
 
 onMounted(() => {
   loadTasks()
-  // 每3秒刷新一次状态
-  timer = window.setInterval(loadTasks, 3000)
+  // 每2秒刷新一次状态
+  timer = window.setInterval(loadTasks, 2000)
 })
 
 onUnmounted(() => {
@@ -82,26 +115,28 @@ async function cancel(id: string) {
   } catch {}
 }
 
-async function remove(id: string) {
+async function resume(id: string) {
   try {
-    await removeDownload(id)
+    await resumeDownload(id)
     await loadTasks()
   } catch {}
 }
 
-async function retry(id: string) {
-  // 重新添加任务
-  const task = tasks.value.find(t => t.id === id)
-  if (task) {
-    await addDownload(task.bookId, task.title, task.coverUrl)
+async function remove(id: string, title: string) {
+  const deleteFile = confirm(`确定删除「${title}」的下载任务？\n\n确认则同时删除已下载文件。`)
+  try {
+    await removeDownload(id, deleteFile)
     await loadTasks()
-  }
+  } catch {}
+}
+
+function openLocal(task: DownloadTask) {
+  router.push('/local')
 }
 
 function getCoverUrl(url: string): string {
   if (!url) return ''
   if (url.includes('fileServer')) {
-    // 解析旧格式
     return url
   }
   return `/api/image/proxy?url=${encodeURIComponent(url)}`
@@ -118,9 +153,6 @@ function sanitizeTitle(title: string): string {
 
 function getDisplayPath(task: DownloadTask): string {
   const path = task.savePath || ('downloads/' + sanitizeTitle(task.title))
-  // 将容器路径转换为宿主机路径
-  // /data/downloads/xxx -> /volume1/bika/xxx
-  // downloads/xxx -> /volume1/bika/xxx (本地运行)
   return path
     .replace(/^\/data\/downloads/, '/volume1/bika')
     .replace(/^downloads/, '/volume1/bika')
@@ -145,6 +177,31 @@ function formatTime(t: string): string {
 </script>
 
 <style scoped>
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  padding: 4px;
+}
+
+.filter-btn {
+  padding: 6px 16px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  font-size: 13px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.filter-btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
 .download-list {
   display: flex;
   flex-direction: column;
@@ -204,6 +261,11 @@ function formatTime(t: string): string {
 
 .download-progress {
   color: var(--primary);
+  font-weight: 500;
+}
+
+.download-speed {
+  color: #27ae60;
   font-weight: 500;
 }
 

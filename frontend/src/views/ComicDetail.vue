@@ -6,13 +6,19 @@
         <img :src="getCoverUrl(comic.thumb)" :alt="comic.title" class="detail-cover" />
       </div>
       <div class="detail-info">
-        <h1 class="detail-title">{{ comic.title }}</h1>
-        <p class="detail-author">作者: {{ comic.author }}</p>
+        <h1 class="detail-title">
+          {{ comic.title }}
+          <button class="share-btn" @click="shareComic" title="分享漫画">🔗</button>
+        </h1>
+        <p class="detail-author" @click="searchAuthor">作者: {{ comic.author }}</p>
         <p class="detail-meta">
           章节: {{ comic.epsCount }} | 喜欢: {{ comic.totalLikes || comic.likesCount }} | 浏览: {{ comic.totalViews || 0 }}
         </p>
         <div class="detail-tags">
-          <span v-for="cat in comic.categories" :key="cat" class="tag">{{ cat }}</span>
+          <span v-for="cat in comic.categories" :key="cat" class="tag clickable" @click="searchTag(cat)">{{ cat }}</span>
+        </div>
+        <div v-if="comic.tags?.length" class="detail-tags">
+          <span v-for="tag in comic.tags" :key="tag" class="tag tag-alt" @click="searchTag(tag)">#{{ tag }}</span>
         </div>
         <div class="detail-actions">
           <button class="btn btn-primary" @click="startReading" :disabled="!eps.length">
@@ -553,6 +559,29 @@ function goBack() {
     router.push('/home')
   }
 }
+
+// 作者点击 → 搜索该作者
+function searchAuthor() {
+  if (comic.value.author) {
+    router.push({ path: '/search', query: { keyword: comic.value.author } })
+  }
+}
+
+// 标签/分类点击 → 搜索
+function searchTag(tag: string) {
+  router.push({ path: '/search', query: { keyword: tag } })
+}
+
+// 分享漫画链接
+async function shareComic() {
+  const url = window.location.href
+  try {
+    await navigator.clipboard.writeText(url)
+    alert('漫画链接已复制！')
+  } catch {
+    alert(url)
+  }
+}
 </script>
 
 <style scoped>
@@ -617,6 +646,33 @@ function goBack() {
   font-size: 11px;
   background: #fce4ec;
   color: var(--primary);
+}
+
+.tag.clickable {
+  cursor: pointer;
+}
+
+.tag.clickable:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.tag-alt {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.share-btn {
+  background: none;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.share-btn:hover {
+  opacity: 0.7;
 }
 
 .detail-actions {

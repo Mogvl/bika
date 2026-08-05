@@ -64,7 +64,7 @@ func (h *DownloadHandler) Status(w http.ResponseWriter, r *http.Request) {
 	Success(w, H{"task": task})
 }
 
-// Cancel 取消下载
+// Cancel 暂停下载
 func (h *DownloadHandler) Cancel(w http.ResponseWriter, r *http.Request) {
 	bookID := r.PathValue("id")
 	if bookID == "" {
@@ -73,7 +73,19 @@ func (h *DownloadHandler) Cancel(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.manager.CancelTask(bookID)
-	Success(w, H{"message": "已取消"})
+	Success(w, H{"message": "已暂停"})
+}
+
+// Resume 恢复下载
+func (h *DownloadHandler) Resume(w http.ResponseWriter, r *http.Request) {
+	bookID := r.PathValue("id")
+	if bookID == "" {
+		Error(w, http.StatusBadRequest, "漫画ID不能为空")
+		return
+	}
+
+	h.manager.ResumeTask(bookID)
+	Success(w, H{"message": "已恢复"})
 }
 
 // Remove 删除下载任务
@@ -84,6 +96,8 @@ func (h *DownloadHandler) Remove(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.manager.RemoveTask(bookID)
+	deleteFile := r.URL.Query().Get("deleteFile") == "true"
+
+	h.manager.RemoveTask(bookID, deleteFile)
 	Success(w, H{"message": "已删除"})
 }

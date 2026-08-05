@@ -80,8 +80,9 @@ func (h *ChatHandler) SendMessage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req struct {
-		RoomID  string `json:"roomId"`
-		Message string `json:"message"`
+		RoomID      string `json:"roomId"`
+		Message     string `json:"message"`
+		ReferenceID string `json:"referenceId"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		Error(w, http.StatusBadRequest, "请求格式错误")
@@ -93,7 +94,7 @@ func (h *ChatHandler) SendMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := h.client.SendMessage(req.RoomID, req.Message)
+	err := h.client.SendMessage(req.RoomID, req.Message, req.ReferenceID)
 	if err != nil {
 		Error(w, http.StatusInternalServerError, err.Error())
 		return

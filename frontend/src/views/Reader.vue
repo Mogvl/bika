@@ -6,19 +6,28 @@
       <div class="toolbar-info">
         <span class="eps-label">{{ currentEpsTitle }}</span>
       </div>
-      <button class="toolbar-btn" @click="toggleMode">
-        {{ singleMode ? '📖' : '📜' }}
-      </button>
+      <div class="toolbar-actions">
+        <button class="toolbar-btn" @click="toggleDir" title="切换翻页方向">
+          {{ rightToLeft ? '⬅️' : '➡️' }}
+        </button>
+        <button class="toolbar-btn" @click="zoomOut" title="缩小">−</button>
+        <span class="zoom-label">{{ Math.round(zoom * 100) }}%</span>
+        <button class="toolbar-btn" @click="zoomIn" title="放大">＋</button>
+        <button class="toolbar-btn" @click="toggleMode">
+          {{ singleMode ? '📖' : '📜' }}
+        </button>
+      </div>
     </div>
 
     <div class="reader-content" ref="readerContent" @click="toggleControls" @touchstart="onTouchStart" @touchend="onTouchEnd">
       <!-- 单页模式 -->
-      <div v-if="singleMode" class="single-page" @click.stop>
+      <div v-if="singleMode" class="single-page" :class="{ 'rtl': rightToLeft }" @click.stop>
         <div class="page-nav-area prev-page" @click.stop="prevPage"></div>
         <img
           v-if="currentImageUrl"
           :src="currentImageUrl"
           class="reader-image"
+          :style="{ transform: `scale(${zoom})` }"
           alt="漫画页"
           @load="onImageLoaded"
           @error="onImageError"
@@ -28,17 +37,30 @@
 
       <!-- 滚动模式 -->
       <div v-else class="scroll-mode" ref="scrollContainer">
-        <img
-          v-for="(img, idx) in allImages"
-          :key="idx"
-          :src="img"
-          class="scroll-image"
-          alt="漫画页"
-          loading="lazy"
-          @load="onScrollImageLoaded(idx)"
-          @error="onScrollImageError($event, idx)"
-        />
+        <div class="scroll-inner" :style="{ transform: `scale(${zoom})`, transformOrigin: 'top center' }">
+          <img
+            v-for="(img, idx) in allImages"
+            :key="idx"
+            :src="img"
+            class="scroll-image"
+            alt="漫画页"
+            loading="lazy"
+            @load="onScrollImageLoaded(idx)"
+            @error="onScrollImageError($event, idx)"
+          />
+        </div>
       </div>
+    </div>
+
+    <!-- 进度滑条 -->
+    <div class="reader-progress" :class="{ hidden: controlsHidden }">
+      <input
+        type="range"
+        min="1"
+        :max="Math.max(totalPages, 1)"
+        :value="currentIndex + 1"
+        @input="skipToPage(Number(($event.target as HTMLInputElement).value))"
+      />
     </div>
 
     <!-- 底部章节切换 -->
@@ -93,6 +115,9 @@ const loading = ref(true)
 const error = ref('')
 const controlsHidden = ref(false)
 const singleMode = ref(true)
+const zoom = ref(1)
+const rightToLeft = ref(false)
+let autoScrollTimer: number | null = null
 
 const readerContent = ref<HTMLElement | null>(null)
 const scrollContainer = ref<HTMLElement | null>(null)
@@ -127,8 +152,13 @@ function onTouchEnd(e: TouchEvent) {
   const dx = e.changedTouches[0].clientX - touchStartX
   const dy = e.changedTouches[0].clientY - touchStartY
   if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 30) {
-    if (dx < 0) nextPage()
-    else prevPage()
+    if (rightToLeft.value) {
+      if (dx < 0) prevPage()
+      else nextPage()
+    } else {
+      if (dx < 0) nextPage()
+      else prevPage()
+    }
   }
 }
 
@@ -145,11 +175,25 @@ onMounted(async () => {
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown)
+  if (autoScrollTimer) clearInterval(autoScrollTimer)
 })
 
 function handleKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape') {
     goBack()
+  } else if (e.key === 'ArrowRight') {
+    if (rightToLeft.value) prevPage()
+    else nextPage()
+  } else if (e.key === 'ArrowLeft') {
+    if (rightToLeft.value) nextPage()
+    else prevPage()
+  } else if (e.key === 'ArrowUp') {
+    prevPage()
+  } else if (e.key === 'ArrowDown') {
+    nextPage()
+  } else if (e.key === ' ') {
+    e.preventDefault()
+    nextPage()
   }
 }
 
@@ -229,6 +273,24 @@ function toggleControls() {
 function toggleMode() {
   singleMode.value = !singleMode.value
   controlsHidden.value = false
+}
+
+function toggleDir() {
+  rightToLeft.value = !rightToLeft.value
+}
+
+function zoomIn() {
+  if (zoom.value < 3) zoom.value = Math.min(3, Math.round((zoom.value + 0.25) * 100) / 100)
+}
+
+function zoomOut() {
+  if (zoom.value > 0.5) zoom.value = Math.max(0.5, Math.round((zoom.value - 0.25) * 100) / 100)
+}
+
+function skipToPage(p: number) {
+  if (p < 1 || p > pages.value.length) return
+  currentIndex.value = p - 1
+  saveProgress()
 }
 
 function switchEps() {
@@ -320,6 +382,21 @@ function onScrollImageError(e: Event, idx: number) {
 .toolbar-info {
   color: white;
   font-size: 14px;
+  flex: 1;
+  text-align: center;
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.zoom-label {
+  color: white;
+  font-size: 12px;
+  min-width: 44px;
+  text-align: center;
 }
 
 .reader-content {
@@ -334,6 +411,10 @@ function onScrollImageError(e: Event, idx: number) {
   height: 100%;
   align-items: center;
   justify-content: center;
+}
+
+.single-page.rtl {
+  direction: rtl;
 }
 
 .page-nav-area {
@@ -466,5 +547,28 @@ function onScrollImageError(e: Event, idx: number) {
   border-radius: 12px;
   font-size: 12px;
   z-index: 305;
+}
+
+/* 进度滑条 */
+.reader-progress {
+  position: fixed;
+  bottom: 48px;
+  left: 0;
+  right: 0;
+  padding: 4px 16px;
+  background: rgba(0,0,0,0.6);
+  z-index: 309;
+  transition: opacity 0.3s;
+}
+
+.reader-progress.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.reader-progress input[type="range"] {
+  width: 100%;
+  accent-color: var(--primary);
+  cursor: pointer;
 }
 </style>

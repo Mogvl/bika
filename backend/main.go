@@ -35,6 +35,7 @@ func main() {
 	os.MkdirAll(downloadDir, 0755)
 	downloadManager := download.NewManager(client, downloadDir)
 	downloadHandler := handler.NewDownloadHandler(downloadManager)
+	localHandler := handler.NewLocalHandler(downloadManager)
 
 	// 初始化聊天客户端
 	chatClient := chat.NewChatClient()
@@ -105,7 +106,13 @@ func main() {
 	mux.HandleFunc("/api/downloads/add", handler.AuthMiddleware(client, downloadHandler.Add))
 	mux.HandleFunc("/api/downloads/{id}", handler.AuthMiddleware(client, downloadHandler.Status))
 	mux.HandleFunc("/api/downloads/{id}/cancel", handler.AuthMiddleware(client, downloadHandler.Cancel))
+	mux.HandleFunc("/api/downloads/{id}/resume", handler.AuthMiddleware(client, downloadHandler.Resume))
 	mux.HandleFunc("/api/downloads/{id}/remove", handler.AuthMiddleware(client, downloadHandler.Remove))
+
+	// 本地库接口
+	mux.HandleFunc("/api/local/list", handler.AuthMiddleware(client, localHandler.List))
+	mux.HandleFunc("/api/local/eps", handler.AuthMiddleware(client, localHandler.Eps))
+	mux.HandleFunc("/api/local/image", handler.AuthMiddleware(client, localHandler.Image))
 
 	// 聊天接口
 	mux.HandleFunc("/api/chat/login", handler.AuthMiddleware(client, chatHandler.Login))

@@ -34,6 +34,7 @@
         <router-link to="/chat" @click="showMenu = false" class="menu-item">💬 聊天室</router-link>
         <router-link to="/fried" @click="showMenu = false" class="menu-item">📱 锅贴广场</router-link>
         <router-link to="/downloads" @click="showMenu = false" class="menu-item">📥 下载管理</router-link>
+        <router-link to="/local" @click="showMenu = false" class="menu-item">📚 本地库</router-link>
         <router-link to="/history" @click="showMenu = false" class="menu-item">📖 阅读历史</router-link>
         <router-link to="/my-comments" @click="showMenu = false" class="menu-item">💬 我的评论</router-link>
         <router-link to="/profile" @click="showMenu = false" class="menu-item">👤 个人资料</router-link>
@@ -74,7 +75,7 @@ const router = useRouter()
 const showMenu = ref(false)
 const showUserMenu = ref(false)
 
-const isReaderPage = computed(() => route.name === 'reader')
+const isReaderPage = computed(() => route.name === 'reader' || route.name === 'local-reader')
 
 // 二级页面显示返回按钮（详情/列表/设置等）
 const backRoutes = new Set(['comic-detail', 'game-detail', 'search', 'category-comics', 'profile', 'settings', 'history', 'my-comments', 'downloads', 'chat', 'fried', 'help', 'leaderboard', 'favourites', 'games'])

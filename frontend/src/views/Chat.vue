@@ -46,6 +46,8 @@
           :key="msg._id"
           class="message-item"
           :class="{ 'message-mine': msg.sender?._id === myUserId }"
+          :data-msg-id="msg._id"
+          @click="setReply(msg)"
         >
           <div class="message-avatar">
             <img v-if="msg.sender?.avatar" :src="msg.sender.avatar" alt="" />
@@ -53,18 +55,34 @@
           </div>
           <div class="message-content">
             <div class="message-sender">{{ msg.sender?.name || '匿名' }}</div>
+            <!-- 回复引用 -->
+            <div v-if="msg.replyTo" class="message-reply" @click="scrollToMessage(msg.replyTo?._id)">
+              <span class="reply-name">@{{ msg.replyTo?.sender?.name || '用户' }}</span>
+              <span class="reply-text">{{ msg.replyTo?.message || '...' }}</span>
+            </div>
             <div class="message-text">{{ msg.message }}</div>
+            <div class="message-time">{{ formatTime(msg.createdAt) }}</div>
           </div>
         </div>
       </div>
 
       <div class="chat-input">
+        <!-- 回复提示 -->
+        <div v-if="replyToMsg" class="reply-bar">
+          <span class="reply-hint">回复 @{{ replyToMsg.sender?.name }}: {{ replyToMsg.message }}</span>
+          <button class="reply-cancel" @click="replyToMsg = null">✕</button>
+        </div>
+        <!-- 表情面板 -->
+        <div v-if="showEmoji" class="emoji-panel">
+          <span v-for="e in emojis" :key="e" class="emoji-item" @click="insertEmoji(e)">{{ e }}</span>
+        </div>
         <input
           v-model="newMessage"
           type="text"
           placeholder="输入消息..."
           @keydown.enter="sendMessage"
         />
+        <button class="btn-emoji" @click="showEmoji = !showEmoji" title="表情">😊</button>
         <button class="btn-send" @click="sendMessage" :disabled="!newMessage.trim()">发送</button>
       </div>
     </div>
@@ -95,6 +113,7 @@ interface ChatMessage {
     avatar: string
     level: number
   }
+  replyTo?: ChatMessage
   createdAt: string
 }
 
@@ -109,6 +128,10 @@ const chatToken = ref('')
 const myUserId = ref('')
 const loginError = ref('')
 const messagesContainer = ref<HTMLElement | null>(null)
+const replyToMsg = ref<ChatMessage | null>(null)
+const showEmoji = ref(false)
+
+const emojis = ['😀','😂','🤣','😊','😍','😘','😎','🤔','😴','😭','😅','🙄','👍','👎','👏','🙏','💪','🔥','❤️','💔','✨','🎉','🍺','🌹']
 
 onMounted(() => {
   // 检查本地存储的聊天token
@@ -176,12 +199,43 @@ async function loadMessages() {
 async function sendMessage() {
   if (!newMessage.value.trim() || !currentRoom.value) return
   try {
-    await sendChatMessage(currentRoom.value.id, newMessage.value)
+    // 若有回复引用，拼接到消息中
+    let msg = newMessage.value.trim()
+    if (replyToMsg.value) {
+      const refId = replyToMsg.value._id
+      await sendChatMessage(currentRoom.value.id, msg, refId)
+    } else {
+      await sendChatMessage(currentRoom.value.id, msg)
+    }
     newMessage.value = ''
+    replyToMsg.value = null
+    showEmoji.value = false
     await loadMessages()
   } catch (e: any) {
     alert(e.message || '发送失败')
   }
+}
+
+function insertEmoji(e: string) {
+  newMessage.value += e
+}
+
+function setReply(msg: ChatMessage) {
+  // 点击消息设置回复对象（非自己的消息）
+  if (msg.sender?._id !== myUserId.value) {
+    replyToMsg.value = msg
+  }
+}
+
+function scrollToMessage(id: string) {
+  const el = document.querySelector(`[data-msg-id="${id}"]`)
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+}
+
+function formatTime(t: string): string {
+  if (!t) return ''
+  const d = new Date(t)
+  return d.toLocaleString('zh-CN', { hour: '2-digit', minute: '2-digit' })
 }
 
 function scrollToBottom() {
@@ -354,11 +408,114 @@ function scrollToBottom() {
   border-radius: 12px;
   padding: 8px 12px;
   box-shadow: var(--shadow);
+  cursor: pointer;
 }
 
 .message-mine .message-content {
   background: var(--primary);
   color: white;
+}
+
+.message-reply {
+  background: rgba(0,0,0,0.06);
+  border-left: 3px solid var(--primary);
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+
+.message-mine .message-reply {
+  background: rgba(255,255,255,0.2);
+  border-left-color: white;
+}
+
+.reply-name {
+  color: var(--primary);
+  font-weight: 500;
+  margin-right: 4px;
+}
+
+.message-mine .reply-name {
+  color: #ffd0e0;
+}
+
+.reply-text {
+  color: var(--text-secondary);
+}
+
+.message-mine .reply-text {
+  color: rgba(255,255,255,0.8);
+}
+
+.message-time {
+  font-size: 10px;
+  color: #999;
+  margin-top: 2px;
+}
+
+.message-mine .message-time {
+  color: rgba(255,255,255,0.6);
+}
+
+.reply-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fce4ec;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: var(--primary);
+}
+
+.reply-hint {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reply-cancel {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--primary);
+  font-size: 14px;
+}
+
+.emoji-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-height: 160px;
+  overflow-y: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.emoji-item {
+  cursor: pointer;
+  font-size: 20px;
+  padding: 2px;
+}
+
+.emoji-item:hover {
+  background: var(--bg);
+  border-radius: 4px;
+}
+
+.btn-emoji {
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
 .message-sender {

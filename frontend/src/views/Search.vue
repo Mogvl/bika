@@ -65,7 +65,7 @@ import type { Comic } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
-const keyword = ref('')
+const keyword = ref((route.query.keyword as string) || '')
 const lastKeyword = ref('')
 const results = ref<Comic[]>([])
 const keywords = ref<string[]>([])
@@ -76,11 +76,14 @@ const searched = ref(false)
 let searchTimer: number | undefined
 
 onMounted(async () => {
-  // 检查是否有分类查询参数
+  // 检查是否有分类/关键词查询参数
   const category = route.query.c as string
+  const kw = route.query.keyword as string
   if (category) {
     keyword.value = category
     await doCategorySearch(category)
+  } else if (kw) {
+    await doSearch()
   } else {
     try {
       const res = await getKeywords()
