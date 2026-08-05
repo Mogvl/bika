@@ -34,6 +34,7 @@
         <router-link to="/fried" @click="showMenu = false" class="menu-item">📱 锅贴广场</router-link>
         <router-link to="/downloads" @click="showMenu = false" class="menu-item">📥 下载管理</router-link>
         <router-link to="/history" @click="showMenu = false" class="menu-item">📖 阅读历史</router-link>
+        <router-link to="/my-comments" @click="showMenu = false" class="menu-item">💬 我的评论</router-link>
         <router-link to="/profile" @click="showMenu = false" class="menu-item">👤 个人资料</router-link>
         <router-link to="/settings" @click="showMenu = false" class="menu-item">⚙️ 设置</router-link>
         <router-link to="/help" @click="showMenu = false" class="menu-item">❓ 帮助</router-link>

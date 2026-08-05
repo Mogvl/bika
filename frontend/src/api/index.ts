@@ -63,6 +63,30 @@ export async function forgotPassword(email: string) {
   return res.data
 }
 
+// 重置密码（忘记密码后通过密保问答重置）
+export async function resetPassword(email: string, questionNo: number, answer: string) {
+  const res = await api.post('/auth/reset-password', { email, questionNo, answer })
+  return res.data
+}
+
+// 修改头像（接收 base64 图片数据）
+export async function setAvatar(avatar: string) {
+  const res = await api.post('/auth/avatar', { avatar })
+  return res.data
+}
+
+// 修改称号
+export async function setTitle(title: string) {
+  const res = await api.post('/auth/title', { title })
+  return res.data
+}
+
+// 我的评论列表
+export async function getMyComments(page = 1) {
+  const res = await api.get('/auth/my-comments', { params: { page } })
+  return res.data
+}
+
 // ==================== 分类 ====================
 export async function getCategories() {
   const res = await api.get('/categories')
@@ -97,6 +121,11 @@ export async function getComicPages(id: string, epsId: string, page = 1) {
 
 export async function getLeaderboard(tt: LeaderboardTT = 'H24') {
   const res = await api.get('/comics/leaderboard', { params: { tt } })
+  return res.data
+}
+
+export async function getKnightLeaderboard() {
+  const res = await api.get('/comics/knight-leaderboard')
   return res.data
 }
 

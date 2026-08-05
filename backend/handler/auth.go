@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/Mogvl/bika/backend/fried"
 	"github.com/Mogvl/bika/backend/pica"
@@ -172,6 +173,89 @@ func (h *AuthHandler) ForgotPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	resp, err := h.client.ForgotPassword(req.Email)
+	if err != nil {
+		Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	Success(w, resp.Data)
+}
+
+// ResetPassword 重置密码（忘记密码后通过密保问答重置）
+func (h *AuthHandler) ResetPassword(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+		Email      string `json:"email"`
+		QuestionNo int    `json:"questionNo"`
+		Answer     string `json:"answer"`
+	}
+	if err := decodeJSON(r, &req); err != nil {
+		Error(w, http.StatusBadRequest, "请求格式错误")
+		return
+	}
+	if req.Email == "" || req.Answer == "" {
+		Error(w, http.StatusBadRequest, "邮箱和答案不能为空")
+		return
+	}
+	resp, err := h.client.ResetPassword(req.Email, req.QuestionNo, req.Answer)
+	if err != nil {
+		Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	Success(w, resp.Data)
+}
+
+// SetAvatar 修改头像
+func (h *AuthHandler) SetAvatar(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+		Avatar string `json:"avatar"`
+	}
+	if err := decodeJSON(r, &req); err != nil {
+		Error(w, http.StatusBadRequest, "请求格式错误")
+		return
+	}
+	if req.Avatar == "" {
+		Error(w, http.StatusBadRequest, "头像数据不能为空")
+		return
+	}
+	resp, err := h.client.SetAvatar(req.Avatar, "jpeg")
+	if err != nil {
+		Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	Success(w, resp.Data)
+}
+
+// SetTitle 修改称号
+func (h *AuthHandler) SetTitle(w http.ResponseWriter, r *http.Request) {
+	userID := r.PathValue("id")
+	if userID == "" {
+		userID = r.URL.Query().Get("userId")
+	}
+	var req struct {
+		Title string `json:"title"`
+	}
+	if err := decodeJSON(r, &req); err != nil {
+		Error(w, http.StatusBadRequest, "请求格式错误")
+		return
+	}
+	if req.Title == "" {
+		Error(w, http.StatusBadRequest, "称号不能为空")
+		return
+	}
+	resp, err := h.client.SetTitle(userID, req.Title)
+	if err != nil {
+		Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	Success(w, resp.Data)
+}
+
+// MyComments 我的评论列表
+func (h *AuthHandler) MyComments(w http.ResponseWriter, r *http.Request) {
+	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
+	if page < 1 {
+		page = 1
+	}
+	resp, err := h.client.GetUserComment(page)
 	if err != nil {
 		Error(w, http.StatusInternalServerError, err.Error())
 		return

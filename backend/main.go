@@ -60,12 +60,17 @@ func main() {
 	mux.HandleFunc("/api/auth/punch-in", handler.AuthMiddleware(client, authHandler.PunchIn))
 	mux.HandleFunc("/api/auth/change-password", handler.AuthMiddleware(client, authHandler.ChangePassword))
 	mux.HandleFunc("/api/auth/forgot-password", authHandler.ForgotPassword)
+	mux.HandleFunc("/api/auth/reset-password", authHandler.ResetPassword)
+	mux.HandleFunc("/api/auth/avatar", handler.AuthMiddleware(client, authHandler.SetAvatar))
+	mux.HandleFunc("/api/auth/title", handler.AuthMiddleware(client, authHandler.SetTitle))
+	mux.HandleFunc("/api/auth/my-comments", handler.AuthMiddleware(client, authHandler.MyComments))
 
 	mux.HandleFunc("/api/categories", handler.AuthMiddleware(client, comicsHandler.Categories))
 
 	mux.HandleFunc("/api/comics", handler.AuthMiddleware(client, comicsHandler.ListByCategory))
 	mux.HandleFunc("/api/comics/search", handler.AuthMiddleware(client, comicsHandler.Search))
 	mux.HandleFunc("/api/comics/leaderboard", handler.AuthMiddleware(client, comicsHandler.Leaderboard))
+	mux.HandleFunc("/api/comics/knight-leaderboard", handler.AuthMiddleware(client, comicsHandler.KnightLeaderboard))
 	mux.HandleFunc("/api/comics/random", handler.AuthMiddleware(client, comicsHandler.Random))
 	mux.HandleFunc("/api/comics/collections", handler.AuthMiddleware(client, comicsHandler.Collections))
 	mux.HandleFunc("/api/comics/keywords", handler.AuthMiddleware(client, comicsHandler.Keywords))

@@ -150,6 +150,16 @@ func (h *ComicsHandler) Leaderboard(w http.ResponseWriter, r *http.Request) {
 	Success(w, resp.Data)
 }
 
+// KnightLeaderboard 获取骑士榜（用户排行）
+func (h *ComicsHandler) KnightLeaderboard(w http.ResponseWriter, r *http.Request) {
+	resp, err := h.client.GetKnightLeaderboard()
+	if err != nil {
+		Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	Success(w, resp.Data)
+}
+
 // Random 获取随机漫画
 func (h *ComicsHandler) Random(w http.ResponseWriter, r *http.Request) {
 	resp, err := h.client.GetRandomComics()

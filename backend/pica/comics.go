@@ -65,6 +65,11 @@ func (c *Client) GetLeaderboard(tt string) (*APIResponse, error) {
 	return c.doGet(fmt.Sprintf("comics/leaderboard?tt=%s&ct=VC", tt))
 }
 
+// GetKnightLeaderboard 获取骑士榜（用户排行）
+func (c *Client) GetKnightLeaderboard() (*APIResponse, error) {
+	return c.doGet("comics/knight-leaderboard")
+}
+
 // GetRandomComics 获取随机漫画
 func (c *Client) GetRandomComics() (*APIResponse, error) {
 	return c.doGet("comics/random")
