@@ -108,9 +108,10 @@ func (c *Client) SendComment(bookID, content string) (*APIResponse, error) {
 	return c.doPost(fmt.Sprintf("comics/%s/comments", bookID), map[string]string{"content": content})
 }
 
-// GetSubComments 获取子评论
+// GetSubComments 获取子评论（楼中楼）
+// 原版路径: comments/{commentId}/childrens?page={page}
 func (c *Client) GetSubComments(commentID string, page int) (*APIResponse, error) {
-	return c.doGet(fmt.Sprintf("comics/%s/comments?page=%d", commentID, page))
+	return c.doGet(fmt.Sprintf("comments/%s/childrens?page=%d", commentID, page))
 }
 
 // SendSubComment 发送子评论

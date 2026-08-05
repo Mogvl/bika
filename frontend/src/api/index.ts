@@ -136,6 +136,28 @@ export async function likeComic(bookId: string) {
   return res.data
 }
 
+// 子评论（楼中楼）
+export async function getSubComments(commentId: string, page = 1) {
+  const res = await api.get(`/comments/${commentId}/childrens`, { params: { page } })
+  return res.data
+}
+
+export async function sendSubComment(commentId: string, content: string) {
+  const res = await api.post(`/comments/${commentId}/childrens/send`, { content })
+  return res.data
+}
+
+export async function reportComment(commentId: string) {
+  const res = await api.post(`/comments/${commentId}/report`)
+  return res.data
+}
+
+// 相关推荐
+export async function getComicRecommendation(id: string) {
+  const res = await api.get(`/comics/${id}/recommendation`)
+  return res.data
+}
+
 // ==================== 收藏 ====================
 export async function getFavourites(page = 1, sort = 'da') {
   const res = await api.get('/favourites', { params: { page, s: sort } })
@@ -170,6 +192,16 @@ export async function getGamePages(id: string, epsId: string, page = 1) {
 
 export async function getGameComments(id: string, page = 1) {
   const res = await api.get(`/games/${id}/comments`, { params: { page } })
+  return res.data
+}
+
+export async function sendGameComment(id: string, content: string) {
+  const res = await api.post(`/games/${id}/comments/send`, { content })
+  return res.data
+}
+
+export async function likeGameComment(commentId: string) {
+  const res = await api.post(`/game-comments/${commentId}/like`)
   return res.data
 }
 
@@ -227,5 +259,26 @@ export async function sendChatMessage(roomId: string, message: string) {
 
 export async function getChatProfile() {
   const res = await api.get('/chat/profile')
+  return res.data
+}
+
+// ==================== 锅贴（好友动态） ====================
+export async function getFriedPosts(page = 1) {
+  const res = await api.get('/fried/posts', { params: { page } })
+  return res.data
+}
+
+export async function getFriedComments(postId: string, page = 1) {
+  const res = await api.get(`/fried/posts/${postId}/comments`, { params: { page } })
+  return res.data
+}
+
+export async function sendFriedComment(postId: string, content: string) {
+  const res = await api.post(`/fried/posts/${postId}/comments/send`, { content })
+  return res.data
+}
+
+export async function likeFriedComment(commentId: string) {
+  const res = await api.post(`/fried/comments/${commentId}/like`)
   return res.data
 }

@@ -74,7 +74,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getComicEps, getComicPages } from '@/api'
+import { getComicEps, getComicPages, getGameEps, getGamePages } from '@/api'
 import { saveReadingProgress } from '@/utils/history'
 import type { EP, Page } from '@/types'
 
@@ -82,6 +82,7 @@ const route = useRoute()
 const router = useRouter()
 
 const comicId = computed(() => route.params.id as string)
+const isGame = computed(() => route.query.type === 'game')
 const currentOrder = ref(Number(route.params.epsId) || 1)  // 章节序号
 const epsList = ref<EP[]>([])
 const totalEpsLoaded = ref(false)
@@ -147,7 +148,9 @@ watch(currentOrder, async () => {
 
 async function loadEpsList() {
   try {
-    const res = await getComicEps(comicId.value, 1)
+    const res = isGame.value
+      ? await getGameEps(comicId.value, 1)
+      : await getComicEps(comicId.value, 1)
     const epsData = res.data?.eps
     epsList.value = Array.isArray(epsData?.docs) ? epsData.docs : (Array.isArray(epsData) ? epsData : [])
     totalEpsLoaded.value = true
@@ -161,7 +164,9 @@ async function loadPages() {
   pages.value = []
 
   try {
-    const res = await getComicPages(comicId.value, String(currentOrder.value))
+    const res = isGame.value
+      ? await getGamePages(comicId.value, String(currentOrder.value))
+      : await getComicPages(comicId.value, String(currentOrder.value))
     const data = res.data
     const pagesData = data?.pages
     pages.value = Array.isArray(pagesData?.docs) ? pagesData.docs : (Array.isArray(pagesData) ? pagesData : [])

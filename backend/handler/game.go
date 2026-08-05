@@ -89,3 +89,40 @@ func (h *GameHandler) Comments(w http.ResponseWriter, r *http.Request) {
 	}
 	Success(w, resp.Data)
 }
+
+// SendComment 发送游戏评论
+func (h *GameHandler) SendComment(w http.ResponseWriter, r *http.Request) {
+	gameID := r.PathValue("id")
+	if gameID == "" {
+		Error(w, http.StatusBadRequest, "游戏ID不能为空")
+		return
+	}
+	var req struct {
+		Content string `json:"content"`
+	}
+	if err := decodeJSON(r, &req); err != nil || req.Content == "" {
+		Error(w, http.StatusBadRequest, "评论内容不能为空")
+		return
+	}
+	resp, err := h.client.SendGameComment(gameID, req.Content)
+	if err != nil {
+		Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	Success(w, resp.Data)
+}
+
+// LikeComment 点赞游戏评论
+func (h *GameHandler) LikeComment(w http.ResponseWriter, r *http.Request) {
+	commentID := r.PathValue("id")
+	if commentID == "" {
+		Error(w, http.StatusBadRequest, "评论ID不能为空")
+		return
+	}
+	resp, err := h.client.LikeComment(commentID)
+	if err != nil {
+		Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	Success(w, resp.Data)
+}

@@ -76,8 +76,12 @@ func main() {
 	mux.HandleFunc("/api/comics/{id}/comments", handler.AuthMiddleware(client, comicsHandler.Comments))
 	mux.HandleFunc("/api/comics/{id}/comments/send", handler.AuthMiddleware(client, comicsHandler.SendComment))
 	mux.HandleFunc("/api/comics/{id}/like", handler.AuthMiddleware(client, comicsHandler.LikeComic))
+	mux.HandleFunc("/api/comics/{id}/recommendation", handler.AuthMiddleware(client, comicsHandler.Recommendation))
 
 	mux.HandleFunc("/api/comments/{id}/like", handler.AuthMiddleware(client, comicsHandler.LikeComment))
+	mux.HandleFunc("/api/comments/{id}/childrens", handler.AuthMiddleware(client, comicsHandler.SubComments))
+	mux.HandleFunc("/api/comments/{id}/childrens/send", handler.AuthMiddleware(client, comicsHandler.SendSubComment))
+	mux.HandleFunc("/api/comments/{id}/report", handler.AuthMiddleware(client, comicsHandler.ReportComment))
 
 	// 游戏接口
 	mux.HandleFunc("/api/games", handler.AuthMiddleware(client, gameHandler.List))
@@ -85,6 +89,8 @@ func main() {
 	mux.HandleFunc("/api/games/{id}/eps", handler.AuthMiddleware(client, gameHandler.Eps))
 	mux.HandleFunc("/api/games/{id}/eps/{epsId}/pages", handler.AuthMiddleware(client, gameHandler.Pages))
 	mux.HandleFunc("/api/games/{id}/comments", handler.AuthMiddleware(client, gameHandler.Comments))
+	mux.HandleFunc("/api/games/{id}/comments/send", handler.AuthMiddleware(client, gameHandler.SendComment))
+	mux.HandleFunc("/api/game-comments/{id}/like", handler.AuthMiddleware(client, gameHandler.LikeComment))
 
 	mux.HandleFunc("/api/favourites", handler.AuthMiddleware(client, comicsHandler.Favourites))
 	mux.HandleFunc("/api/comics/{id}/favourite", handler.AuthMiddleware(client, comicsHandler.AddFavourite))

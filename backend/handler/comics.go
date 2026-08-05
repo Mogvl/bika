@@ -288,3 +288,76 @@ func (h *ComicsHandler) LikeComment(w http.ResponseWriter, r *http.Request) {
 	Success(w, resp.Data)
 }
 
+// SubComments 获取子评论（楼中楼）
+func (h *ComicsHandler) SubComments(w http.ResponseWriter, r *http.Request) {
+	commentID := r.PathValue("id")
+	if commentID == "" {
+		Error(w, http.StatusBadRequest, "评论ID不能为空")
+		return
+	}
+
+	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
+	if page < 1 {
+		page = 1
+	}
+
+	resp, err := h.client.GetSubComments(commentID, page)
+	if err != nil {
+		Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	Success(w, resp.Data)
+}
+
+// SendSubComment 发送子评论
+func (h *ComicsHandler) SendSubComment(w http.ResponseWriter, r *http.Request) {
+	commentID := r.PathValue("id")
+	if commentID == "" {
+		Error(w, http.StatusBadRequest, "评论ID不能为空")
+		return
+	}
+	var req struct {
+		Content string `json:"content"`
+	}
+	if err := decodeJSON(r, &req); err != nil || req.Content == "" {
+		Error(w, http.StatusBadRequest, "评论内容不能为空")
+		return
+	}
+	resp, err := h.client.SendSubComment(commentID, req.Content)
+	if err != nil {
+		Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	Success(w, resp.Data)
+}
+
+// ReportComment 举报评论
+func (h *ComicsHandler) ReportComment(w http.ResponseWriter, r *http.Request) {
+	commentID := r.PathValue("id")
+	if commentID == "" {
+		Error(w, http.StatusBadRequest, "评论ID不能为空")
+		return
+	}
+	resp, err := h.client.ReportComment(commentID)
+	if err != nil {
+		Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	Success(w, resp.Data)
+}
+
+// Recommendation 获取漫画相关推荐
+func (h *ComicsHandler) Recommendation(w http.ResponseWriter, r *http.Request) {
+	bookID := r.PathValue("id")
+	if bookID == "" {
+		Error(w, http.StatusBadRequest, "漫画ID不能为空")
+		return
+	}
+	resp, err := h.client.GetComicRecommendation(bookID)
+	if err != nil {
+		Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	Success(w, resp.Data)
+}
+

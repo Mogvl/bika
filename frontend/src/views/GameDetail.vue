@@ -29,6 +29,59 @@
         </div>
       </div>
     </div>
+
+    <!-- 游戏评论 -->
+    <div class="detail-section">
+      <div class="comments-header">
+        <h3 class="section-title">评论 ({{ commentsTotal }})</h3>
+        <button class="comments-refresh" @click="loadComments(1)">🔄 刷新</button>
+      </div>
+
+      <div class="comment-input-wrap">
+        <textarea
+          v-model="newComment"
+          class="comment-input"
+          placeholder="发表你的评论..."
+          rows="2"
+        ></textarea>
+        <div class="comment-send-row">
+          <span v-if="commentMsg" class="comment-msg" :class="{ error: commentError }">{{ commentMsg }}</span>
+          <button class="btn btn-primary btn-comment-send" @click="submitComment" :disabled="!newComment.trim()">
+            发表评论
+          </button>
+        </div>
+      </div>
+
+      <div v-if="commentsLoading && comments.length === 0" class="loading">加载中</div>
+      <div v-else-if="comments.length === 0" class="empty-state">
+        <p>还没有评论</p>
+      </div>
+
+      <div v-else class="comments-list">
+        <div v-for="c in comments" :key="c._id" class="comment-item">
+          <div class="comment-avatar">
+            <img v-if="c._user?.avatar" :src="getUserAvatar(c._user)" alt="" />
+            <span v-else class="avatar-text">{{ c._user?.name?.[0] || '?' }}</span>
+          </div>
+          <div class="comment-body">
+            <div class="comment-meta">
+              <span class="comment-user">{{ c._user?.name || '匿名' }}</span>
+              <span class="comment-time">{{ formatTime(c.createdAt) }}</span>
+            </div>
+            <div class="comment-content">{{ c.content }}</div>
+            <div class="comment-actions">
+              <span class="comment-action" :class="{ active: c.liked }" @click="toggleLike(c)">
+                👍 {{ c.likesCount || 0 }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="commentsHasMore" class="page-load-more">
+        <button class="load-more-btn" @click="loadMoreComments">加载更多评论</button>
+      </div>
+    </div>
   </div>
   <div v-else class="loading">加载中</div>
 </template>
@@ -36,13 +89,23 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getGameDetail, getGameEps } from '@/api'
+import { getGameDetail, getGameEps, getGameComments, sendGameComment, likeGameComment } from '@/api'
 
 const route = useRoute()
 const router = useRouter()
 const game = ref<any>({})
 const eps = ref<any[]>([])
 const loading = ref(true)
+
+// 评论
+const comments = ref<any[]>([])
+const commentsPage = ref(1)
+const commentsTotal = ref(0)
+const commentsHasMore = ref(false)
+const commentsLoading = ref(false)
+const newComment = ref('')
+const commentMsg = ref('')
+const commentError = ref(false)
 
 onMounted(async () => {
   const id = route.params.id as string
@@ -51,8 +114,77 @@ onMounted(async () => {
     game.value = detailRes.data?.game || {}
     const epsData = epsRes.data?.eps
     eps.value = Array.isArray(epsData?.docs) ? epsData.docs : (Array.isArray(epsData) ? epsData : [])
+    loadComments(1)
   } catch {} finally { loading.value = false }
 })
+
+async function loadComments(page: number) {
+  commentsLoading.value = true
+  try {
+    const res = await getGameComments(route.params.id as string, page)
+    const data = res.data
+    const docs = data?.comments?.docs || []
+    comments.value = page === 1 ? docs : comments.value.concat(docs)
+    commentsTotal.value = data?.comments?.total || 0
+    commentsPage.value = page
+    commentsHasMore.value = page < (data?.comments?.pages || 1)
+  } catch {} finally { commentsLoading.value = false }
+}
+
+async function loadMoreComments() {
+  await loadComments(commentsPage.value + 1)
+}
+
+async function submitComment() {
+  const content = newComment.value.trim()
+  if (!content) return
+  commentMsg.value = ''
+  try {
+    await sendGameComment(route.params.id as string, content)
+    newComment.value = ''
+    commentMsg.value = '发表成功！'
+    commentError.value = false
+    await loadComments(1)
+  } catch (e: any) {
+    commentMsg.value = e.message || '发表失败'
+    commentError.value = true
+  }
+}
+
+async function toggleLike(c: any) {
+  try {
+    await likeGameComment(c._id)
+    c.liked = !c.liked
+    c.likesCount = (c.likesCount || 0) + (c.liked ? 1 : -1)
+    if (c.likesCount < 0) c.likesCount = 0
+  } catch (e: any) {
+    alert(e.message || '点赞失败')
+  }
+}
+
+function getUserAvatar(user: any): string {
+  if (user?.avatar?.fileServer && user?.avatar?.path) {
+    return `/api/image/proxy?fileServer=${encodeURIComponent(user.avatar.fileServer)}&path=${encodeURIComponent(user.avatar.path)}`
+  }
+  if (typeof user?.avatar === 'string' && user.avatar) {
+    return `/api/image/proxy?url=${encodeURIComponent(user.avatar)}`
+  }
+  return ''
+}
+
+function formatTime(t: string): string {
+  if (!t) return ''
+  const date = new Date(t)
+  const now = new Date()
+  const diff = now.getTime() - date.getTime()
+  const days = Math.floor(diff / 86400000)
+  if (days > 0) return `${days}天前`
+  const hours = Math.floor(diff / 3600000)
+  if (hours > 0) return `${hours}小时前`
+  const minutes = Math.floor(diff / 60000)
+  if (minutes > 0) return `${minutes}分钟前`
+  return '刚刚'
+}
 
 function getCoverUrl(thumb: any): string {
   if (!thumb?.fileServer || !thumb?.path) return ''
@@ -60,7 +192,7 @@ function getCoverUrl(thumb: any): string {
 }
 
 function startPlaying() { if (eps.value.length) goReader(eps.value[0].order) }
-function goReader(order: number) { router.push(`/reader/${route.params.id}/${order}`) }
+function goReader(order: number) { router.push({ path: `/reader/${route.params.id}/${order}`, query: { type: 'game' } }) }
 </script>
 
 <style scoped>
@@ -81,4 +213,28 @@ function goReader(order: number) { router.push(`/reader/${route.params.id}/${ord
 .eps-item:hover { background: var(--bg); }
 .eps-order { font-size: 13px; color: var(--primary); font-weight: 500; min-width: 56px; }
 .eps-title { flex: 1; font-size: 14px; }
+
+/* 评论 */
+.comments-header { display: flex; justify-content: space-between; align-items: center; }
+.comments-refresh { padding: 4px 12px; border: 1px solid var(--border); border-radius: 16px; font-size: 12px; background: var(--bg); cursor: pointer; color: var(--text-secondary); }
+.comment-input-wrap { margin-bottom: 16px; }
+.comment-input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; resize: vertical; box-sizing: border-box; font-family: inherit; }
+.comment-input:focus { border-color: var(--primary); }
+.comment-send-row { display: flex; justify-content: flex-end; align-items: center; gap: 12px; margin-top: 8px; }
+.comment-msg { font-size: 13px; color: #27ae60; }
+.comment-msg.error { color: #e74c3c; }
+.btn-comment-send { padding: 8px 24px; }
+.comments-list { display: flex; flex-direction: column; }
+.comment-item { display: flex; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.comment-avatar { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: var(--primary); display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 600; }
+.comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.comment-body { flex: 1; min-width: 0; }
+.comment-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.comment-user { font-size: 13px; font-weight: 500; }
+.comment-time { font-size: 11px; color: #999; }
+.comment-content { font-size: 14px; line-height: 1.6; word-break: break-word; }
+.comment-actions { display: flex; gap: 16px; margin-top: 6px; }
+.comment-action { font-size: 12px; color: var(--text-secondary); cursor: pointer; }
+.comment-action:hover { color: var(--primary); }
+.comment-action.active { color: var(--primary); }
 </style>
