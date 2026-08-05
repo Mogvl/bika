@@ -95,13 +95,13 @@ import type { Comic } from '@/types'
 const route = useRoute()
 const router = useRouter()
 
-const keyword = ref('')
+const keyword = ref((route.query.keyword as string) || '')
 const categoryName = ref((route.query.c as string) || '')
 const comics = ref<Comic[]>([])
-const page = ref(1)
+const page = ref(Number(route.query.page) || 1)
 const totalPages = ref(1)
 const jumpPage = ref(1)
-const sort = ref('ua')
+const sort = ref((route.query.s as string) || 'ua')
 const loading = ref(false)
 const error = ref('')
 const showFilters = ref(false)
@@ -119,9 +119,20 @@ onMounted(async () => {
   // 如果指定了分类（从分类页跳转来的，不设关键词）
   if (categoryName.value) {
     selectedCategories.value = [categoryName.value]
-    await loadComics()
   }
+  // 从 query 恢复上次浏览位置（页码/关键词/排序）
+  await loadComics()
 })
+
+// 将当前浏览状态同步到 URL query，返回时可通过 query 恢复
+function syncQuery() {
+  const q: Record<string, string> = {}
+  if (categoryName.value) q.c = categoryName.value
+  if (keyword.value.trim()) q.keyword = keyword.value.trim()
+  if (page.value > 1) q.page = String(page.value)
+  if (sort.value !== 'ua') q.s = sort.value
+  router.replace({ path: '/category/comics', query: q })
+}
 
 async function loadComics() {
   loading.value = true
@@ -167,6 +178,7 @@ async function loadComics() {
 function doSearch() {
   page.value = 1
   comics.value = []
+  syncQuery()
   loadComics()
 }
 
@@ -194,6 +206,7 @@ function clearFilters() {
 function prevPage() {
   if (page.value > 1) {
     page.value--
+    syncQuery()
     loadComics()
   }
 }
@@ -201,6 +214,7 @@ function prevPage() {
 function nextPage() {
   if (page.value < totalPages.value) {
     page.value++
+    syncQuery()
     loadComics()
   }
 }
@@ -209,6 +223,7 @@ function goPage() {
   const p = jumpPage.value
   if (p >= 1 && p <= totalPages.value) {
     page.value = p
+    syncQuery()
     loadComics()
   }
 }
@@ -224,6 +239,7 @@ function handleImgError(e: Event) {
 }
 
 function goComic(id: string) {
+  syncQuery() // 先把当前页码写进 URL，返回时才能恢复到第二页
   router.push(`/comic/${id}`)
 }
 </script>
