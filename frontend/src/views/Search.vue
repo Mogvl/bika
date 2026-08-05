@@ -167,6 +167,11 @@ function goComic(id: string) {
 </script>
 
 <style scoped>
+.search-box {
+  position: relative;
+  padding: 12px;
+}
+
 .clear-btn {
   position: absolute;
   right: 20px;

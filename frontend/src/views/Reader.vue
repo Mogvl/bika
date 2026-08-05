@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getComicEps, getComicPages, getGameEps, getGamePages } from '@/api'
 import { saveReadingProgress } from '@/utils/history'
@@ -140,7 +140,18 @@ function getImageSrc(page: Page): string {
 onMounted(async () => {
   await loadEpsList()
   await loadPages()
+  window.addEventListener('keydown', handleKeydown)
 })
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown)
+})
+
+function handleKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape') {
+    goBack()
+  }
+}
 
 watch(currentOrder, async () => {
   await loadPages()

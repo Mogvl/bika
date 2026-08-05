@@ -193,6 +193,14 @@ function getCoverUrl(thumb: any): string {
 
 function startPlaying() { if (eps.value.length) goReader(eps.value[0].order) }
 function goReader(order: number) { router.push({ path: `/reader/${route.params.id}/${order}`, query: { type: 'game' } }) }
+
+function goBack() {
+  if (window.history.length > 1) {
+    router.back()
+  } else {
+    router.push('/games')
+  }
+}
 </script>
 
 <style scoped>

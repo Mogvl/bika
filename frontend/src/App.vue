@@ -2,6 +2,7 @@
   <div id="app-root">
     <header v-if="auth.isLoggedIn && !isReaderPage" class="app-header">
       <div class="header-left">
+        <button v-if="showBack" class="back-btn" @click="goBack">←</button>
         <button class="menu-btn" @click="showMenu = !showMenu">☰</button>
         <router-link to="/home" class="logo">PicACG</router-link>
       </div>
@@ -63,16 +64,29 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
 const auth = useAuthStore()
 auth.init()
 const route = useRoute()
+const router = useRouter()
 const showMenu = ref(false)
 const showUserMenu = ref(false)
 
 const isReaderPage = computed(() => route.name === 'reader')
+
+// 二级页面显示返回按钮（详情/列表/设置等）
+const backRoutes = new Set(['comic-detail', 'game-detail', 'search', 'category-comics', 'profile', 'settings', 'history', 'my-comments', 'downloads', 'chat', 'fried', 'help', 'leaderboard', 'favourites', 'games'])
+const showBack = computed(() => backRoutes.has(route.name as string))
+
+function goBack() {
+  if (window.history.length > 1) {
+    router.back()
+  } else {
+    router.push('/home')
+  }
+}
 
 function logout() {
   auth.logout()
@@ -135,6 +149,20 @@ a { color: inherit; text-decoration: none; }
   cursor: pointer;
   padding: 4px;
   color: var(--text);
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+  color: var(--text);
+  margin-right: 4px;
+}
+
+.back-btn:hover {
+  color: var(--primary);
 }
 
 .logo {

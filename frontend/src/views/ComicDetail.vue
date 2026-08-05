@@ -213,7 +213,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   getComicDetail, getComicEps, addDownload,
@@ -259,7 +259,18 @@ onMounted(async () => {
     return
   }
   await loadDetail(id)
+  window.addEventListener('keydown', handleKeydown)
 })
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown)
+})
+
+function handleKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape') {
+    goBack()
+  }
+}
 
 async function loadDetail(id: string) {
   try {
@@ -532,6 +543,15 @@ function handleImgError(e: Event) {
 
 function goComic(id: string) {
   router.push(`/comic/${id}`)
+}
+
+// 返回上一页
+function goBack() {
+  if (window.history.length > 1) {
+    router.back()
+  } else {
+    router.push('/home')
+  }
 }
 </script>
 
