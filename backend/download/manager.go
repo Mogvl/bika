@@ -217,16 +217,22 @@ func (m *Manager) downloadComic(task *DownloadTask) {
 		return
 	}
 
-	// 计算总页数
+	// 计算总页数（兼容 pagesCount 字段缺失的情况）
 	totalPages := 0
 	for _, ep := range docs {
 		epMap, ok := ep.(map[string]any)
 		if !ok {
 			continue
 		}
-		if pc, ok := epMap["pagesCount"].(float64); ok {
+		if pc, ok := epMap["pagesCount"].(float64); ok && int(pc) > 0 {
 			totalPages += int(pc)
+			continue
 		}
+		// 字段缺失时用已下载页数占位，最后按实际章节逐章累加
+		totalPages += -1
+	}
+	if totalPages < 0 {
+		totalPages = 0
 	}
 	m.mu.Lock()
 	task.TotalPages = totalPages
@@ -285,6 +291,11 @@ func (m *Manager) downloadComic(task *DownloadTask) {
 			log.Printf("[下载] 章节 %d 没有页面", int(order))
 			continue
 		}
+
+		// 累计实际页数（此前 pagesCount 缺失时算不到，这里补上）
+		m.mu.Lock()
+		task.TotalPages += len(pageDocs)
+		m.mu.Unlock()
 
 		// 创建章节目录
 		epsDir := filepath.Join(comicDir, sanitizeFilename(epsTitle))

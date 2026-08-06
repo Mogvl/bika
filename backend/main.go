@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/Mogvl/bika/backend/chat"
 	"github.com/Mogvl/bika/backend/download"
@@ -14,6 +15,17 @@ import (
 	"github.com/Mogvl/bika/backend/handler"
 	"github.com/Mogvl/bika/backend/pica"
 )
+
+// statusRecorder 记录响应状态码
+type statusRecorder struct {
+	http.ResponseWriter
+	status int
+}
+
+func (r *statusRecorder) WriteHeader(code int) {
+	r.status = code
+	r.ResponseWriter.WriteHeader(code)
+}
 
 //go:embed all:static
 var embeddedStatic embed.FS
@@ -155,6 +167,14 @@ func main() {
 	// CORS
 	corsHandler := handler.CORSMiddleware(mux)
 
+	// 请求日志中间件
+	loggedHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+		rec := &statusRecorder{ResponseWriter: w, status: 200}
+		corsHandler.ServeHTTP(rec, r)
+		log.Printf("[%s] %s %s → %d (%s)", r.Method, r.URL.Path, r.URL.RawQuery, rec.status, time.Since(start))
+	})
+
 	// ==================== 启动服务器 ====================
 
 	port := os.Getenv("PORT")
@@ -169,7 +189,7 @@ func main() {
 	log.Printf("  API 地址: http://localhost:%s/api", port)
 	log.Printf("==========================================")
 
-	if err := http.ListenAndServe(addr, corsHandler); err != nil {
+	if err := http.ListenAndServe(addr, loggedHandler); err != nil {
 		log.Fatalf("服务启动失败: %v", err)
 	}
 }
