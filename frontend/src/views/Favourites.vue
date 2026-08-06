@@ -4,10 +4,7 @@
 
     <!-- 工具栏 -->
     <div class="favourite-toolbar">
-      <select v-model="sort" @change="reload" class="sort-select">
-        <option value="da">添加时间（新→旧）</option>
-        <option value="dd">添加时间（旧→新）</option>
-      </select>
+      <SortSelect v-model="sort" :options="sortOptions" @change="reload" />
       <div class="search-box2">
         <input v-model="searchKeyword" type="text" placeholder="搜索收藏..." @input="onSearchInput" />
       </div>
@@ -53,6 +50,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getFavourites, addFavourite } from '@/api'
 import type { Comic } from '@/types'
+import SortSelect from '@/components/SortSelect.vue'
 
 const router = useRouter()
 const comics = ref<Comic[]>([])
@@ -62,6 +60,12 @@ const loading = ref(true)
 const error = ref('')
 const sort = ref('da')
 const searchKeyword = ref('')
+
+// 排序选项
+const sortOptions = [
+  { value: 'da', label: '添加时间（新→旧）' },
+  { value: 'dd', label: '添加时间（旧→新）' },
+]
 
 onMounted(() => loadFavourites())
 
@@ -142,14 +146,7 @@ function goComic(id: string) {
   align-items: center;
 }
 
-.sort-select {
-  padding: 8px 12px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 13px;
-  background: var(--bg-card);
-  outline: none;
-}
+
 
 .search-box2 {
   flex: 1;

@@ -43,13 +43,7 @@
     <div class="sort-bar">
       <div class="sort-group">
         <span class="sort-label">排序:</span>
-        <select v-model="sort" @change="doSearch" class="sort-select">
-          <option value="ua">最新</option>
-          <option value="dd">新→旧</option>
-          <option value="da">旧→新</option>
-          <option value="ld">最多喜欢</option>
-          <option value="vv">最多浏览</option>
-        </select>
+        <SortSelect v-model="sort" :options="sortOptions" @change="doSearch" />
       </div>
     </div>
 
@@ -91,9 +85,19 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getComicsByCategory, searchComics, getCategories } from '@/api'
 import type { Comic } from '@/types'
+import SortSelect from '@/components/SortSelect.vue'
 
 const route = useRoute()
 const router = useRouter()
+
+// 排序选项
+const sortOptions = [
+  { value: 'ua', label: '最新' },
+  { value: 'dd', label: '新→旧' },
+  { value: 'da', label: '旧→新' },
+  { value: 'ld', label: '最多喜欢' },
+  { value: 'vv', label: '最多浏览' },
+]
 
 const keyword = ref((route.query.keyword as string) || '')
 const categoryName = ref((route.query.c as string) || '')
@@ -382,14 +386,7 @@ function goComic(id: string) {
   color: var(--text-secondary);
 }
 
-.sort-select {
-  padding: 6px 12px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 13px;
-  background: var(--bg);
-  outline: none;
-}
+
 
 /* 漫画网格 */
 .comic-grid {
