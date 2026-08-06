@@ -114,7 +114,7 @@ async function handleRegister() {
 .register-container {
   width: 100%;
   max-width: 400px;
-  background: rgba(44, 28, 41, 0.75);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(24px) saturate(140%);
   -webkit-backdrop-filter: blur(24px) saturate(140%);
   border: 1px solid var(--border);

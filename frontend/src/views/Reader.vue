@@ -344,7 +344,7 @@ function onScrollImageError(e: Event, idx: number) {
   left: 0;
   right: 0;
   bottom: 0;
-  background: #0a0a0c;
+  background: #faf0f5;
   display: flex;
   flex-direction: column;
   z-index: 300;
@@ -356,7 +356,7 @@ function onScrollImageError(e: Event, idx: number) {
   left: 0;
   right: 0;
   height: 48px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(255,245,249,0.9); backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -373,14 +373,14 @@ function onScrollImageError(e: Event, idx: number) {
 .toolbar-btn {
   background: none;
   border: none;
-  color: white;
+  color: var(--text);
   font-size: 20px;
   cursor: pointer;
   padding: 8px;
 }
 
 .toolbar-info {
-  color: white;
+  color: var(--text);
   font-size: 14px;
   flex: 1;
   text-align: center;
@@ -393,7 +393,7 @@ function onScrollImageError(e: Event, idx: number) {
 }
 
 .zoom-label {
-  color: white;
+  color: var(--text);
   font-size: 12px;
   min-width: 44px;
   text-align: center;
@@ -458,7 +458,7 @@ function onScrollImageError(e: Event, idx: number) {
   left: 0;
   right: 0;
   height: 48px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(255,245,249,0.9); backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -474,9 +474,9 @@ function onScrollImageError(e: Event, idx: number) {
 }
 
 .btn-nav {
-  background: rgba(255,255,255,0.15);
+  background: var(--bg-soft); border: 1px solid var(--border); color: var(--text);
   border: none;
-  color: white;
+  color: var(--text);
   padding: 6px 16px;
   border-radius: 6px;
   font-size: 13px;
@@ -484,9 +484,9 @@ function onScrollImageError(e: Event, idx: number) {
 }
 
 .eps-select {
-  background: rgba(255,255,255,0.15);
+  background: var(--bg-soft); border: 1px solid var(--border); color: var(--text);
   border: none;
-  color: white;
+  color: var(--text);
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 13px;
@@ -495,8 +495,8 @@ function onScrollImageError(e: Event, idx: number) {
 }
 
 .eps-select option {
-  background: #333;
-  color: white;
+  background: var(--bg-card);
+  color: var(--text);
 }
 
 .reader-loading {
@@ -509,7 +509,7 @@ function onScrollImageError(e: Event, idx: number) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--text);
   gap: 16px;
 }
 
@@ -517,7 +517,7 @@ function onScrollImageError(e: Event, idx: number) {
   width: 40px;
   height: 40px;
   border: 3px solid rgba(255,255,255,0.2);
-  border-top-color: white;
+  border-top-color: var(--text);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -532,7 +532,7 @@ function onScrollImageError(e: Event, idx: number) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--text);
   gap: 16px;
 }
 
@@ -541,8 +541,8 @@ function onScrollImageError(e: Event, idx: number) {
   bottom: 56px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0,0,0,0.6);
-  color: white;
+  background: rgba(255,245,249,0.85); backdrop-filter: blur(8px);
+  color: var(--text);
   padding: 4px 16px;
   border-radius: 12px;
   font-size: 12px;
@@ -556,7 +556,7 @@ function onScrollImageError(e: Event, idx: number) {
   left: 0;
   right: 0;
   padding: 4px 16px;
-  background: rgba(0,0,0,0.6);
+  background: rgba(255,245,249,0.85); backdrop-filter: blur(8px);
   z-index: 309;
   transition: opacity 0.3s;
 }

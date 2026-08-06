@@ -102,27 +102,27 @@ function logout() {
   --primary: #ff5fa8;
   --primary-dark: #f0449a;
   --accent: #ff8fc2;
-  --bg: #1a0f18;
-  --bg-soft: #241722;
-  --bg-card: #2c1c29;
-  --bg-elev: #372333;
-  --text: #ffeef6;
-  --text-secondary: #d9a8c2;
-  --text-muted: #a97a94;
-  --border: rgba(255, 143, 194, 0.14);
-  --border-strong: rgba(255, 143, 194, 0.28);
-  --shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-  --shadow-glow: 0 0 0 1px rgba(255, 95, 168, 0.3), 0 8px 32px rgba(255, 95, 168, 0.22);
+  --bg: #fff5f9;
+  --bg-soft: #fdeef5;
+  --bg-card: #ffffff;
+  --bg-elev: #ffedf5;
+  --text: #3a2430;
+  --text-secondary: #7a5c6b;
+  --text-muted: #ab8c9c;
+  --border: rgba(255, 95, 168, 0.14);
+  --border-strong: rgba(255, 95, 168, 0.26);
+  --shadow: 0 8px 30px rgba(255, 143, 194, 0.14);
+  --shadow-glow: 0 0 0 1px rgba(255, 95, 168, 0.22), 0 8px 28px rgba(255, 95, 168, 0.16);
   --radius: 14px;
   --radius-sm: 10px;
   --radius-lg: 22px;
   --safe-top: env(safe-area-inset-top, 0px);
   --font-display: 'Plus Jakarta Sans', 'Noto Sans SC', -apple-system, sans-serif;
   --font-body: 'Noto Sans SC', 'Plus Jakarta Sans', -apple-system, sans-serif;
-  --success: #51d8a6;
-  --danger: #ff6b7d;
-  --warn: #f5b754;
-  --info: #6db7ff;
+  --success: #2fbf8f;
+  --danger: #e5484d;
+  --warn: #e8a13c;
+  --info: #3d7edd;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -143,7 +143,7 @@ a { color: inherit; text-decoration: none; }
   left: 0;
   right: 0;
   height: 58px;
-  background: rgba(26, 15, 24, 0.82);
+  background: rgba(255, 245, 249, 0.82);
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
   border-bottom: 1px solid var(--border);
@@ -569,7 +569,7 @@ select.input-field option { background: var(--bg-card); color: var(--text); }
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   border-bottom: 1px solid var(--border);
-  background: rgba(13, 13, 18, 0.6);
+  background: rgba(255, 245, 249, 0.85); backdrop-filter: blur(12px);
 }
 
 .tab-item {

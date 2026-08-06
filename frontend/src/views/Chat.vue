@@ -426,8 +426,8 @@ function scrollToBottom() {
 }
 
 .message-mine .message-reply {
-  background: rgba(255,255,255,0.2);
-  border-left-color: white;
+  background: rgba(0,0,0,0.08);
+  border-left-color: var(--border-strong);
 }
 
 .reply-name {

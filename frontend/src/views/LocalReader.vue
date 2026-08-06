@@ -190,11 +190,11 @@ function onScrollImageError(e: Event) {
 </script>
 
 <style scoped>
-.local-reader-page { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #0a0a0c; display: flex; flex-direction: column; z-index: 300; }
-.reader-toolbar { position: fixed; top: 0; left: 0; right: 0; height: 48px; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: space-between; padding: 0 12px; z-index: 310; transition: opacity 0.3s; }
+.local-reader-page { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #faf0f5; display: flex; flex-direction: column; z-index: 300; }
+.reader-toolbar { position: fixed; top: 0; left: 0; right: 0; height: 48px; background: rgba(255,245,249,0.9); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: space-between; padding: 0 12px; z-index: 310; transition: opacity 0.3s; }
 .reader-toolbar.hidden { opacity: 0; pointer-events: none; }
-.toolbar-btn { background: none; border: none; color: white; font-size: 20px; cursor: pointer; padding: 8px; }
-.toolbar-info { color: white; font-size: 14px; flex: 1; text-align: center; }
+.toolbar-btn { background: none; border: none; color: var(--text); font-size: 20px; cursor: pointer; padding: 8px; }
+.toolbar-info { color: var(--text); font-size: 14px; flex: 1; text-align: center; }
 .toolbar-actions { display: flex; gap: 4px; }
 .reader-content { flex: 1; overflow: hidden; position: relative; }
 .single-page { display: flex; height: 100%; align-items: center; justify-content: center; }
@@ -204,9 +204,9 @@ function onScrollImageError(e: Event) {
 .reader-image { max-width: 100%; max-height: 100%; object-fit: contain; user-select: none; }
 .scroll-mode { height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .scroll-image { display: block; width: 100%; max-width: 800px; margin: 0 auto; }
-.reader-bottom { position: fixed; bottom: 0; left: 0; right: 0; height: 48px; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; gap: 12px; padding: 0 12px; z-index: 310; transition: opacity 0.3s; }
+.reader-bottom { position: fixed; bottom: 0; left: 0; right: 0; height: 48px; background: rgba(255,245,249,0.9); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; gap: 12px; padding: 0 12px; z-index: 310; transition: opacity 0.3s; }
 .reader-bottom.hidden { opacity: 0; pointer-events: none; }
-.btn-nav { background: rgba(255,255,255,0.15); border: none; color: white; padding: 6px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; }
-.eps-label2 { color: white; font-size: 13px; }
-.reader-error { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; gap: 16px; }
+.btn-nav { background: var(--bg-soft); border: 1px solid var(--border); color: var(--text); padding: 6px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+.eps-label2 { color: var(--text); font-size: 13px; }
+.reader-error { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text); gap: 16px; }
 </style>
