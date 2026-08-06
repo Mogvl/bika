@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"net/http"
 	"strings"
@@ -165,6 +166,8 @@ func (c *Client) doRequest(method, path string, body io.Reader) (*APIResponse, e
 	}
 
 	if apiResp.Code != 200 {
+		// 打日志方便诊断上游返回的原始信息
+		log.Printf("[PicACG] %s %s → code=%d message=%q raw=%s", method, path, apiResp.Code, apiResp.Message, string(respBody))
 		return &apiResp, fmt.Errorf("API 错误: code=%d, message=%s", apiResp.Code, apiResp.Message)
 	}
 
@@ -178,6 +181,10 @@ func (c *Client) doGet(path string) (*APIResponse, error) {
 
 // doPost 执行 POST 请求
 func (c *Client) doPost(path string, body any) (*APIResponse, error) {
+	if body == nil {
+		// 上游要求 JSON 必须是对象或数组，nil 会序列化成 null 导致 400
+		body = map[string]any{}
+	}
 	jsonBody, err := json.Marshal(body)
 	if err != nil {
 		return nil, fmt.Errorf("序列化请求体失败: %w", err)
@@ -187,6 +194,9 @@ func (c *Client) doPost(path string, body any) (*APIResponse, error) {
 
 // doPut 执行 PUT 请求
 func (c *Client) doPut(path string, body any) (*APIResponse, error) {
+	if body == nil {
+		body = map[string]any{}
+	}
 	jsonBody, err := json.Marshal(body)
 	if err != nil {
 		return nil, fmt.Errorf("序列化请求体失败: %w", err)

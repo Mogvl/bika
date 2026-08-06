@@ -22,6 +22,7 @@ func GetCodeErrMsg(code string) string {
 		"1025": "哔咔是注册商标，不能使用",
 		"1026": "邮箱格式错误",
 		"1029": "时间不同步，请调整设备时间",
+		"400":  "请求参数错误（可能是收藏/点赞接口路径或方法不正确）",
 	}
 	if msg, ok := msgMap[code]; ok {
 		return msg
