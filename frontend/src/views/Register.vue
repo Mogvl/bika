@@ -105,24 +105,35 @@ async function handleRegister() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
+  background:
+    radial-gradient(ellipse 80% 60% at 20% -10%, rgba(236, 110, 173, 0.18), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 110%, rgba(160, 107, 255, 0.14), transparent 60%),
+    var(--bg);
   padding: 20px;
 }
 .register-container {
   width: 100%;
   max-width: 400px;
-  background: white;
-  border-radius: 20px;
+  background: rgba(25, 25, 35, 0.7);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  border: 1px solid var(--border);
+  border-radius: 24px;
   padding: 32px 24px;
-  box-shadow: 0 8px 32px rgba(231, 76, 139, 0.15);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
 }
 .register-header { text-align: center; margin-bottom: 24px; }
-.register-logo { font-size: 28px; color: var(--primary); }
-.register-subtitle { font-size: 13px; color: var(--text-secondary); }
+.register-logo {
+  font-family: var(--font-display);
+  font-size: 30px; font-weight: 800;
+  background: linear-gradient(135deg, #ff8fc2 0%, #ec6ead 55%, #a06bff 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.register-subtitle { font-size: 13px; color: var(--text-muted); }
 .register-form { display: flex; flex-direction: column; gap: 12px; }
 .question-group { display: flex; flex-direction: column; gap: 8px; padding: 8px 0; border-top: 1px solid var(--border); }
-.error-tip { color: #e74c3c; font-size: 13px; text-align: center; }
-.success-tip { color: #27ae60; font-size: 13px; text-align: center; }
+.error-tip { color: var(--danger); font-size: 13px; text-align: center; }
+.success-tip { color: var(--success); font-size: 13px; text-align: center; }
 .register-btn { width: 100%; padding: 12px; font-size: 15px; }
 .login-link { text-align: center; font-size: 13px; color: var(--primary); margin-top: 8px; }
 </style>

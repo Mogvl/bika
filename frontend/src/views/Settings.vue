@@ -9,7 +9,7 @@
       </div>
       <div class="setting-item">
         <span class="setting-label">退出登录</span>
-        <button class="btn" style="background: #e74c3c; color: white;" @click="logout">退出</button>
+        <button class="btn" style="background: var(--danger); color: white;" @click="logout">退出</button>
       </div>
     </div>
 
@@ -62,9 +62,9 @@ function logout() {
 .setting-label { font-size: 15px; }
 .setting-item:last-child { border-bottom: none; }
 .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100; }
-.modal { background: white; border-radius: var(--radius); padding: 24px; width: 90%; max-width: 360px; display: flex; flex-direction: column; gap: 12px; }
+.modal { background: var(--bg-card); border: 1px solid var(--border); box-shadow: var(--shadow); border-radius: var(--radius); padding: 24px; width: 90%; max-width: 360px; display: flex; flex-direction: column; gap: 12px; }
 .modal h3 { margin-bottom: 8px; }
-.error-tip { color: #e74c3c; font-size: 13px; }
+.error-tip { color: var(--danger); font-size: 13px; }
 .modal-actions { display: flex; gap: 12px; margin-top: 8px; }
 .modal-actions .btn { flex: 1; padding: 10px; }
 </style>

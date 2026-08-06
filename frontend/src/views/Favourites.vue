@@ -191,6 +191,6 @@ function goComic(id: string) {
 }
 
 .unfav-btn:hover {
-  background: #e74c3c;
+  background: var(--danger);
 }
 </style>

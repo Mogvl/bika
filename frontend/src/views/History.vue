@@ -51,7 +51,7 @@ function getCoverUrl(thumb: any): string {
 
 function handleImgError(e: Event) {
   const img = e.target as HTMLImageElement
-  img.style.background = '#f0f0f0'
+  img.style.background = 'var(--bg-soft)'
 }
 
 function goComic(id: string) {
@@ -89,7 +89,7 @@ function formatTime(timestamp: number): string {
 
 .clear-btn {
   padding: 6px 16px;
-  background: #e74c3c;
+  background: var(--danger);
   color: white;
   border: none;
   border-radius: 16px;
@@ -99,13 +99,13 @@ function formatTime(timestamp: number): string {
 
 .empty-tip {
   font-size: 13px;
-  color: #999;
+  color: var(--text-muted);
   margin-top: 8px;
 }
 
 .comic-time {
   font-size: 11px;
-  color: #999;
+  color: var(--text-muted);
   margin-top: 4px;
 }
 </style>

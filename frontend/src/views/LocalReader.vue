@@ -178,19 +178,19 @@ function handleKeydown(e: KeyboardEvent) {
 function onImageError(e: Event) {
   const img = e.target as HTMLImageElement
   img.alt = '加载失败'
-  img.style.background = '#f0f0f0'
+  img.style.background = 'rgba(255,255,255,0.06)'
   img.style.minHeight = '300px'
 }
 
 function onScrollImageError(e: Event) {
   const img = e.target as HTMLImageElement
   img.alt = '加载失败'
-  img.style.background = '#f0f0f0'
+  img.style.background = 'rgba(255,255,255,0.06)'
 }
 </script>
 
 <style scoped>
-.local-reader-page { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #1a1a1a; display: flex; flex-direction: column; z-index: 300; }
+.local-reader-page { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #0a0a0c; display: flex; flex-direction: column; z-index: 300; }
 .reader-toolbar { position: fixed; top: 0; left: 0; right: 0; height: 48px; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: space-between; padding: 0 12px; z-index: 310; transition: opacity 0.3s; }
 .reader-toolbar.hidden { opacity: 0; pointer-events: none; }
 .toolbar-btn { background: none; border: none; color: white; font-size: 20px; cursor: pointer; padding: 8px; }

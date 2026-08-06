@@ -182,7 +182,7 @@ function getCoverUrl(thumb: any): string {
 
 function handleImgError(e: Event) {
   const img = e.target as HTMLImageElement
-  img.style.background = '#f0f0f0'
+  img.style.background = 'rgba(255,255,255,0.06)'
 }
 
 function goComic(id: string) {

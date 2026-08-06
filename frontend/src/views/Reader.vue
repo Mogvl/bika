@@ -323,7 +323,7 @@ function onImageError(e: Event) {
   const img = e.target as HTMLImageElement
   img.src = ''
   img.alt = '加载失败'
-  img.style.background = '#f0f0f0'
+  img.style.background = 'rgba(255,255,255,0.06)'
   img.style.minHeight = '300px'
 }
 
@@ -332,7 +332,7 @@ function onScrollImageLoaded(idx: number) {}
 function onScrollImageError(e: Event, idx: number) {
   const img = e.target as HTMLImageElement
   img.alt = '加载失败'
-  img.style.background = '#f0f0f0'
+  img.style.background = 'rgba(255,255,255,0.06)'
   img.style.minHeight = '200px'
 }
 </script>
@@ -344,7 +344,7 @@ function onScrollImageError(e: Event, idx: number) {
   left: 0;
   right: 0;
   bottom: 0;
-  background: #1a1a1a;
+  background: #0a0a0c;
   display: flex;
   flex-direction: column;
   z-index: 300;

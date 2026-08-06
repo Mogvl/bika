@@ -213,7 +213,7 @@ function goBack() {
 .detail-author { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
 .detail-meta { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
 .detail-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-.tag { padding: 2px 10px; border-radius: 12px; font-size: 11px; background: #fce4ec; color: var(--primary); }
+.tag { padding: 2px 10px; border-radius: 12px; font-size: 11px; background: rgba(236,110,173,0.14); color: var(--primary); }
 .detail-section { padding: 16px; background: var(--bg-card); margin-top: 8px; }
 .detail-desc { font-size: 14px; line-height: 1.7; color: var(--text-secondary); }
 .eps-list { display: flex; flex-direction: column; }
@@ -229,8 +229,8 @@ function goBack() {
 .comment-input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; resize: vertical; box-sizing: border-box; font-family: inherit; }
 .comment-input:focus { border-color: var(--primary); }
 .comment-send-row { display: flex; justify-content: flex-end; align-items: center; gap: 12px; margin-top: 8px; }
-.comment-msg { font-size: 13px; color: #27ae60; }
-.comment-msg.error { color: #e74c3c; }
+.comment-msg { font-size: 13px; color: var(--success); }
+.comment-msg.error { color: var(--danger); }
 .btn-comment-send { padding: 8px 24px; }
 .comments-list { display: flex; flex-direction: column; }
 .comment-item { display: flex; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--border); }
@@ -239,7 +239,7 @@ function goBack() {
 .comment-body { flex: 1; min-width: 0; }
 .comment-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
 .comment-user { font-size: 13px; font-weight: 500; }
-.comment-time { font-size: 11px; color: #999; }
+.comment-time { font-size: 11px; color: var(--text-muted); }
 .comment-content { font-size: 14px; line-height: 1.6; word-break: break-word; }
 .comment-actions { display: flex; gap: 16px; margin-top: 6px; }
 .comment-action { font-size: 12px; color: var(--text-secondary); cursor: pointer; }

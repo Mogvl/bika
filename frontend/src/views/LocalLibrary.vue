@@ -106,13 +106,13 @@ function openReader(comic: LocalComic, ep: LocalEps) {
 
 function handleImgError(e: Event) {
   const img = e.target as HTMLImageElement
-  img.style.background = '#f0f0f0'
+  img.style.background = 'var(--bg-soft)'
 }
 </script>
 
 <style scoped>
 .comic-card { position: relative; }
-.empty-tip { font-size: 13px; color: #999; margin-top: 8px; }
+.empty-tip { font-size: 13px; color: var(--text-muted); margin-top: 8px; }
 
 .local-detail {
   margin-top: 16px;
@@ -139,7 +139,7 @@ function handleImgError(e: Event) {
   border-radius: 16px;
 }
 
-.btn-back:hover { background: #fce4ec; }
+.btn-back:hover { background: rgba(236,110,173,0.14); }
 
 .detail-title { font-size: 18px; font-weight: 600; flex: 1; }
 

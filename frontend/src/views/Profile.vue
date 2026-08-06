@@ -38,8 +38,8 @@
 
       <div class="profile-actions">
         <button class="btn btn-primary" @click="punchIn">签到</button>
-        <router-link to="/my-comments" class="btn" style="background: var(--bg); color: var(--text);">我的评论</router-link>
-        <router-link to="/settings" class="btn" style="background: var(--bg); color: var(--text);">设置</router-link>
+        <router-link to="/my-comments" class="btn btn-ghost">我的评论</router-link>
+        <router-link to="/settings" class="btn btn-ghost">设置</router-link>
       </div>
     </div>
 
@@ -156,27 +156,30 @@ async function saveTitle() {
 </script>
 
 <style scoped>
-.profile-card { background: var(--bg-card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
+.profile-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px; box-shadow: var(--shadow); }
 .profile-header { display: flex; gap: 16px; margin-bottom: 24px; }
-.profile-avatar { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; flex-shrink: 0; position: relative; cursor: pointer; }
+.profile-avatar { width: 84px; height: 84px; border-radius: 50%; overflow: hidden; flex-shrink: 0; position: relative; cursor: pointer; box-shadow: 0 0 0 3px rgba(236,110,173,0.25); }
 .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.avatar-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--primary); color: white; font-size: 32px; font-weight: 700; }
+.avatar-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg,#ec6ead,#a06bff); color: white; font-size: 32px; font-weight: 700; }
 .avatar-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; opacity: 0; transition: opacity 0.2s; border-radius: 50%; }
 .profile-avatar:hover .avatar-overlay { opacity: 1; }
 .profile-name { font-size: 20px; font-weight: 600; }
-.edit-title-btn { background: none; border: none; font-size: 14px; cursor: pointer; margin-left: 6px; }
+.edit-title-btn { background: none; border: none; font-size: 14px; cursor: pointer; margin-left: 6px; opacity: 0.7; }
+.edit-title-btn:hover { opacity: 1; }
 .profile-level { font-size: 13px; color: var(--primary); }
-.profile-title { font-size: 12px; color: var(--text-secondary); }
-.profile-stats { display: flex; justify-content: space-around; padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.profile-title { font-size: 12px; color: var(--text-muted); }
+.profile-stats { display: flex; justify-content: space-around; padding: 18px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-bottom: 18px; }
 .stat-item { text-align: center; }
-.stat-value { display: block; font-size: 20px; font-weight: 600; color: var(--primary); }
-.stat-label { font-size: 12px; color: var(--text-secondary); }
+.stat-value { display: block; font-size: 22px; font-weight: 700; color: var(--primary); font-variant-numeric: tabular-nums; }
+.stat-label { font-size: 12px; color: var(--text-muted); }
 .profile-actions { display: flex; gap: 12px; }
 .profile-actions .btn { flex: 1; padding: 10px; text-align: center; }
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100; }
-.modal { background: white; border-radius: var(--radius); padding: 24px; width: 90%; max-width: 360px; display: flex; flex-direction: column; gap: 12px; }
-.modal h3 { margin-bottom: 8px; }
-.error-tip { color: #e74c3c; font-size: 13px; }
+.btn-ghost { background: var(--bg-elev); color: var(--text); border: 1px solid var(--border); }
+.btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 300; }
+.modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px; width: 90%; max-width: 360px; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--shadow); }
+.modal h3 { margin-bottom: 8px; font-family: var(--font-display); font-size: 18px; }
+.error-tip { color: var(--danger); font-size: 13px; }
 .modal-actions { display: flex; gap: 12px; margin-top: 8px; }
 .modal-actions .btn { flex: 1; padding: 10px; }
 </style>

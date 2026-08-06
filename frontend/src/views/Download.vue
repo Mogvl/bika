@@ -144,7 +144,7 @@ function getCoverUrl(url: string): string {
 
 function handleImgError(e: Event) {
   const img = e.target as HTMLImageElement
-  img.style.background = '#f0f0f0'
+  img.style.background = 'var(--bg-soft)'
 }
 
 function sanitizeTitle(title: string): string {
@@ -253,11 +253,11 @@ function formatTime(t: string): string {
   align-items: center;
 }
 
-.status-waiting { color: #f39c12; }
-.status-downloading { color: #3498db; }
-.status-completed { color: #27ae60; }
-.status-error { color: #e74c3c; }
-.status-paused { color: #95a5a6; }
+.status-waiting { color: var(--warn); }
+.status-downloading { color: var(--info); }
+.status-completed { color: var(--success); }
+.status-error { color: var(--danger); }
+.status-paused { color: var(--text-muted); }
 
 .download-progress {
   color: var(--primary);
@@ -265,13 +265,13 @@ function formatTime(t: string): string {
 }
 
 .download-speed {
-  color: #27ae60;
+  color: var(--success);
   font-weight: 500;
 }
 
 .download-error {
   font-size: 11px;
-  color: #e74c3c;
+  color: var(--danger);
   margin-top: 4px;
 }
 
@@ -285,7 +285,7 @@ function formatTime(t: string): string {
 
 .download-time {
   font-size: 11px;
-  color: #999;
+  color: var(--text-muted);
   margin-top: 4px;
 }
 
@@ -304,13 +304,13 @@ function formatTime(t: string): string {
   cursor: pointer;
 }
 
-.btn-cancel { background: #f39c12; color: white; }
-.btn-start { background: #3498db; color: white; }
-.btn-remove { background: #e74c3c; color: white; }
+.btn-cancel { background: var(--warn); color: white; }
+.btn-start { background: var(--info); color: white; }
+.btn-remove { background: var(--danger); color: white; }
 
 .empty-tip {
   font-size: 13px;
-  color: #999;
+  color: var(--text-muted);
   margin-top: 8px;
 }
 </style>

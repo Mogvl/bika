@@ -105,7 +105,7 @@ function getCoverUrl(thumb: any): string {
 
 function handleImgError(e: Event) {
   const img = e.target as HTMLImageElement
-  img.style.background = '#f0f0f0'
+  img.style.background = 'var(--bg-soft)'
 }
 
 function goComic(id: string) { router.push(`/comic/${id}`) }
@@ -113,7 +113,7 @@ function goComic(id: string) { router.push(`/comic/${id}`) }
 
 <style scoped>
 .rank-badge { position: absolute; top: 8px; left: 8px; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: white; z-index: 10; }
-.rank-1 { background: #ff4757; } .rank-2 { background: #ff6b81; } .rank-3 { background: #ffa502; }
+.rank-1 { background: var(--danger); } .rank-2 { background: var(--danger); } .rank-3 { background: var(--warn); }
 .rank-badge:not(.rank-1):not(.rank-2):not(.rank-3) { background: rgba(0,0,0,0.5); }
 .comic-card { position: relative; }
 
@@ -176,7 +176,7 @@ function goComic(id: string) { router.push(`/comic/${id}`) }
 .knight-level {
   font-size: 11px;
   color: var(--primary);
-  background: #fce4ec;
+  background: rgba(236,110,173,0.14);
   padding: 1px 6px;
   border-radius: 8px;
   margin-left: 6px;

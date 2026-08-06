@@ -544,7 +544,7 @@ function getCoverUrl(thumb: any): string {
 
 function handleImgError(e: Event) {
   const img = e.target as HTMLImageElement
-  img.style.background = '#f0f0f0'
+  img.style.background = 'var(--bg-soft)'
 }
 
 function goComic(id: string) {
@@ -593,8 +593,11 @@ async function shareComic() {
 .detail-header {
   display: flex;
   gap: 16px;
-  padding: 16px;
+  padding: 18px;
   background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.18);
 }
 
 .detail-cover-wrap {
@@ -641,11 +644,12 @@ async function shareComic() {
 }
 
 .tag {
-  padding: 2px 10px;
-  border-radius: 12px;
+  padding: 3px 12px;
+  border-radius: 10px;
   font-size: 11px;
-  background: #fce4ec;
+  background: rgba(236,110,173,0.14);
   color: var(--primary);
+  transition: all 0.2s;
 }
 
 .tag.clickable {
@@ -658,8 +662,8 @@ async function shareComic() {
 }
 
 .tag-alt {
-  background: #e3f2fd;
-  color: #1976d2;
+  background: rgba(80,150,255,0.16);
+  color: var(--info);
 }
 
 .share-btn {
@@ -682,50 +686,55 @@ async function shareComic() {
 }
 
 .btn-fav {
-  background: #ff6b81;
+  background: var(--danger);
   color: white;
   border: none;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
 }
+.btn-fav:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(255,107,125,0.3); }
 
 .btn-fav.is-fav {
-  background: #e74c3c;
+  background: linear-gradient(135deg, #ff6b7d, #e94b5e);
 }
 
 .btn-like {
-  background: var(--bg);
+  background: var(--bg-soft);
   border: 1px solid var(--border);
   color: var(--text);
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
+  transition: all 0.2s;
 }
+.btn-like:hover { border-color: var(--primary); color: var(--primary); }
 
 .btn-like.is-liked {
-  background: #fce4ec;
+  background: rgba(236,110,173,0.14);
   border-color: var(--primary);
   color: var(--primary);
 }
 
 .btn-download {
-  background: #3498db;
+  background: var(--info);
   color: white;
   border: none;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.2s;
 }
-
-.btn-download:hover {
-  background: #2980b9;
-}
+.btn-download:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(77,159,255,0.3); }
 
 .detail-section {
-  padding: 16px;
+  padding: 18px;
   background: var(--bg-card);
-  margin-top: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-top: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.18);
 }
 
 .detail-desc {
@@ -750,9 +759,9 @@ async function shareComic() {
 
 .eps-chip {
   padding: 8px 16px;
-  background: var(--bg);
+  background: var(--bg-soft);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 13px;
   cursor: pointer;
   transition: all 0.2s;
@@ -762,13 +771,14 @@ async function shareComic() {
 .eps-chip:hover {
   border-color: var(--primary);
   color: var(--primary);
-  background: #fff0f5;
+  background: rgba(236,110,173,0.10);
 }
 
 .eps-chip.selected {
-  background: var(--primary);
+  background: linear-gradient(135deg, #ec6ead, #d94f92);
   color: white;
-  border-color: var(--primary);
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(236,110,173,0.3);
 }
 
 .eps-chip.select-mode {
@@ -864,11 +874,11 @@ async function shareComic() {
 
 .comment-msg {
   font-size: 13px;
-  color: #27ae60;
+  color: var(--success);
 }
 
 .comment-msg.error {
-  color: #e74c3c;
+  color: var(--danger);
 }
 
 .btn-comment-send {
@@ -928,14 +938,14 @@ async function shareComic() {
 .comment-level {
   font-size: 11px;
   color: var(--primary);
-  background: #fce4ec;
+  background: rgba(236,110,173,0.14);
   padding: 1px 6px;
   border-radius: 8px;
 }
 
 .comment-time {
   font-size: 11px;
-  color: #999;
+  color: var(--text-muted);
 }
 
 .comment-content {
@@ -945,7 +955,7 @@ async function shareComic() {
 }
 
 .comment-deleted {
-  color: #999;
+  color: var(--text-muted);
   font-style: italic;
 }
 
@@ -970,7 +980,7 @@ async function shareComic() {
 }
 
 .comment-action.report {
-  color: #999;
+  color: var(--text-muted);
 }
 
 /* 子评论 */

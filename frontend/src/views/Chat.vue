@@ -268,7 +268,7 @@ function scrollToBottom() {
 }
 
 .error-tip {
-  color: #e74c3c;
+  color: var(--danger);
   font-size: 13px;
   margin-top: 8px;
 }
@@ -437,7 +437,7 @@ function scrollToBottom() {
 }
 
 .message-mine .reply-name {
-  color: #ffd0e0;
+  color: rgba(236,110,173,0.22);
 }
 
 .reply-text {
@@ -450,7 +450,7 @@ function scrollToBottom() {
 
 .message-time {
   font-size: 10px;
-  color: #999;
+  color: var(--text-muted);
   margin-top: 2px;
 }
 
@@ -462,7 +462,7 @@ function scrollToBottom() {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #fce4ec;
+  background: rgba(236,110,173,0.14);
   border-radius: 8px;
   padding: 6px 10px;
   font-size: 12px;

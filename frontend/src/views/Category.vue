@@ -70,7 +70,7 @@ function getCoverUrl(thumb: any): string {
 
 function handleImgError(e: Event) {
   const img = e.target as HTMLImageElement
-  img.style.background = '#f0f0f0'
+  img.style.background = 'rgba(255,255,255,0.06)'
 }
 
 function goRank() {
@@ -122,15 +122,15 @@ function goCategory(title: string) {
 }
 
 .rank-icon {
-  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  background: linear-gradient(135deg, #ff7b72, #f0506e);
 }
 
 .update-icon {
-  background: linear-gradient(135deg, #74b9ff, #0984e3);
+  background: linear-gradient(135deg, #6db7ff, #3a8dde);
 }
 
 .random-icon {
-  background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+  background: linear-gradient(135deg, #9a8cff, #7c5cf0);
 }
 
 .category-img {

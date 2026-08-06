@@ -110,7 +110,7 @@ function goComic(id: string) {
 
 .comment-time {
   font-size: 11px;
-  color: #999;
+  color: var(--text-muted);
 }
 
 .comment-content {
