@@ -176,7 +176,7 @@ function goComic(id: string) { router.push(`/comic/${id}`) }
 .knight-level {
   font-size: 11px;
   color: var(--primary);
-  background: rgba(236,110,173,0.14);
+  background: rgba(255,95,168,0.14);
   padding: 1px 6px;
   border-radius: 8px;
   margin-left: 6px;

@@ -106,27 +106,27 @@ async function handleRegister() {
   align-items: center;
   justify-content: center;
   background:
-    radial-gradient(ellipse 80% 60% at 20% -10%, rgba(236, 110, 173, 0.18), transparent 60%),
-    radial-gradient(ellipse 60% 50% at 90% 110%, rgba(160, 107, 255, 0.14), transparent 60%),
+    radial-gradient(ellipse 80% 60% at 20% -10%, rgba(255, 95, 168, 0.22), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 110%, rgba(255, 143, 194, 0.16), transparent 60%),
     var(--bg);
   padding: 20px;
 }
 .register-container {
   width: 100%;
   max-width: 400px;
-  background: rgba(25, 25, 35, 0.7);
+  background: rgba(44, 28, 41, 0.75);
   backdrop-filter: blur(24px) saturate(140%);
   -webkit-backdrop-filter: blur(24px) saturate(140%);
   border: 1px solid var(--border);
   border-radius: 24px;
   padding: 32px 24px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 95, 168, 0.12);
 }
 .register-header { text-align: center; margin-bottom: 24px; }
 .register-logo {
   font-family: var(--font-display);
   font-size: 30px; font-weight: 800;
-  background: linear-gradient(135deg, #ff8fc2 0%, #ec6ead 55%, #a06bff 100%);
+  background: linear-gradient(135deg, #ff9acb 0%, #ff5fa8 55%, #ff3d94 100%);
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
 }
 .register-subtitle { font-size: 13px; color: var(--text-muted); }

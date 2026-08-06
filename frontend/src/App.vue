@@ -99,30 +99,30 @@ function logout() {
 
 <style>
 :root {
-  --primary: #ec6ead;
-  --primary-dark: #d94f92;
+  --primary: #ff5fa8;
+  --primary-dark: #f0449a;
   --accent: #ff8fc2;
-  --bg: #0d0d12;
-  --bg-soft: #14141c;
-  --bg-card: #191923;
-  --bg-elev: #22222e;
-  --text: #e9e9ef;
-  --text-secondary: #a0a0b0;
-  --text-muted: #6d6d7d;
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.14);
-  --shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
-  --shadow-glow: 0 0 0 1px rgba(236, 110, 173, 0.25), 0 8px 32px rgba(236, 110, 173, 0.18);
+  --bg: #1a0f18;
+  --bg-soft: #241722;
+  --bg-card: #2c1c29;
+  --bg-elev: #372333;
+  --text: #ffeef6;
+  --text-secondary: #d9a8c2;
+  --text-muted: #a97a94;
+  --border: rgba(255, 143, 194, 0.14);
+  --border-strong: rgba(255, 143, 194, 0.28);
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 0 1px rgba(255, 95, 168, 0.3), 0 8px 32px rgba(255, 95, 168, 0.22);
   --radius: 14px;
   --radius-sm: 10px;
   --radius-lg: 22px;
   --safe-top: env(safe-area-inset-top, 0px);
   --font-display: 'Plus Jakarta Sans', 'Noto Sans SC', -apple-system, sans-serif;
   --font-body: 'Noto Sans SC', 'Plus Jakarta Sans', -apple-system, sans-serif;
-  --success: #34d399;
+  --success: #51d8a6;
   --danger: #ff6b7d;
   --warn: #f5b754;
-  --info: #4d9fff;
+  --info: #6db7ff;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -143,7 +143,7 @@ a { color: inherit; text-decoration: none; }
   left: 0;
   right: 0;
   height: 58px;
-  background: rgba(13, 13, 18, 0.82);
+  background: rgba(26, 15, 24, 0.82);
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
   border-bottom: 1px solid var(--border);
@@ -185,7 +185,7 @@ a { color: inherit; text-decoration: none; }
   font-size: 19px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  background: linear-gradient(135deg, #ff8fc2 0%, #ec6ead 55%, #a06bff 100%);
+  background: linear-gradient(135deg, #ff9acb 0%, #ff5fa8 55%, #ff3d94 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -262,7 +262,7 @@ a { color: inherit; text-decoration: none; }
   font-family: var(--font-display);
   font-size: 18px;
   font-weight: 700;
-  background: linear-gradient(135deg, #ff8fc2, #a06bff);
+  background: linear-gradient(135deg, #ff9acb, #ff5fa8);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -371,7 +371,7 @@ a { color: inherit; text-decoration: none; }
 
 .comic-card:hover {
   transform: translateY(-4px) scale(1.01);
-  box-shadow: 0 12px 28px rgba(0,0,0,0.45), 0 0 0 1px rgba(236, 110, 173, 0.2);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.45), 0 0 0 1px rgba(255, 95, 168, 0.2);
 }
 
 .comic-cover {
@@ -456,11 +456,11 @@ a { color: inherit; text-decoration: none; }
 .btn:active { transform: scale(0.97); }
 
 .btn-primary {
-  background: linear-gradient(135deg, #ec6ead 0%, #d94f92 100%);
+  background: linear-gradient(135deg, #ff5fa8 0%, #f0449a 100%);
   color: #fff;
-  box-shadow: 0 4px 16px rgba(236, 110, 173, 0.28);
+  box-shadow: 0 4px 16px rgba(255, 95, 168, 0.28);
 }
-.btn-primary:hover { box-shadow: 0 6px 22px rgba(236, 110, 173, 0.4); transform: translateY(-1px); }
+.btn-primary:hover { box-shadow: 0 6px 22px rgba(255, 95, 168, 0.4); transform: translateY(-1px); }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
 .input-field {
@@ -480,7 +480,7 @@ a { color: inherit; text-decoration: none; }
 
 .input-field:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(236, 110, 173, 0.15);
+  box-shadow: 0 0 0 3px rgba(255, 95, 168, 0.15);
 }
 
 select.input-field option { background: var(--bg-card); color: var(--text); }
@@ -525,10 +525,10 @@ select.input-field option { background: var(--bg-card); color: var(--text); }
 }
 .category-tag:hover { border-color: var(--primary); color: var(--primary); }
 .category-tag.active {
-  background: linear-gradient(135deg, #ec6ead, #d94f92);
+  background: linear-gradient(135deg, #ff5fa8, #f0449a);
   color: #fff;
   border-color: transparent;
-  box-shadow: 0 4px 12px rgba(236, 110, 173, 0.3);
+  box-shadow: 0 4px 12px rgba(255, 95, 168, 0.3);
 }
 
 /* 搜索框 */
@@ -549,7 +549,7 @@ select.input-field option { background: var(--bg-card); color: var(--text); }
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
-.search-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(236, 110, 173, 0.15); }
+.search-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255, 95, 168, 0.15); }
 .search-box input::placeholder { color: var(--text-muted); }
 
 .search-box .search-icon {
@@ -602,7 +602,7 @@ select.input-field option { background: var(--bg-card); color: var(--text); }
   width: 28px;
   height: 2px;
   border-radius: 2px;
-  background: linear-gradient(90deg, #ff8fc2, #ec6ead);
+  background: linear-gradient(90deg, #ff9acb, #ff5fa8);
 }
 
 /* 模态框 */

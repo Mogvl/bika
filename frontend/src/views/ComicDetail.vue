@@ -647,7 +647,7 @@ async function shareComic() {
   padding: 3px 12px;
   border-radius: 10px;
   font-size: 11px;
-  background: rgba(236,110,173,0.14);
+  background: rgba(255,95,168,0.14);
   color: var(--primary);
   transition: all 0.2s;
 }
@@ -712,7 +712,7 @@ async function shareComic() {
 .btn-like:hover { border-color: var(--primary); color: var(--primary); }
 
 .btn-like.is-liked {
-  background: rgba(236,110,173,0.14);
+  background: rgba(255,95,168,0.14);
   border-color: var(--primary);
   color: var(--primary);
 }
@@ -771,14 +771,14 @@ async function shareComic() {
 .eps-chip:hover {
   border-color: var(--primary);
   color: var(--primary);
-  background: rgba(236,110,173,0.10);
+  background: rgba(255,95,168,0.10);
 }
 
 .eps-chip.selected {
-  background: linear-gradient(135deg, #ec6ead, #d94f92);
+  background: linear-gradient(135deg, #ff5fa8, #f0449a);
   color: white;
   border-color: transparent;
-  box-shadow: 0 4px 12px rgba(236,110,173,0.3);
+  box-shadow: 0 4px 12px rgba(255,95,168,0.3);
 }
 
 .eps-chip.select-mode {
@@ -938,7 +938,7 @@ async function shareComic() {
 .comment-level {
   font-size: 11px;
   color: var(--primary);
-  background: rgba(236,110,173,0.14);
+  background: rgba(255,95,168,0.14);
   padding: 1px 6px;
   border-radius: 8px;
 }

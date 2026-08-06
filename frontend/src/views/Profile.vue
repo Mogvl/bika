@@ -158,9 +158,9 @@ async function saveTitle() {
 <style scoped>
 .profile-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px; box-shadow: var(--shadow); }
 .profile-header { display: flex; gap: 16px; margin-bottom: 24px; }
-.profile-avatar { width: 84px; height: 84px; border-radius: 50%; overflow: hidden; flex-shrink: 0; position: relative; cursor: pointer; box-shadow: 0 0 0 3px rgba(236,110,173,0.25); }
+.profile-avatar { width: 84px; height: 84px; border-radius: 50%; overflow: hidden; flex-shrink: 0; position: relative; cursor: pointer; box-shadow: 0 0 0 3px rgba(255,95,168,0.25); }
 .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.avatar-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg,#ec6ead,#a06bff); color: white; font-size: 32px; font-weight: 700; }
+.avatar-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg,#ff5fa8,#ff3d94); color: white; font-size: 32px; font-weight: 700; }
 .avatar-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; opacity: 0; transition: opacity 0.2s; border-radius: 50%; }
 .profile-avatar:hover .avatar-overlay { opacity: 1; }
 .profile-name { font-size: 20px; font-weight: 600; }
