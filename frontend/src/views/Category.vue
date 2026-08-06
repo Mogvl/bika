@@ -104,21 +104,29 @@ function goCategory(title: string) {
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  transition: transform 0.2s;
+  padding: 12px 8px;
+  border-radius: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s, border-color 0.22s;
 }
 
 .category-card:hover {
   transform: translateY(-4px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow);
 }
 
 .category-icon {
   width: 72px;
   height: 72px;
-  border-radius: 16px;
+  border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 30px;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
 }
 
 .rank-icon {
@@ -130,7 +138,7 @@ function goCategory(title: string) {
 }
 
 .random-icon {
-  background: linear-gradient(135deg, #9a8cff, #7c5cf0);
+  background: linear-gradient(135deg, #ff9acb, #ff5fa8);
 }
 
 .category-img {
@@ -145,7 +153,8 @@ function goCategory(title: string) {
   font-size: 12px;
   text-align: center;
   color: var(--text);
-  max-width: 80px;
+  max-width: 88px;
+  font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

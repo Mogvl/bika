@@ -322,37 +322,45 @@ function goComic(id: string) {
 .filter-body {
   padding: 0 16px 12px;
   border-top: 1px solid var(--border);
+  animation: fadeUp 0.2s ease;
 }
 
 .filter-actions {
   display: flex;
   gap: 8px;
-  padding: 8px 0;
+  padding: 10px 0;
 }
 
 .filter-action {
-  padding: 4px 12px;
+  padding: 5px 14px;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 16px;
   font-size: 12px;
-  background: var(--bg);
+  background: var(--bg-soft);
+  color: var(--text-secondary);
   cursor: pointer;
+  transition: all 0.2s;
+}
+.filter-action:hover {
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .filter-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  max-height: 200px;
+  gap: 8px;
+  max-height: 220px;
   overflow-y: auto;
 }
 
 .filter-tag {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-  background: var(--bg);
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  background: var(--bg-soft);
   border: 1px solid var(--border);
+  color: var(--text);
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -360,12 +368,14 @@ function goComic(id: string) {
 .filter-tag:hover {
   border-color: var(--primary);
   color: var(--primary);
+  transform: translateY(-1px);
 }
 
 .filter-tag.active {
-  background: var(--primary);
+  background: linear-gradient(135deg, #ff5fa8, #f0449a);
   color: white;
-  border-color: var(--primary);
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(255, 95, 168, 0.3);
 }
 
 /* 排序 */

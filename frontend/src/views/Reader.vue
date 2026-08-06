@@ -66,11 +66,12 @@
     <!-- 底部章节切换 -->
     <div class="reader-bottom" :class="{ hidden: controlsHidden }">
       <button class="btn-nav" @click="prevEps">上一话</button>
-      <select v-model="currentOrder" @change="switchEps" class="eps-select">
-        <option v-for="ep in epsList" :key="ep.order" :value="ep.order">
-          第 {{ ep.order }} 话
-        </option>
-      </select>
+      <SortSelect
+        v-model="currentOrderText"
+        :options="epsOrderOptions"
+        @change="switchEps"
+        class="eps-select-wrap"
+      />
       <button class="btn-nav" @click="nextEps">下一话</button>
     </div>
 
@@ -99,6 +100,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { getComicEps, getComicPages, getGameEps, getGamePages } from '@/api'
 import { saveReadingProgress } from '@/utils/history'
 import type { EP, Page } from '@/types'
+import SortSelect from '@/components/SortSelect.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -108,6 +110,19 @@ const isGame = computed(() => route.query.type === 'game')
 const currentOrder = ref(Number(route.params.epsId) || 1)  // 章节序号
 const epsList = ref<EP[]>([])
 const totalEpsLoaded = ref(false)
+
+// 章节下拉：显示文本用 currentOrderText，选择后切到对应 order
+const epsOrderOptions = computed(() => {
+  return epsList.value.map(ep => ({
+    value: String(ep.order),
+    label: `第 ${ep.order} 话`,
+  }))
+})
+
+const currentOrderText = computed({
+  get: () => String(currentOrder.value),
+  set: (v: string) => { currentOrder.value = Number(v) },
+})
 
 const pages = ref<Page[]>([])
 const currentIndex = ref(0)
@@ -473,6 +488,8 @@ function onScrollImageError(e: Event, idx: number) {
   pointer-events: none;
 }
 
+.eps-select-wrap .sort-select-trigger { padding: 7px 14px; min-width: 96px; }
+
 .btn-nav {
   background: var(--bg-soft); border: 1px solid var(--border); color: var(--text);
   border: none;
@@ -483,21 +500,9 @@ function onScrollImageError(e: Event, idx: number) {
   cursor: pointer;
 }
 
-.eps-select {
-  background: var(--bg-soft); border: 1px solid var(--border); color: var(--text);
-  border: none;
-  color: var(--text);
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 13px;
-  cursor: pointer;
-  max-width: 120px;
-}
 
-.eps-select option {
-  background: var(--bg-card);
-  color: var(--text);
-}
+
+
 
 .reader-loading {
   position: fixed;
