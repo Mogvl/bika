@@ -87,16 +87,18 @@ function toggleExpand(comic: LocalComic) {
 
 function getCoverUrl(comic: LocalComic): string {
   if (!comic.cover) return ''
-  return getLocalImageUrl(comic.path + '/' + comic.cover)
+  // cover 已是相对下载根目录的路径
+  return getLocalImageUrl(comic.cover)
 }
 
 function openReader(comic: LocalComic, ep: LocalEps) {
-  // 使用本地库阅读器路由
+  // 使用本地库阅读器路由；comic.path / ep.path 均为相对下载根目录的 posix 路径
   router.push({
     path: '/local-reader',
     query: {
       comic: comic.path,
       eps: ep.path,
+      epsTitle: ep.title,
       title: comic.title,
     },
   })

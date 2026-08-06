@@ -1,6 +1,9 @@
 package pica
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 // GetCodeErrMsg 根据错误码返回错误信息
 func GetCodeErrMsg(code string) string {
@@ -47,7 +50,7 @@ func (c *Client) Login(email, password string) (*APIResponse, error) {
 					errMsg = fmt.Sprintf("登录失败 (错误码: %s)", code)
 				}
 			}
-			return nil, fmt.Errorf(errMsg)
+			return nil, errors.New(errMsg)
 		}
 		return nil, fmt.Errorf("登录失败: %w", err)
 	}

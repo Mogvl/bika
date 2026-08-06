@@ -141,9 +141,15 @@ func (c *FriedClient) GetComments(postID string, page int) ([]Comment, error) {
 // SendComment 发送评论
 func (c *FriedClient) SendComment(postID, content string) error {
 	url := fmt.Sprintf("%s/comments", FriedBaseURL)
-	body := fmt.Sprintf(`{"content":"%s","postId":"%s"}`, content, postID)
+	body, err := json.Marshal(map[string]string{
+		"content": content,
+		"postId":  postID,
+	})
+	if err != nil {
+		return err
+	}
 
-	req, err := http.NewRequest("POST", url, strings.NewReader(body))
+	req, err := http.NewRequest("POST", url, strings.NewReader(string(body)))
 	if err != nil {
 		return err
 	}

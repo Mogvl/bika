@@ -60,9 +60,15 @@ func NewChatClient() *ChatClient {
 // Login 聊天服务器登录
 func (c *ChatClient) Login(email, password string) (string, error) {
 	url := ChatBaseURL + "auth/signin"
-	body := fmt.Sprintf(`{"email":"%s","password":"%s"}`, email, password)
+	body, err := json.Marshal(map[string]string{
+		"email":    email,
+		"password": password,
+	})
+	if err != nil {
+		return "", err
+	}
 
-	req, err := http.NewRequest("POST", url, strings.NewReader(body))
+	req, err := http.NewRequest("POST", url, strings.NewReader(string(body)))
 	if err != nil {
 		return "", err
 	}
@@ -192,10 +198,17 @@ func (c *ChatClient) SendMessage(roomID, message, referenceID string) error {
 	if referenceID == "" {
 		referenceID = generateUUID()
 	}
-	body := fmt.Sprintf(`{"roomId":"%s","message":"%s","referenceId":"%s","userMentions":[]}`,
-		roomID, message, referenceID)
+	body, err := json.Marshal(map[string]any{
+		"roomId":       roomID,
+		"message":      message,
+		"referenceId":  referenceID,
+		"userMentions": []string{},
+	})
+	if err != nil {
+		return err
+	}
 
-	req, err := http.NewRequest("POST", url, strings.NewReader(body))
+	req, err := http.NewRequest("POST", url, strings.NewReader(string(body)))
 	if err != nil {
 		return err
 	}

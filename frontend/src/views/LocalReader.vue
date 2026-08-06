@@ -62,14 +62,16 @@ const route = useRoute()
 const router = useRouter()
 
 const comicPath = (route.query.comic as string) || ''
-const epsName = (route.query.eps as string) || ''
-const epsTitle = (route.query.title as string) || '本地漫画'
+const epsPath = (route.query.eps as string) || ''
+const epsTitle = ref((route.query.epsTitle as string) || (route.query.title as string) || '本地漫画')
 
 const pages = ref<string[]>([])
 const currentIndex = ref(0)
 const controlsHidden = ref(false)
 const singleMode = ref(true)
 const error = ref('')
+const epsList = ref<any[]>([])
+const currentEpsPath = ref(epsPath)
 
 let touchStartX = 0
 let touchStartY = 0
@@ -94,18 +96,21 @@ onUnmounted(() => {
 
 // 从本地库 eps 接口获取指定章节的图片列表
 async function loadPages() {
-  if (!comicPath || !epsName) {
+  if (!comicPath || !epsPath) {
     error.value = '参数错误'
     return
   }
   try {
     const res = await getLocalEps(comicPath)
-    const epsList = res.data?.eps || []
-    const target = epsList.find((e: any) => e.title === epsName)
+    const epsListData = res.data?.eps || []
+    epsList.value = epsListData
+    const target = epsListData.find((e: any) => e.path === currentEpsPath.value) || epsListData[0]
     if (target && target.pages?.length) {
-      // 图片路径是相对漫画目录的，需拼接漫画路径
-      pages.value = target.pages.map((p: string) => comicPath + '/' + p)
+      // 图片路径已相对下载根目录，直接使用
+      currentEpsPath.value = target.path
+      pages.value = target.pages
       currentIndex.value = 0
+      epsTitle.value = target.title
     } else {
       error.value = '未找到该章节'
     }
@@ -150,8 +155,19 @@ function toggleMode() {
   controlsHidden.value = false
 }
 
-function prevEps() { /* 本地章节切换简化：暂不支持 */ }
-function nextEps() { /* 本地章节切换简化：暂不支持 */ }
+function switchEps(targetPath: string) {
+  currentEpsPath.value = targetPath
+  loadPages()
+}
+
+function prevEps() {
+  const idx = epsList.value.findIndex((e: any) => e.path === currentEpsPath.value)
+  if (idx > 0) switchEps(epsList.value[idx - 1].path)
+}
+function nextEps() {
+  const idx = epsList.value.findIndex((e: any) => e.path === currentEpsPath.value)
+  if (idx < epsList.value.length - 1) switchEps(epsList.value[idx + 1].path)
+}
 
 function handleKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape') goBack()

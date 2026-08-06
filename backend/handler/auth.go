@@ -138,7 +138,11 @@ func (h *AuthHandler) PunchIn(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := h.client.PunchIn()
 	if err != nil {
-		Success(w, resp.Data)
+		if resp != nil && resp.Message != "" {
+			Error(w, http.StatusBadRequest, resp.Message)
+			return
+		}
+		Error(w, http.StatusInternalServerError, "签到失败")
 		return
 	}
 
@@ -224,12 +228,8 @@ func (h *AuthHandler) SetAvatar(w http.ResponseWriter, r *http.Request) {
 	Success(w, resp.Data)
 }
 
-// SetTitle 修改称号
+// SetTitle 修改称号（当前登录用户自己的称号）
 func (h *AuthHandler) SetTitle(w http.ResponseWriter, r *http.Request) {
-	userID := r.PathValue("id")
-	if userID == "" {
-		userID = r.URL.Query().Get("userId")
-	}
 	var req struct {
 		Title string `json:"title"`
 	}
@@ -241,6 +241,23 @@ func (h *AuthHandler) SetTitle(w http.ResponseWriter, r *http.Request) {
 		Error(w, http.StatusBadRequest, "称号不能为空")
 		return
 	}
+
+	// 通过个人资料取得当前用户 ID（前端未单独传 userId）
+	profileResp, err := h.client.GetProfile()
+	if err != nil || profileResp == nil || profileResp.Data == nil {
+		Error(w, http.StatusInternalServerError, "获取用户信息失败")
+		return
+	}
+	userData, _ := profileResp.Data["user"].(map[string]any)
+	if userData == nil {
+		userData = profileResp.Data
+	}
+	userID, _ := userData["_id"].(string)
+	if userID == "" {
+		Error(w, http.StatusInternalServerError, "无法获取用户ID")
+		return
+	}
+
 	resp, err := h.client.SetTitle(userID, req.Title)
 	if err != nil {
 		Error(w, http.StatusInternalServerError, err.Error())

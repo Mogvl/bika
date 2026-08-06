@@ -67,11 +67,16 @@ export function saveComicHistory(comic: any) {
 
 // 保存阅读进度
 export function saveReadingProgress(bookId: string, title: string, thumb: any, epsId: string, epsOrder: number, epsTitle: string, picIndex: number) {
+  const existing = getHistory().find(h => h.bookId === bookId)
+  // 传入 thumb 为空时保留历史里已有的封面信息
+  const effectiveThumb = (thumb && (thumb.fileServer || thumb.path))
+    ? thumb
+    : (existing?.thumb || { fileServer: '', path: '' })
   saveHistory({
     bookId,
     title,
-    author: '',
-    thumb: thumb || { fileServer: '', path: '' },
+    author: existing?.author || '',
+    thumb: effectiveThumb,
     epsId,
     epsOrder,
     epsTitle,
