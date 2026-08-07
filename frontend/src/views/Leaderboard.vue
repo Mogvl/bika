@@ -114,7 +114,7 @@ function goComic(id: string) { router.push(`/comic/${id}`) }
 <style scoped>
 .rank-badge { position: absolute; top: 8px; left: 8px; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: white; z-index: 10; }
 .rank-1 { background: var(--danger); } .rank-2 { background: var(--danger); } .rank-3 { background: var(--warn); }
-.rank-badge:not(.rank-1):not(.rank-2):not(.rank-3) { background: rgba(0,0,0,0.5); }
+.rank-badge:not(.rank-1):not(.rank-2):not(.rank-3) { background: rgba(60, 40, 80, 0.3); }
 .comic-card { position: relative; }
 
 /* 骑士榜 */
@@ -176,7 +176,7 @@ function goComic(id: string) { router.push(`/comic/${id}`) }
 .knight-level {
   font-size: 11px;
   color: var(--primary);
-  background: rgba(255,95,168,0.14);
+  background: rgba(164,117,208,0.12);
   padding: 1px 6px;
   border-radius: 8px;
   margin-left: 6px;

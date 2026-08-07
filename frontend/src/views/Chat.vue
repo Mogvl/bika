@@ -437,7 +437,7 @@ function scrollToBottom() {
 }
 
 .message-mine .reply-name {
-  color: rgba(255,95,168,0.28);
+  color: rgba(164,117,208,0.2);
 }
 
 .reply-text {
@@ -462,7 +462,7 @@ function scrollToBottom() {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255,95,168,0.14);
+  background: rgba(164,117,208,0.12);
   border-radius: 8px;
   padding: 6px 10px;
   font-size: 12px;

@@ -158,10 +158,10 @@ async function saveTitle() {
 <style scoped>
 .profile-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px; box-shadow: var(--shadow); }
 .profile-header { display: flex; gap: 16px; margin-bottom: 24px; }
-.profile-avatar { width: 84px; height: 84px; border-radius: 50%; overflow: hidden; flex-shrink: 0; position: relative; cursor: pointer; box-shadow: 0 0 0 3px rgba(255,95,168,0.25); }
+.profile-avatar { width: 84px; height: 84px; border-radius: 50%; overflow: hidden; flex-shrink: 0; position: relative; cursor: pointer; box-shadow: 0 0 0 3px rgba(164,117,208,0.16); }
 .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.avatar-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg,#ff5fa8,#ff3d94); color: white; font-size: 32px; font-weight: 700; }
-.avatar-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; opacity: 0; transition: opacity 0.2s; border-radius: 50%; }
+.avatar-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg,#a475d0,#8b5fc0); color: white; font-size: 32px; font-weight: 700; }
+.avatar-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(60, 40, 80, 0.25); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 22px; opacity: 0; transition: opacity 0.2s; border-radius: 50%; }
 .profile-avatar:hover .avatar-overlay { opacity: 1; }
 .profile-name { font-size: 20px; font-weight: 600; }
 .edit-title-btn { background: none; border: none; font-size: 14px; cursor: pointer; margin-left: 6px; opacity: 0.7; }
@@ -176,7 +176,7 @@ async function saveTitle() {
 .profile-actions .btn { flex: 1; padding: 10px; text-align: center; }
 .btn-ghost { background: var(--bg-elev); color: var(--text); border: 1px solid var(--border); }
 .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 300; }
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(60, 40, 80, 0.3); display: flex; align-items: center; justify-content: center; z-index: 300; }
 .modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px; width: 90%; max-width: 360px; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--shadow); }
 .modal h3 { margin-bottom: 8px; font-family: var(--font-display); font-size: 18px; }
 .error-tip { color: var(--danger); font-size: 13px; }

@@ -213,7 +213,7 @@ function goBack() {
 .detail-author { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
 .detail-meta { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
 .detail-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-.tag { padding: 2px 10px; border-radius: 12px; font-size: 11px; background: rgba(255,95,168,0.14); color: var(--primary); }
+.tag { padding: 2px 10px; border-radius: 12px; font-size: 11px; background: rgba(164,117,208,0.12); color: var(--primary); }
 .detail-section { padding: 16px; background: var(--bg-card); margin-top: 8px; }
 .detail-desc { font-size: 14px; line-height: 1.7; color: var(--text-secondary); }
 .eps-list { display: flex; flex-direction: column; }

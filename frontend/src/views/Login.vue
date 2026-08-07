@@ -143,8 +143,8 @@ async function doReset() {
   align-items: center;
   justify-content: center;
   background:
-    radial-gradient(ellipse 80% 60% at 20% -10%, rgba(255, 95, 168, 0.22), transparent 60%),
-    radial-gradient(ellipse 60% 50% at 90% 110%, rgba(255, 143, 194, 0.16), transparent 60%),
+    radial-gradient(ellipse 80% 60% at 20% -10%, rgba(164, 117, 208, 0.10), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 110%, rgba(164, 117, 208, 0.10), transparent 60%),
     var(--bg);
   padding: 20px;
 }
@@ -158,7 +158,7 @@ async function doReset() {
   border: 1px solid var(--border);
   border-radius: 24px;
   padding: 44px 32px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 95, 168, 0.12);
+  box-shadow: var(--shadow);
 }
 
 .login-header {
@@ -172,7 +172,7 @@ async function doReset() {
   font-weight: 800;
   letter-spacing: -0.03em;
   margin-bottom: 10px;
-  background: linear-gradient(135deg, #ff9acb 0%, #ff5fa8 55%, #ff3d94 100%);
+  background: linear-gradient(135deg, #b98ce8 0%, #a475d0 55%, #8b5fc0 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -239,7 +239,7 @@ async function doReset() {
   padding-top: 14px;
 }
 
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 300; }
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(60, 40, 80, 0.3); display: flex; align-items: center; justify-content: center; z-index: 300; }
 .modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px; width: 90%; max-width: 380px; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--shadow); }
 .modal h3 { margin-bottom: 8px; font-family: var(--font-display); font-size: 18px; }
 .forgot-tip { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }

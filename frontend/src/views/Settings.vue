@@ -61,7 +61,7 @@ function logout() {
 .setting-item { display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid var(--border); }
 .setting-label { font-size: 15px; }
 .setting-item:last-child { border-bottom: none; }
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100; }
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(60, 40, 80, 0.3); display: flex; align-items: center; justify-content: center; z-index: 100; }
 .modal { background: var(--bg-card); border: 1px solid var(--border); box-shadow: var(--shadow); border-radius: var(--radius); padding: 24px; width: 90%; max-width: 360px; display: flex; flex-direction: column; gap: 12px; }
 .modal h3 { margin-bottom: 8px; }
 .error-tip { color: var(--danger); font-size: 13px; }

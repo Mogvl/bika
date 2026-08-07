@@ -126,11 +126,11 @@ function goCategory(title: string) {
   justify-content: center;
   font-size: 30px;
   color: #fff;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  box-shadow: 0 4px 14px rgba(164, 117, 208, 0.15);
 }
 
 .rank-icon {
-  background: linear-gradient(135deg, #ff7b72, #f0506e);
+  background: linear-gradient(135deg, #b98ce8, #e08bb8);
 }
 
 .update-icon {
@@ -138,7 +138,7 @@ function goCategory(title: string) {
 }
 
 .random-icon {
-  background: linear-gradient(135deg, #ff9acb, #ff5fa8);
+  background: linear-gradient(135deg, #b98ce8, #a475d0);
 }
 
 .category-img {

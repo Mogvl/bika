@@ -139,7 +139,7 @@ function handleImgError(e: Event) {
   border-radius: 16px;
 }
 
-.btn-back:hover { background: rgba(255,95,168,0.14); }
+.btn-back:hover { background: rgba(164,117,208,0.12); }
 
 .detail-title { font-size: 18px; font-weight: 600; flex: 1; }
 

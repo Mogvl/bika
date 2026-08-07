@@ -177,7 +177,7 @@ function goComic(id: string) {
   height: 24px;
   border-radius: 50%;
   border: none;
-  background: rgba(0,0,0,0.6);
+  background: rgba(164, 117, 208, 0.3);
   color: white;
   font-size: 12px;
   cursor: pointer;

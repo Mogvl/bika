@@ -597,7 +597,7 @@ async function shareComic() {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+  box-shadow: var(--shadow-sm);
 }
 
 .detail-cover-wrap {
@@ -647,7 +647,7 @@ async function shareComic() {
   padding: 3px 12px;
   border-radius: 10px;
   font-size: 11px;
-  background: rgba(255,95,168,0.14);
+  background: rgba(164,117,208,0.12);
   color: var(--primary);
   transition: all 0.2s;
 }
@@ -694,10 +694,10 @@ async function shareComic() {
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
 }
-.btn-fav:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(255,107,125,0.3); }
+.btn-fav:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(164,117,208,0.2); }
 
 .btn-fav.is-fav {
-  background: linear-gradient(135deg, #ff6b7d, #e94b5e);
+  background: linear-gradient(135deg, #b98ce8, #e08bb8);
 }
 
 .btn-like {
@@ -712,7 +712,7 @@ async function shareComic() {
 .btn-like:hover { border-color: var(--primary); color: var(--primary); }
 
 .btn-like.is-liked {
-  background: rgba(255,95,168,0.14);
+  background: rgba(164,117,208,0.12);
   border-color: var(--primary);
   color: var(--primary);
 }
@@ -734,7 +734,7 @@ async function shareComic() {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   margin-top: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+  box-shadow: var(--shadow-sm);
 }
 
 .detail-desc {
@@ -771,14 +771,14 @@ async function shareComic() {
 .eps-chip:hover {
   border-color: var(--primary);
   color: var(--primary);
-  background: rgba(255,95,168,0.10);
+  background: rgba(164,117,208,0.08);
 }
 
 .eps-chip.selected {
-  background: linear-gradient(135deg, #ff5fa8, #f0449a);
+  background: linear-gradient(135deg, #a475d0, #8b5fc0);
   color: white;
   border-color: transparent;
-  box-shadow: 0 4px 12px rgba(255,95,168,0.3);
+  box-shadow: 0 4px 12px rgba(164,117,208,0.18);
 }
 
 .eps-chip.select-mode {
@@ -938,7 +938,7 @@ async function shareComic() {
 .comment-level {
   font-size: 11px;
   color: var(--primary);
-  background: rgba(255,95,168,0.14);
+  background: rgba(164,117,208,0.12);
   padding: 1px 6px;
   border-radius: 8px;
 }

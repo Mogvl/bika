@@ -372,10 +372,10 @@ function goComic(id: string) {
 }
 
 .filter-tag.active {
-  background: linear-gradient(135deg, #ff5fa8, #f0449a);
+  background: linear-gradient(135deg, #a475d0, #8b5fc0);
   color: white;
   border-color: transparent;
-  box-shadow: 0 4px 12px rgba(255, 95, 168, 0.3);
+  box-shadow: 0 4px 12px rgba(164, 117, 208, 0.18);
 }
 
 /* 排序 */
