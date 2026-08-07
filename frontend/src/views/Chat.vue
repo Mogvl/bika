@@ -283,14 +283,17 @@ function scrollToBottom() {
   display: flex;
   gap: 12px;
   padding: 12px;
-  background: var(--bg-card);
-  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-sm);
 }
 
 .room-item:hover {
-  background: var(--bg);
+  background: rgba(164, 117, 208, 0.06);
 }
 
 .room-icon {
@@ -344,8 +347,13 @@ function scrollToBottom() {
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  background: var(--bg-card);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-sm);
+  margin: 12px;
 }
 
 .btn-back, .btn-refresh {
@@ -404,10 +412,13 @@ function scrollToBottom() {
 }
 
 .message-content {
-  background: var(--bg-card);
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
   padding: 8px 12px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
 }
 
@@ -490,11 +501,14 @@ function scrollToBottom() {
   gap: 4px;
   max-height: 160px;
   overflow-y: auto;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.76);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 14px;
   padding: 8px;
   margin-bottom: 8px;
+  box-shadow: var(--shadow-sm);
 }
 
 .emoji-item {
@@ -504,13 +518,13 @@ function scrollToBottom() {
 }
 
 .emoji-item:hover {
-  background: var(--bg);
+  background: var(--bg-solid);
   border-radius: 4px;
 }
 
 .btn-emoji {
   padding: 10px 12px;
-  background: var(--bg);
+  background: var(--bg-solid);
   border: 1px solid var(--border);
   border-radius: 20px;
   font-size: 16px;
@@ -538,8 +552,12 @@ function scrollToBottom() {
   display: flex;
   gap: 8px;
   padding: 12px 16px;
-  background: var(--bg-card);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin: 12px;
 }
 
 .chat-input input {

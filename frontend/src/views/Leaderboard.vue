@@ -130,9 +130,12 @@ function goComic(id: string) { router.push(`/comic/${id}`) }
   align-items: center;
   gap: 12px;
   padding: 12px 12px 12px 48px;
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
 }
 
 .knight-rank {

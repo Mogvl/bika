@@ -89,12 +89,13 @@ function formatTime(timestamp: number): string {
 
 .clear-btn {
   padding: 6px 16px;
-  background: var(--danger);
+  background: linear-gradient(120deg, #ec8fa0, #e57386);
   color: white;
   border: none;
-  border-radius: 16px;
+  border-radius: var(--radius-pill);
   font-size: 13px;
   cursor: pointer;
+  box-shadow: var(--glass-highlight), 0 4px 14px rgba(236,143,160,0.24);
 }
 
 .empty-tip {

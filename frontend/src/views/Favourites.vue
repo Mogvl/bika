@@ -156,9 +156,11 @@ function goComic(id: string) {
   width: 100%;
   padding: 8px 12px;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: var(--radius-pill);
   font-size: 13px;
   outline: none;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: var(--shadow-sm);
 }
 
 .search-box2 input:focus {

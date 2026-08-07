@@ -116,10 +116,13 @@ function handleImgError(e: Event) {
 
 .local-detail {
   margin-top: 16px;
-  background: var(--bg-card);
-  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: var(--radius-sm);
   padding: 16px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-sm);
 }
 
 .detail-header {
@@ -154,7 +157,7 @@ function handleImgError(e: Event) {
   gap: 12px;
 }
 
-.eps-item:hover { background: var(--bg); }
+.eps-item:hover { background: var(--bg-solid); }
 
 .eps-order { font-size: 16px; }
 .eps-title { flex: 1; font-size: 14px; }

@@ -104,10 +104,13 @@ function goCategory(title: string) {
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  padding: 12px 8px;
-  border-radius: 18px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
+  padding: 14px 8px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: var(--shadow-sm);
   transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s, border-color 0.22s;
 }
 
@@ -120,13 +123,13 @@ function goCategory(title: string) {
 .category-icon {
   width: 72px;
   height: 72px;
-  border-radius: 18px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 30px;
   color: #fff;
-  box-shadow: 0 4px 14px rgba(164, 117, 208, 0.15);
+  box-shadow: var(--glass-highlight), 0 8px 22px rgba(164, 117, 208, 0.22);
 }
 
 .rank-icon {
@@ -146,7 +149,7 @@ function goCategory(title: string) {
   height: 72px;
   border-radius: 16px;
   object-fit: cover;
-  background: var(--bg);
+  background: var(--bg-solid);
 }
 
 .category-name {

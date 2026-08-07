@@ -61,7 +61,7 @@
         <input v-model="forgot.answer" type="text" class="input-field" placeholder="密保答案" />
         <p v-if="forgotMsg" class="error-tip" :class="{ success: forgotOk }">{{ forgotMsg }}</p>
         <div class="modal-actions">
-          <button class="btn" style="background: var(--bg);" @click="showForgot = false">取消</button>
+          <button class="btn" @click="showForgot = false">取消</button>
           <button class="btn btn-primary" @click="doReset" :disabled="forgotLoading">
             {{ forgotLoading ? '提交中...' : '重置密码' }}
           </button>
@@ -143,22 +143,22 @@ async function doReset() {
   align-items: center;
   justify-content: center;
   background:
-    radial-gradient(ellipse 80% 60% at 20% -10%, rgba(164, 117, 208, 0.10), transparent 60%),
-    radial-gradient(ellipse 60% 50% at 90% 110%, rgba(164, 117, 208, 0.10), transparent 60%),
-    var(--bg);
+    radial-gradient(ellipse 80% 60% at 20% -10%, rgba(164, 117, 208, 0.12), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 110%, rgba(164, 117, 208, 0.12), transparent 60%),
+    linear-gradient(160deg, #f6f0fb 0%, #fbf7fc 40%, #f3eef9 100%);
   padding: 20px;
 }
 
 .login-container {
   width: 100%;
   max-width: 380px;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(24px) saturate(140%);
-  -webkit-backdrop-filter: blur(24px) saturate(140%);
-  border: 1px solid var(--border);
-  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.64);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 28px;
   padding: 44px 32px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--glass-highlight), var(--shadow);
 }
 
 .login-header {
@@ -205,7 +205,7 @@ async function doReset() {
   padding: 14px;
   font-size: 15.5px;
   margin-top: 8px;
-  border-radius: 14px;
+  border-radius: var(--radius-pill);
 }
 
 .login-footer {
@@ -240,7 +240,7 @@ async function doReset() {
 }
 
 .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(60, 40, 80, 0.3); display: flex; align-items: center; justify-content: center; z-index: 300; }
-.modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px; width: 90%; max-width: 380px; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--shadow); }
+.modal { background: rgba(255, 255, 255, 0.76); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 1px solid rgba(255, 255, 255, 0.7); border-radius: var(--radius-lg); padding: 26px; width: 90%; max-width: 380px; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--glass-highlight), var(--shadow); }
 .modal h3 { margin-bottom: 8px; font-family: var(--font-display); font-size: 18px; }
 .forgot-tip { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
 .error-tip { color: var(--danger); font-size: 13px; }

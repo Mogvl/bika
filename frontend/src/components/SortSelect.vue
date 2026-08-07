@@ -72,25 +72,29 @@ onUnmounted(() => document.removeEventListener('click', onDocClick))
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 14px;
+  padding: 9px 16px;
   min-width: 120px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-strong);
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: var(--radius-pill);
   cursor: pointer;
   font-size: 13px;
   color: var(--text);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   transition: border-color 0.2s, box-shadow 0.2s;
   user-select: none;
 }
 
 .sort-select-trigger:hover {
   border-color: var(--primary);
+  box-shadow: var(--shadow);
 }
 
 .sort-select-trigger.open {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(255, 95, 168, 0.15);
+  box-shadow: 0 0 0 3px rgba(164, 117, 208, 0.12);
 }
 
 .sort-select-label {
@@ -114,10 +118,12 @@ onUnmounted(() => document.removeEventListener('click', onDocClick))
   top: calc(100% + 6px);
   left: 0;
   min-width: 100%;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  box-shadow: var(--shadow);
+  background: rgba(255, 255, 255, 0.76);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 16px;
+  box-shadow: var(--glass-highlight), var(--shadow);
   padding: 6px;
   z-index: 50;
   animation: sortPop 0.18s cubic-bezier(0.22, 1, 0.36, 1);

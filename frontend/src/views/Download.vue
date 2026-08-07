@@ -188,18 +188,20 @@ function formatTime(t: string): string {
 .filter-btn {
   padding: 6px 16px;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: var(--radius-pill);
   font-size: 13px;
-  background: var(--bg-card);
+  background: rgba(255, 255, 255, 0.6);
   color: var(--text-secondary);
   cursor: pointer;
   white-space: nowrap;
+  box-shadow: var(--shadow-sm);
 }
 
 .filter-btn.active {
-  background: var(--primary);
+  background: linear-gradient(120deg, #b98ce8, #a475d0);
   color: white;
-  border-color: var(--primary);
+  border-color: transparent;
+  box-shadow: var(--glass-highlight), 0 4px 14px rgba(164,117,208,0.22);
 }
 
 .download-list {
@@ -212,9 +214,12 @@ function formatTime(t: string): string {
   display: flex;
   gap: 12px;
   padding: 12px;
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
 }
 
 .download-cover {

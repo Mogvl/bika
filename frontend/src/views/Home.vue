@@ -204,8 +204,9 @@ function goComic(id: string) {
 }
 
 .collection-title {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   margin-bottom: 12px;
   padding: 0 4px;
   color: var(--primary);
@@ -218,22 +219,26 @@ function goComic(id: string) {
 }
 
 .refresh-btn {
-  padding: 10px 32px;
-  background: var(--primary);
+  padding: 12px 36px;
+  background: linear-gradient(120deg, #b98ce8, #a475d0, #e08bb8);
   color: white;
   border: none;
-  border-radius: 24px;
+  border-radius: var(--radius-pill);
   font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  box-shadow: 0 8px 24px rgba(164, 117, 208, 0.28);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .refresh-btn:hover {
-  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(164, 117, 208, 0.36);
 }
 
 .refresh-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 </style>

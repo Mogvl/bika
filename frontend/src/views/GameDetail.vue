@@ -205,7 +205,7 @@ function goBack() {
 
 <style scoped>
 .detail-page { max-width: 800px; margin: 0 auto; }
-.detail-header { display: flex; gap: 16px; padding: 16px; background: var(--bg-card); }
+.detail-header { display: flex; gap: 16px; padding: 16px; background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.75); border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); }
 .detail-cover-wrap { flex-shrink: 0; width: 140px; }
 .detail-cover { width: 100%; border-radius: 8px; aspect-ratio: 3/4; object-fit: cover; }
 .detail-info { flex: 1; min-width: 0; }
@@ -214,17 +214,17 @@ function goBack() {
 .detail-meta { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
 .detail-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
 .tag { padding: 2px 10px; border-radius: 12px; font-size: 11px; background: rgba(164,117,208,0.12); color: var(--primary); }
-.detail-section { padding: 16px; background: var(--bg-card); margin-top: 8px; }
+.detail-section { padding: 16px; background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.75); border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); margin-top: 8px; }
 .detail-desc { font-size: 14px; line-height: 1.7; color: var(--text-secondary); }
 .eps-list { display: flex; flex-direction: column; }
 .eps-item { display: flex; align-items: center; padding: 12px 8px; border-bottom: 1px solid var(--border); cursor: pointer; gap: 12px; }
-.eps-item:hover { background: var(--bg); }
+.eps-item:hover { background: var(--bg-solid); }
 .eps-order { font-size: 13px; color: var(--primary); font-weight: 500; min-width: 56px; }
 .eps-title { flex: 1; font-size: 14px; }
 
 /* 评论 */
 .comments-header { display: flex; justify-content: space-between; align-items: center; }
-.comments-refresh { padding: 4px 12px; border: 1px solid var(--border); border-radius: 16px; font-size: 12px; background: var(--bg); cursor: pointer; color: var(--text-secondary); }
+.comments-refresh { padding: 4px 12px; border: 1px solid var(--border); border-radius: 16px; font-size: 12px; background: var(--bg-solid); cursor: pointer; color: var(--text-secondary); }
 .comment-input-wrap { margin-bottom: 16px; }
 .comment-input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; resize: vertical; box-sizing: border-box; font-family: inherit; }
 .comment-input:focus { border-color: var(--primary); }

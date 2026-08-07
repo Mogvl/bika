@@ -258,8 +258,13 @@ function goComic(id: string) {
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  margin: 12px;
 }
 
 .btn-back {
@@ -282,9 +287,10 @@ function goComic(id: string) {
   flex: 1;
   padding: 10px 16px;
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: var(--radius-pill);
   font-size: 15px;
   outline: none;
+  background: rgba(255, 255, 255, 0.6);
 }
 
 .search-input:focus {
@@ -296,7 +302,7 @@ function goComic(id: string) {
   background: var(--primary);
   color: white;
   border: none;
-  border-radius: 20px;
+  border-radius: var(--radius-pill);
   font-size: 16px;
   cursor: pointer;
   flex-shrink: 0;
@@ -304,8 +310,13 @@ function goComic(id: string) {
 
 /* 分类筛选 */
 .filter-section {
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  margin: 12px;
 }
 
 .filter-toggle {
@@ -334,9 +345,9 @@ function goComic(id: string) {
 .filter-action {
   padding: 5px 14px;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: var(--radius-pill);
   font-size: 12px;
-  background: var(--bg-soft);
+  background: rgba(255, 255, 255, 0.6);
   color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.2s;
@@ -356,9 +367,9 @@ function goComic(id: string) {
 
 .filter-tag {
   padding: 7px 14px;
-  border-radius: 20px;
+  border-radius: var(--radius-pill);
   font-size: 13px;
-  background: var(--bg-soft);
+  background: rgba(255, 255, 255, 0.6);
   border: 1px solid var(--border);
   color: var(--text);
   cursor: pointer;
@@ -375,14 +386,19 @@ function goComic(id: string) {
   background: linear-gradient(135deg, #a475d0, #8b5fc0);
   color: white;
   border-color: transparent;
-  box-shadow: 0 4px 12px rgba(164, 117, 208, 0.18);
+  box-shadow: var(--glass-highlight), 0 6px 16px rgba(164, 117, 208, 0.24);
 }
 
 /* 排序 */
 .sort-bar {
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
   padding: 8px 16px;
+  margin: 12px;
 }
 
 .sort-group {
@@ -407,10 +423,13 @@ function goComic(id: string) {
 }
 
 .comic-card {
-  background: var(--bg-card);
-  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
 }
 

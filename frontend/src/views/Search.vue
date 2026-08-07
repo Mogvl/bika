@@ -195,12 +195,13 @@ function goComic(id: string) {
 
 .keyword-tag {
   padding: 6px 14px;
-  border-radius: 16px;
+  border-radius: var(--radius-pill);
   font-size: 13px;
-  background: var(--bg-card);
+  background: rgba(255, 255, 255, 0.6);
   border: 1px solid var(--border);
   cursor: pointer;
   transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
 }
 
 .keyword-tag:hover {

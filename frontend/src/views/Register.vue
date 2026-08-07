@@ -106,21 +106,21 @@ async function handleRegister() {
   align-items: center;
   justify-content: center;
   background:
-    radial-gradient(ellipse 80% 60% at 20% -10%, rgba(164, 117, 208, 0.10), transparent 60%),
-    radial-gradient(ellipse 60% 50% at 90% 110%, rgba(164, 117, 208, 0.10), transparent 60%),
-    var(--bg);
+    radial-gradient(ellipse 80% 60% at 20% -10%, rgba(164, 117, 208, 0.12), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 110%, rgba(164, 117, 208, 0.12), transparent 60%),
+    linear-gradient(160deg, #f6f0fb 0%, #fbf7fc 40%, #f3eef9 100%);
   padding: 20px;
 }
 .register-container {
   width: 100%;
   max-width: 400px;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(24px) saturate(140%);
-  -webkit-backdrop-filter: blur(24px) saturate(140%);
-  border: 1px solid var(--border);
-  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.64);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 28px;
   padding: 32px 24px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--glass-highlight), var(--shadow);
 }
 .register-header { text-align: center; margin-bottom: 24px; }
 .register-logo {
@@ -134,6 +134,6 @@ async function handleRegister() {
 .question-group { display: flex; flex-direction: column; gap: 8px; padding: 8px 0; border-top: 1px solid var(--border); }
 .error-tip { color: var(--danger); font-size: 13px; text-align: center; }
 .success-tip { color: var(--success); font-size: 13px; text-align: center; }
-.register-btn { width: 100%; padding: 12px; font-size: 15px; }
+.register-btn { width: 100%; padding: 12px; font-size: 15px; border-radius: var(--radius-pill); }
 .login-link { text-align: center; font-size: 13px; color: var(--primary); margin-top: 8px; }
 </style>

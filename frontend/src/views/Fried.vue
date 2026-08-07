@@ -210,10 +210,13 @@ function handleImgError(e: Event) {
 }
 
 .post-item {
-  background: var(--bg-card);
-  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: var(--radius-sm);
   padding: 16px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-sm);
 }
 
 .post-header {
@@ -297,7 +300,7 @@ function handleImgError(e: Event) {
 .post-comments {
   margin-top: 12px;
   padding: 12px;
-  background: var(--bg);
+  background: var(--bg-solid);
   border-radius: 8px;
 }
 
@@ -351,9 +354,10 @@ function handleImgError(e: Event) {
   flex: 1;
   padding: 8px 12px;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: var(--radius-pill);
   font-size: 13px;
   outline: none;
+  background: rgba(255, 255, 255, 0.6);
 }
 
 .sub-input input:focus {
@@ -362,10 +366,10 @@ function handleImgError(e: Event) {
 
 .btn-sub {
   padding: 6px 16px;
-  background: var(--primary);
+  background: linear-gradient(120deg, #b98ce8, #a475d0);
   color: white;
   border: none;
-  border-radius: 16px;
+  border-radius: var(--radius-pill);
   font-size: 13px;
   cursor: pointer;
 }
