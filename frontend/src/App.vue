@@ -1,9 +1,9 @@
 <template>
   <div id="app-root">
-    <header v-if="auth.isLoggedIn && !isReaderPage" class="app-header">
+    <header v-if="auth.isLoggedIn && !isReaderPage" class="app-header" :class="{ 'header-desktop': !isMobile }">
       <div class="header-left">
         <button v-if="showBack" class="back-btn" @click="goBack">←</button>
-        <button class="menu-btn" @click="showMenu = !showMenu">☰</button>
+        <button v-if="isMobile" class="menu-btn" @click="showMenu = !showMenu">☰</button>
         <router-link to="/home" class="logo">PicACG</router-link>
       </div>
       <div class="header-right">
@@ -17,12 +17,12 @@
       </div>
     </header>
 
-    <!-- 侧边菜单 -->
-    <div v-if="showMenu" class="menu-overlay" @click="showMenu = false"></div>
-    <aside v-if="showMenu" class="side-menu">
+    <!-- 侧边菜单：桌面常驻 / 移动端抽屉 -->
+    <div v-if="showMenu && isMobile" class="menu-overlay" @click="showMenu = false"></div>
+    <aside v-if="!isReaderPage && (isMobile ? showMenu : true)" class="side-menu" :class="{ 'desktop-menu': !isMobile }">
       <div class="menu-header">
         <h3>哔咔漫画</h3>
-        <button @click="showMenu = false">✕</button>
+        <button v-if="isMobile" @click="showMenu = false">✕</button>
       </div>
       <nav class="menu-items">
         <router-link to="/home" @click="showMenu = false" class="menu-item">🏠 首页</router-link>
@@ -45,7 +45,7 @@
       </nav>
     </aside>
 
-    <main class="app-main" :class="{ 'reader-mode': isReaderPage }">
+    <main class="app-main" :class="{ 'reader-mode': isReaderPage, 'main-desktop': !isMobile }">
       <router-view />
     </main>
 
@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
@@ -74,6 +74,16 @@ const route = useRoute()
 const router = useRouter()
 const showMenu = ref(false)
 const showUserMenu = ref(false)
+const isMobile = ref(window.innerWidth < 768)
+
+// 监听窗口尺寸，实时切换桌面/移动端布局
+function onResize() {
+  isMobile.value = window.innerWidth < 768
+  // 从移动端切换到桌面端时，收起移动端抽屉
+  if (!isMobile.value) showMenu.value = false
+}
+onMounted(() => window.addEventListener('resize', onResize))
+onUnmounted(() => window.removeEventListener('resize', onResize))
 
 const isReaderPage = computed(() => route.name === 'reader' || route.name === 'local-reader')
 
@@ -183,7 +193,11 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  z-index: 100;
+}
+
+/* 桌面端顶栏：左侧缩进与常驻菜单对齐，汉堡按钮隐藏，导航链接左移补位 */
+.app-header.header-desktop {
+  padding-left: 304px;
 }
 
 .header-left { display: flex; align-items: center; gap: 14px; }
@@ -258,6 +272,22 @@ a { color: inherit; text-decoration: none; }
 }
 .app-main.reader-mode { padding-top: 0; }
 
+/* 桌面端：侧栏 + 内容并排（sticky 布局） */
+.app-main.main-desktop {
+  display: flex;
+  align-items: flex-start;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 14px 24px 48px;
+  gap: 28px;
+}
+.app-main.main-desktop.reader-mode {
+  display: block;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
 /* ==================== 菜单 ==================== */
 .menu-overlay, .user-menu-overlay {
   position: fixed;
@@ -283,6 +313,15 @@ a { color: inherit; text-decoration: none; }
   flex-direction: column;
   overflow: hidden;
   animation: menuFloatIn 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 桌面端：侧边栏常驻（仍是悬浮玻璃面板，只是始终显示、无入场动画） */
+.side-menu.desktop-menu {
+  position: sticky;
+  top: 78px; /* 64px 固定顶栏 + 14px 间距，滚动时停在顶栏下方 */
+  height: calc(100vh - 92px);
+  flex-shrink: 0;
+  animation: none;
 }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
